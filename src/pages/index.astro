@@ -1,4 +1,5 @@
 ---
+import { compareArticles } from '../lib/articles';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import JsonLd from '../components/JsonLd.astro';
@@ -6,9 +7,7 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
 const allArticles = await getCollection('articles');
-const sortedArticles = allArticles.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const sortedArticles = allArticles.sort(compareArticles);
 
 const featuredArticle = sortedArticles.find((a) => a.data.featured) || sortedArticles[0];
 const featuredWordCount = featuredArticle?.body ? featuredArticle.body.trim().split(/\s+/).length : 750;
