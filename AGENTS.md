@@ -16,6 +16,7 @@ npm install
 npm run dev       # http://localhost:4321
 npm run check     # astro check (tipe props komponen & pemakaian konten)
 npm run build     # astro check + build ke dist/
+npm run verify    # semua pemeriksaan CI: publikasi, keamanan konten, build, validasi dist/, lint gaya
 npm run preview   # sajikan dist/
 ```
 
@@ -66,7 +67,7 @@ Kategori menentukan URL: `category: "bedah"` -> `/bedah/<slug>/`, `"ai"` -> `/ai
    ```
 4. `fixnowTopic` memilih CTA, URL layanan, dan variasi anchor lewat `src/lib/fixnow-topics.ts`. Peta itu bertipe `Record<FixnowTopic, ...>` dari enum di `src/content/config.ts`, jadi topik baru di enum tanpa entri peta menggagalkan type check. Tanpa `fixnowTopic`, artikel tidak merender callout sama sekali. Isi hanya jika artikel memang membahas kerusakan yang relevan dengan layanan itu.
 5. Tambahkan entri di `public/llms.txt` dan `public/llms-full.txt`.
-6. Jalankan `npm run build`.
+6. Jalankan `npm run verify`. Pemeriksaan yang sama berjalan otomatis di setiap pull request.
 
 ## Aturan konten (wajib)
 
@@ -150,9 +151,13 @@ Selalu gunakan **token semantik dinamis** yang terdaftar di `tailwind.config.mjs
 Situs ini 100% statis: tidak ada backend, database, login, atau form. Yang diterbitkan hanya isi folder `dist/` hasil build.
 
 **Security headers dibuat otomatis.** `src/lib/htaccess.mjs` (integrasi di `astro.config.mjs`) menulis `dist/.htaccess` setiap `npm run build`: redirect HTTPS + non-www, blokir dotfile, `ErrorDocument 404`, HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, dan Content-Security-Policy.
-- CSP mengizinkan script inline **hanya lewat hash SHA-256** yang dihitung dari HTML hasil build. Jangan menambah script pihak ketiga (analytics, chat widget, font CDN) tanpa menambahkan domainnya ke CSP di `htaccess.mjs`, karena browser akan memblokirnya.
+- CSP mengizinkan script inline **hanya lewat hash SHA-256** yang tercantum di allowlist (lihat di bawah) dan benar-benar muncul di HTML hasil build. Jangan menambah script pihak ketiga (analytics, chat widget, font CDN) tanpa menambahkan domainnya ke CSP di `htaccess.mjs`, karena browser akan memblokirnya.
 - Jangan pakai `onclick=""` atau atribut event inline lain; pakai `<script>` di komponen.
-- Jangan menulis `<script>`, HTML mentah, atau `import` di luar komponen yang sudah ada di dalam artikel. Artikel diperlakukan sebagai kode dan direview sebelum terbit.
+- Artikel diperlakukan sebagai kode dan direview sebelum terbit. `scripts/check-content-security.mjs` mem-parse setiap artikel dan **menggagalkan build** jika ada `import`, komponen, elemen, atau atribut di luar `scripts/content-allowlist.json`, ekspresi `{...}` selain gambar yang di-import dan array `widths`, atribut `on*`, URL `javascript:`/`data:`, `export`, atau gambar hero yang bukan raster di `src/assets/`. Perluas allowlist lewat PR jika memang perlu.
+- Data terstruktur (JSON-LD) wajib disisipkan lewat `serializeJsonLd()` di `src/lib/json-ld.ts`, jangan `JSON.stringify` langsung di `set:html`.
+- Script inline hanya boleh yang hash-nya tercantum di `src/lib/inline-script-allowlist.json`. Build gagal jika ada script inline lain. Jika script tema, menu, atau tab beranda sengaja diubah (atau minifier versi baru mengubah hasilnya), perbarui hash di PR yang sama; pesan error build menyebut hash barunya.
+- `scripts/validate-dist.mjs` menolak `dist/` yang memuat file yang bisa dieksekusi server (`.php`, `.user.ini`, dan sejenisnya) atau `.htaccess` di subfolder.
+- `scripts/lint-style.mjs` memberi peringatan (tidak menggagalkan build) untuk em dash, frasa klise, klaim lab/garansi/harga/reballing, dan artikel tanpa `## Sumber`.
 - Jangan pernah meng-commit kredensial (token, password, kunci API). Secret scanning aktif di repo ini.
 
 ## Publikasi repo

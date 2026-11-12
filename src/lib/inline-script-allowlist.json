@@ -1,0 +1,17 @@
+{
+  "_comment": "Hash SHA-256 script inline yang boleh ada di HTML hasil build. Build gagal jika muncul hash lain. Saat script di bawah ini berubah (termasuk karena minifier versi baru), perbarui hash di PR yang sama supaya perubahannya terlihat saat review.",
+  "scripts": [
+    {
+      "hash": "sha256-f+MEPe/MWtBtvYcDMNorsuMdMizgGHYXYB0YD0UL82A=",
+      "source": "src/layouts/BaseLayout.astro: inisialisasi tema (is:inline)"
+    },
+    {
+      "hash": "sha256-NTEbFombMLKLM53evV7KaSy4nOwE18LanRFU0j5/tb0=",
+      "source": "src/components/Navbar.astro: menu mobile dan tombol tema (di-inline Astro)"
+    },
+    {
+      "hash": "sha256-aSBE1BapJcxMdZ7GR/FujLeLXBi1m2Ct/8R6G7C9q/g=",
+      "source": "src/pages/index.astro: tab rubrik beranda (di-inline Astro)"
+    }
+  ]
+}

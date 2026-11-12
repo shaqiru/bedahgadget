@@ -10,7 +10,12 @@
     "check": "astro check",
     "check:css": "node scripts/check-theme-css.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check:content": "node scripts/check-content-security.mjs",
+    "check:dist": "node scripts/validate-dist.mjs",
+    "check:publication": "node scripts/check-publication.mjs",
+    "lint:style": "node scripts/lint-style.mjs",
+    "verify": "npm run check:publication && npm run check:content && npm run build && npm run check:dist && npm run lint:style"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
@@ -22,6 +27,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@mdx-js/mdx": "3.1.1",
     "@tailwindcss/typography": "^0.5.20",
     "typescript": "^5.9.3"
   }
