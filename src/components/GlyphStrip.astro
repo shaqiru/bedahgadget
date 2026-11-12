@@ -1,0 +1,42 @@
+---
+// Strip pemisah: 12 tile glyph berulang lewat <pattern>, jadi satu salinan glyph cukup untuk layar selebar apa pun.
+import { tileMarkup } from '../lib/glyphs';
+import type { GlyphName, TileKind } from '../lib/glyphs';
+
+export interface Props {
+  id: string; // id pattern, wajib unik per halaman
+  size?: number;
+  class?: string;
+}
+
+const BASE = 40;
+const { id, size = BASE, class: className = '' } = Astro.props;
+
+const sequence: [GlyphName, TileKind][] = [
+  ['screw-torx', 'ink'],
+  ['chip', 'plate'],
+  ['fan', 'accent'],
+  ['resistor', 'plate'],
+  ['hotspot', 'ink'],
+  ['heatsink', 'heat'],
+  ['capacitor', 'plate'],
+  ['bga', 'ink'],
+  ['trace', 'plate'],
+  ['battery', 'accent'],
+  ['choke', 'plate'],
+  ['screw-phillips', 'heat'],
+];
+// Pembagian dihitung di luar template literal (kompiler Astro salah membaca `/` di dalam ${}).
+const scale = size / BASE;
+const widthPct = Math.ceil(100 / scale);
+const defs = `<defs><pattern id="${id}" width="${sequence.length * BASE}" height="${BASE}" patternUnits="userSpaceOnUse">${(
+      await Promise.all(sequence.map(([name, kind], i) => tileMarkup(name, kind, i * BASE, 0, BASE)))
+    ).join('')}</pattern></defs>`;
+const fill =
+  scale === 1
+    ? `<rect width="100%" height="${BASE}" fill="url(#${id})"/>`
+    : `<g transform="scale(${scale})"><rect width="${widthPct}%" height="${BASE}" fill="url(#${id})"/></g>`;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" class="block w-full ${className}" height="${size}" aria-hidden="true" focusable="false">${defs}${fill}</svg>`;
+---
+
+<Fragment set:html={svg} />

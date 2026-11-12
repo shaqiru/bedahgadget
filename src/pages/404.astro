@@ -1,5 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { tileMarkup } from '../lib/glyphs';
+import type { GlyphName, TileKind } from '../lib/glyphs';
+
+// Poster 3x3: komponen yang biasa dicek saat jalur daya putus.
+const poster: [GlyphName, TileKind][] = [
+  ['screw-torx', 'ink'], ['trace', 'plate'], ['chip', 'accent'],
+  ['capacitor', 'plate'], ['hotspot', 'heat'], ['choke', 'plate'],
+  ['fan', 'accent'], ['resistor', 'plate'], ['bga', 'ink'],
+];
+const tiles = (await Promise.all(poster.map(([name, kind], i) => tileMarkup(name, kind, (i % 3) * 64, Math.floor(i / 3) * 64, 64)))).join('');
+const posterSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" class="block h-auto w-32 sm:w-44" aria-hidden="true" focusable="false">${tiles}</svg>`;
 ---
 
 <BaseLayout title="404: Jalur Dokumen Terputus" noindex={true}>
@@ -10,7 +21,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <span class="inline-flex items-center gap-2 font-bold text-accent-danger"><span class="status-dot" aria-hidden="true"></span>STATUS: HTTP 404 // OPEN CIRCUIT</span>
         <span class="text-ink-muted">NODE TIDAK DITEMUKAN</span>
       </div>
-      <div class="p-6 sm:p-8 space-y-5">
+      <div class="p-6 sm:p-8 flex flex-col sm:flex-row-reverse sm:items-start gap-6">
+        <Fragment set:html={posterSvg} />
+        <div class="flex-1 space-y-5">
         <h1 class="font-brand text-3xl sm:text-4xl text-ink">
           Jalur Halaman Tidak Ditemukan
         </h1>
@@ -32,6 +45,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           >
             ARSIP BEDAH ANATOMI
           </a>
+        </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ import { join } from 'node:path';
 // Dijalankan setelah `astro build` (lihat package.json scripts.build).
 
 const root = process.cwd();
-const SEMANTIC = /^--(bg|text|accent|border)-/;
+const SEMANTIC = /^--(bg|text|accent|border|g)-/;
 // Varian seperti `hover:`, `md:`, `dark:` ikut ditangkap supaya selektor yang
 // diperiksa sama persis dengan kelas yang dihasilkan Tailwind.
 const OPACITY_CLASS =
@@ -97,6 +97,8 @@ function checkTokenPairs(css) {
   const blocks = [
     [':root', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
     ["html[data-theme='dark']", parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
+    ["html[data-graphics='b']", parseBlock(css, GRAPHICS_B)],
+    ["html[data-theme='dark'][data-graphics='b']", parseBlock(css, GRAPHICS_B_DARK)],
   ];
   const problems = [];
 
@@ -124,6 +126,40 @@ function checkTokenPairs(css) {
 
   if (problems.length) {
     throw new Error(`Pasangan token hex/RGB tidak sinkron:\n  ${problems.join('\n  ')}`);
+  }
+}
+
+const GRAPHICS_B = /html\[data-graphics=['"]b['"]\]\s*\{([\s\S]*?)\}/;
+const GRAPHICS_B_DARK = /html\[data-theme=['"]dark['"]\]\[data-graphics=['"]b['"]\]\s*\{([\s\S]*?)\}/;
+
+// Empat kombinasi grafis: varian A/B di atas tema terang/gelap. Blok B hanya menimpa sebagian token.
+function graphicCombos(css) {
+  const light = parseBlock(css, /:root\s*\{([\s\S]*?)\}/);
+  const dark = new Map([...light, ...parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)]);
+  const bLight = parseBlock(css, GRAPHICS_B);
+  const bDark = parseBlock(css, GRAPHICS_B_DARK);
+  if (!bLight || !bDark) throw new Error('Blok token grafis varian B tidak ditemukan di global.css');
+  return [
+    ['A terang', light],
+    ['A gelap', dark],
+    ['B terang', new Map([...light, ...bLight])],
+    ['B gelap', new Map([...dark, ...bLight, ...bDark])],
+  ];
+}
+
+// Bentuk grafis harus terbaca: --g-1 dan --g-2 minimal 3:1 terhadap latar halaman dan pelat tile.
+function checkGraphicContrast(css) {
+  const problems = [];
+  for (const [label, vars] of graphicCombos(css)) {
+    for (const shape of ['--g-1', '--g-2']) {
+      for (const background of ['--bg-page', '--bg-surface', '--g-4']) {
+        const ratio = contrastRatio(vars.get(shape), vars.get(background));
+        if (ratio < 3) problems.push(`${label}: ${shape} pada ${background} hanya ${ratio.toFixed(2)}:1`);
+      }
+    }
+  }
+  if (problems.length) {
+    throw new Error(`Kontras bentuk grafis di bawah 3:1:\n  ${problems.join('\n  ')}`);
   }
 }
 
@@ -220,10 +256,7 @@ function checkActionContrast(css) {
 
 // Kasus terburuk teks di atas glass: fill glass dicampur dengan isian paling mencolok di bawahnya.
 function checkGlassContrast(css) {
-  const blocks = [
-    ['terang', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
-    ['gelap', parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
-  ];
+  const blocks = graphicCombos(css);
   const problems = [];
   for (const [label, vars] of blocks) {
     const fill = vars?.get('--glass-fill')?.match(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/);
@@ -233,7 +266,7 @@ function checkGlassContrast(css) {
     }
     const [, r, g, b, alpha] = fill.map(Number);
     const ink = vars.get('--text-primary');
-    for (const under of ['--accent-hot', '--accent-heat', '--text-primary', '--bg-page']) {
+    for (const under of ['--accent-hot', '--accent-heat', '--text-primary', '--bg-page', '--g-1', '--g-2']) {
       const below = vars.get(under).replace('#', '');
       const mixed =
         '#' +
@@ -260,8 +293,9 @@ try {
   checkAccentContrast(source);
   checkActionContrast(source);
   checkGlassContrast(source);
+  checkGraphicContrast(source);
   checkRawAccentText();
-  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks, tombol aksi, dan glass >= 4.5:1, tanpa warna isian untuk teks).`);
+  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks, tombol aksi, dan glass >= 4.5:1, bentuk grafis A/B >= 3:1, tanpa warna isian untuk teks).`);
 } catch (error) {
   console.error(`check:css gagal: ${error.message}`);
   process.exit(1);

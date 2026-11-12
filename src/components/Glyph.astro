@@ -1,0 +1,16 @@
+---
+// Glyph brand (src/assets/glyphs), disisipkan inline saat build. Selalu dekoratif.
+// Warna lewat kelas g1-g4/gl yang membaca token --g-* (lihat global.css).
+import { glyphBody } from '../lib/glyphs';
+import type { GlyphName } from '../lib/glyphs';
+
+export interface Props {
+  name: GlyphName;
+  class?: string;
+}
+
+const { name, class: className = 'h-12 w-12' } = Astro.props;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="glyph ${className}" aria-hidden="true" focusable="false">${await glyphBody(name)}</svg>`;
+---
+
+<Fragment set:html={svg} />

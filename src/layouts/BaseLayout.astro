@@ -57,6 +57,17 @@ const fullTitle = title.includes('BedahGadget') || title.includes('bedahgadget.i
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'light');
         }
+        // Varian grafis brand: ?g=b atau ?g=a, bertahan selama sesi tab. Default A (tanpa atribut).
+        var g = null;
+        try {
+          g = new URLSearchParams(location.search).get('g');
+        } catch (e) {}
+        if (g !== 'a' && g !== 'b') g = null;
+        try {
+          if (g) sessionStorage.setItem('bg-graphics', g);
+          else g = sessionStorage.getItem('bg-graphics');
+        } catch (e) {}
+        if (g === 'b') document.documentElement.setAttribute('data-graphics', 'b');
       })();
     </script>
 

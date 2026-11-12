@@ -6,6 +6,9 @@ import AnatomyHero from '../components/AnatomyHero.astro';
 import SymptomPanel from '../components/SymptomPanel.astro';
 import FloatingCTA from '../components/FloatingCTA.astro';
 import Icon from '../components/Icon.astro';
+import Glyph from '../components/Glyph.astro';
+import GlyphCapsule from '../components/GlyphCapsule.astro';
+import type { GlyphName } from '../lib/glyphs';
 import { getCollection } from 'astro:content';
 import { articlePath, categories } from '../lib/categories';
 import { laptopParts, symptoms, type ResolvedPart } from '../lib/laptop-parts';
@@ -43,6 +46,12 @@ const rubricBlurb: Record<string, string> = {
   bedah: 'Cara kerja komponen sampai ke level sirkuit: VRM, pendingin, engsel, dan korosi.',
   ai: 'Arsitektur silikon untuk AI di laptop: NPU, GPU, dan jalur memorinya.',
   review: 'Checklist menilai jeroan laptop sebelum membeli, dari pendingin sampai kemudahan servis.',
+};
+
+const rubricGlyph: Record<string, GlyphName> = {
+  bedah: 'screw-torx',
+  ai: 'chip',
+  review: 'fan',
 };
 
 const canonicalURL = 'https://bedahgadget.id/';
@@ -167,7 +176,10 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
                 <span class="text-ink-muted">{category.count} artikel</span>
               </div>
               <div class="p-5 space-y-4 flex-1 flex flex-col">
-                <p class="text-sm text-ink-secondary leading-relaxed">{rubricBlurb[category.key]}</p>
+                <div class="flex items-start justify-between gap-4">
+                  <p class="text-sm text-ink-secondary leading-relaxed">{rubricBlurb[category.key]}</p>
+                  <Glyph name={rubricGlyph[category.key]} class="h-12 w-12 shrink-0" />
+                </div>
                 <div class="scale-rule mt-auto" aria-hidden="true" />
                 <span class="font-mono text-xs font-bold uppercase text-accent-link underline underline-offset-4">
                   Buka arsip
@@ -266,7 +278,7 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
         </div>
 
         <div class="p-6 sm:p-8 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div class="lg:col-span-7 space-y-4">
+          <div class="lg:col-span-6 space-y-4">
             <h2 id="workshop-title" class="font-brand text-2xl sm:text-3xl text-ink leading-snug">
               Apa yang dikerjakan di meja servis, dan apa yang tidak
             </h2>
@@ -309,6 +321,14 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
                 </ul>
               </div>
             </div>
+          </div>
+
+          <div class="hidden lg:flex lg:col-span-1 justify-center">
+            <GlyphCapsule
+              id="capsule-workshop"
+              glyphs={[['screw-phillips', 'heat'], ['choke', 'plate'], ['trace', 'ink'], ['capacitor', 'plate'], ['fan', 'accent']]}
+              class="w-14"
+            />
           </div>
 
           <div class="lg:col-span-5 bg-elevated border border-line p-5 sm:p-6 space-y-4">

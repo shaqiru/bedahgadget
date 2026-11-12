@@ -62,6 +62,18 @@
   /* Material glass (layer fungsional saja). */
   --glass-fill: rgb(248 245 239 / 0.78);
   --glass-edge: rgb(255 255 255 / 0.4);
+
+  /* Grafis brand, varian A (design brand-graphics Decision 4). Dekorasi saja, bukan untuk teks atau status. */
+  --g-1: #17120F;
+  --g-1-rgb: 23 18 15;
+  --g-2: #E2401C;
+  --g-2-rgb: 226 64 28;
+  --g-3: #FFB81C;
+  --g-3-rgb: 255 184 28;
+  --g-4: #E4DDD1;
+  --g-4-rgb: 228 221 209;
+  --g-line: #17120F;
+  --g-line-rgb: 23 18 15;
 }
 
 html[data-theme='dark'] {
@@ -109,6 +121,66 @@ html[data-theme='dark'] {
 
   --glass-fill: rgb(23 18 15 / 0.74);
   --glass-edge: rgb(255 255 255 / 0.12);
+
+  --g-1: #EFE9DF;
+  --g-1-rgb: 239 233 223;
+  --g-2: #FF6A45;
+  --g-2-rgb: 255 106 69;
+  --g-3: #FFB81C;
+  --g-3-rgb: 255 184 28;
+  --g-4: #2B241F;
+  --g-4-rgb: 43 36 31;
+  --g-line: #EFE9DF;
+  --g-line-rgb: 239 233 223;
+}
+
+/* Grafis brand, varian B: ujung dingin skala ironbow (indigo, magenta). Dipilih lewat ?g=b. */
+html[data-graphics='b'] {
+  --g-1: #2B1A6B;
+  --g-1-rgb: 43 26 107;
+  --g-2: #9B1D74;
+  --g-2-rgb: 155 29 116;
+}
+
+html[data-theme='dark'][data-graphics='b'] {
+  --g-1: #9D8CFF;
+  --g-1-rgb: 157 140 255;
+  --g-2: #F062B0;
+  --g-2-rgb: 240 98 176;
+}
+
+/* Glyph membaca slot --gs-*; komposisi menyetel slot itu per jenis tile. */
+.glyph .g1 { fill: rgb(var(--gs-1, var(--g-1-rgb))); }
+.glyph .g2 { fill: rgb(var(--gs-2, var(--g-2-rgb))); }
+.glyph .g3 { fill: rgb(var(--gs-3, var(--g-3-rgb))); }
+.glyph .g4 { fill: rgb(var(--gs-4, var(--g-4-rgb))); }
+.glyph .gl {
+  fill: none;
+  stroke: rgb(var(--gs-line, var(--g-line-rgb)));
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.g-tile-bg { fill: rgb(var(--g-tile)); }
+.g-tile-plate { --g-tile: var(--g-4-rgb); }
+/* Tile satu warna: bentuk (g1, g2, kontur) memakai warna terang, lubang (g3, g4) memakai warna tile. */
+.g-tile-ink,
+.g-tile-accent {
+  --gs-1: var(--bg-surface-rgb);
+  --gs-2: var(--bg-surface-rgb);
+  --gs-3: var(--g-tile);
+  --gs-4: var(--g-tile);
+  --gs-line: var(--bg-surface-rgb);
+}
+.g-tile-ink { --g-tile: var(--g-1-rgb); }
+.g-tile-accent { --g-tile: var(--g-2-rgb); }
+.g-tile-heat {
+  --g-tile: var(--g-3-rgb);
+  --gs-1: var(--text-on-heat-rgb);
+  --gs-2: var(--text-on-heat-rgb);
+  --gs-3: var(--g-tile);
+  --gs-4: var(--g-tile);
+  --gs-line: var(--text-on-heat-rgb);
 }
 
 /* Theme visibility helpers for dual SVGs */
@@ -550,4 +622,25 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Dinding glyph footer: bagian glyph terangkat bertingkat lalu terpasang lagi (bongkar-pasang).
+   Hanya transform; diam saat prefers-reduced-motion, tanpa tombol jeda (aturan gerak proyek). */
+@keyframes gw-lift {
+  0%, 30% { transform: translateY(0); }
+  48%, 66% { transform: translateY(var(--gw-lift)); }
+  84%, 100% { transform: translateY(0); }
+}
+.glyph-wall-svg .gx-1, .glyph-wall-svg .gx-2, .glyph-wall-svg .gx-3 {
+  animation: gw-lift 7.2s cubic-bezier(.65, 0, .35, 1) infinite;
+  animation-delay: var(--gw-delay, 0s);
+}
+.glyph-wall-svg .gx-1 { --gw-lift: -5px; }
+.glyph-wall-svg .gx-2 { --gw-lift: -10px; }
+.glyph-wall-svg .gx-3 { --gw-lift: -15px; }
+.gw-d0 { --gw-delay: 0s; } .gw-d1 { --gw-delay: .6s; } .gw-d2 { --gw-delay: 1.2s; } .gw-d3 { --gw-delay: 1.8s; }
+.gw-d4 { --gw-delay: 2.4s; } .gw-d5 { --gw-delay: 3s; } .gw-d6 { --gw-delay: 3.6s; } .gw-d7 { --gw-delay: 4.2s; }
+.gw-d8 { --gw-delay: 4.8s; } .gw-d9 { --gw-delay: 5.4s; } .gw-d10 { --gw-delay: 6s; } .gw-d11 { --gw-delay: 6.6s; }
+@media (prefers-reduced-motion: reduce) {
+  .glyph-wall-svg .gx-1, .glyph-wall-svg .gx-2, .glyph-wall-svg .gx-3 { animation: none; }
 }

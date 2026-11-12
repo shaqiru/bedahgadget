@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build && node scripts/check-theme-css.mjs",
+    "build": "astro check && astro build && node scripts/check-theme-css.mjs && node scripts/check-glyphs.mjs",
     "check": "astro check",
     "check:css": "node scripts/check-theme-css.mjs",
+    "check:glyphs": "node scripts/check-glyphs.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "figure": "node scripts/anatomy/laptop.mjs"
