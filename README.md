@@ -18,7 +18,8 @@ npm run preview
 - `src/content/articles/` : artikel MDX (nama file = slug)
 - `src/assets/stills/` : gambar artikel (dioptimasi otomatis ke WebP)
 - `src/components/` : layout, callout FixNow, schema JSON-LD
-- `public/` : aset brand, `robots.txt`, `llms.txt`
+- `public/` : aset brand, `robots.txt`
+- `/llms.txt` dan `/llms-full.txt` dibuat otomatis dari artikel (`src/lib/llms.ts`)
 
 ## Untuk agent AI dan kontributor
 

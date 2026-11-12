@@ -49,6 +49,16 @@ const articles = defineCollection({
         })
       )
       .optional(),
+    // Ringkasan untuk /llms.txt dan /llms-full.txt. Tanpa field ini, judul, description, dan tags dipakai.
+    llms: z
+      .object({
+        heading: z.string().optional(),
+        summary: z.string().optional(),
+        topics: z.string().optional(),
+        digest: z.string().optional(),
+        service: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 

@@ -34,6 +34,9 @@ src/
   layouts/ArticleLayout.astro Template bersama semua halaman artikel (hero, JSON-LD, FAQ, CTA, artikel terkait)
   lib/categories.ts          Label, path arsip, rubrik, dan parameter per kategori (bedah/ai/review)
   lib/fixnow-topics.ts       Peta fixnowTopic -> URL layanan, judul, isu, variasi anchor
+  lib/llms.ts                Isi /llms.txt dan /llms-full.txt (dibangun dari koleksi artikel)
+  lib/json-ld.ts             serializeJsonLd(): sisipkan JSON-LD dengan aman
+  lib/articles.ts            compareArticles(): urutan baku daftar artikel
   components/
     FixNowCallout.astro      CTA kontekstual ke halaman layanan FixNow.id (membaca peta topik)
     TeardownSpec.astro       Kartu spesifikasi teknis + titik rawan
@@ -46,7 +49,7 @@ src/
     rss.xml.ts
 public/
   brand/                     Logo SVG/PNG, font Archivo Black (aset resmi, jangan diubah)
-  robots.txt, llms.txt, llms-full.txt
+  robots.txt
 scripts/                     Pemeriksa build (tema/kontras, publikasi repo)
 .agents/                     Skill/workflow OpenSpec generik untuk agent
 publication-allowlist.txt    Daftar path yang boleh ada di repo ini
@@ -66,7 +69,7 @@ Kategori menentukan URL: `category: "bedah"` -> `/bedah/<slug>/`, `"ai"` -> `/ai
    <Image src={still_foo} alt="..." widths={[640, 1080]} sizes="(min-width: 896px) 896px, 100vw" class="rounded-xl border border-navy-700 w-full" />
    ```
 4. `fixnowTopic` memilih CTA, URL layanan, dan variasi anchor lewat `src/lib/fixnow-topics.ts`. Peta itu bertipe `Record<FixnowTopic, ...>` dari enum di `src/content/config.ts`, jadi topik baru di enum tanpa entri peta menggagalkan type check. Tanpa `fixnowTopic`, artikel tidak merender callout sama sekali. Isi hanya jika artikel memang membahas kerusakan yang relevan dengan layanan itu.
-5. Tambahkan entri di `public/llms.txt` dan `public/llms-full.txt`.
+5. `/llms.txt` dan `/llms-full.txt` dibuat otomatis saat build. Agar ringkasannya bagus, isi field opsional `llms` di frontmatter (`heading`, `summary` untuk llms.txt, `topics`, `digest` untuk Intisari, `service` untuk Solusi Servis). Tanpa field itu, judul, `description`, dan `tags` yang dipakai.
 6. Jalankan `npm run verify`. Pemeriksaan yang sama berjalan otomatis di setiap pull request.
 
 ## Aturan konten (wajib)
@@ -144,7 +147,7 @@ Selalu gunakan **token semantik dinamis** yang terdaftar di `tailwind.config.mjs
   - Halaman Tag Tipis (< 2 artikel) & `404.astro`: Memasang `noindex={true}` dan **dilarang memasang tag canonical** `<link rel="canonical">`. Tag tipis otomatis dikecualikan dari sitemap.
 - **Optimasi LCP**: Gambar hero utama pada beranda dan setiap artikel **wajib** dipasang `loading="eager"` dan `fetchpriority="high"`.
 - Sitemap otomatis (`/sitemap-index.xml`), RSS di `/rss.xml`, `robots.txt` mengizinkan crawler AI.
-- `llms.txt` / `llms-full.txt` harus selalu sinkron dengan daftar artikel.
+- `/llms.txt` dan `/llms-full.txt` dibangun dari koleksi artikel oleh `src/lib/llms.ts`, jadi selalu sinkron. Jangan membuat file `public/llms*.txt` lagi.
 
 ## Keamanan dan deploy
 
