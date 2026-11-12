@@ -50,6 +50,7 @@ src/
 public/
   brand/                     Logo SVG/PNG, font Archivo Black (aset resmi, jangan diubah)
   robots.txt
+.github/workflows/          ci.yml (pemeriksaan PR), deploy.yml (terbit otomatis dari main)
 scripts/                     Pemeriksa build (tema/kontras, publikasi repo)
 .agents/                     Skill/workflow OpenSpec generik untuk agent
 publication-allowlist.txt    Daftar path yang boleh ada di repo ini
@@ -152,6 +153,8 @@ Selalu gunakan **token semantik dinamis** yang terdaftar di `tailwind.config.mjs
 ## Keamanan dan deploy
 
 Situs ini 100% statis: tidak ada backend, database, login, atau form. Yang diterbitkan hanya isi folder `dist/` hasil build.
+
+**Alur terbit otomatis.** Setiap pull request menjalankan `.github/workflows/ci.yml` dengan token baca saja dan tanpa secret. Merge ke `main` menjalankan `.github/workflows/deploy.yml`: job `build` (tanpa secret) membangun dan memvalidasi `dist/` serta menulis `release.json`, lalu job `deploy` di environment `production` mengunggah artefak itu tanpa checkout repo, memangkas file yang tidak ada di dua rilis terakhir, dan membersihkan cache CDN. Jangan pernah memakai trigger `pull_request_target`, menambah langkah checkout atau `npm` ke job `deploy`, atau merujuk Action dengan tag; `scripts/check-workflows.mjs` menggagalkan CI jika itu terjadi.
 
 **Security headers dibuat otomatis.** `src/lib/htaccess.mjs` (integrasi di `astro.config.mjs`) menulis `dist/.htaccess` setiap `npm run build`: redirect HTTPS + non-www, blokir dotfile, `ErrorDocument 404`, HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, dan Content-Security-Policy.
 - CSP mengizinkan script inline **hanya lewat hash SHA-256** yang tercantum di allowlist (lihat di bawah) dan benar-benar muncul di HTML hasil build. Jangan menambah script pihak ketiga (analytics, chat widget, font CDN) tanpa menambahkan domainnya ke CSP di `htaccess.mjs`, karena browser akan memblokirnya.
