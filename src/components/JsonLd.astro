@@ -1,0 +1,199 @@
+---
+interface Props {
+  type: 'article' | 'review' | 'website' | 'collection' | 'about';
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  author?: string;
+  category?: string;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+  faqs?: Array<{ question: string; answer: string }>;
+  items?: Array<{ name: string; url: string }>;
+}
+
+const {
+  type,
+  title,
+  description,
+  url,
+  image = '/brand/png/profile-navy.png',
+  pubDate,
+  updatedDate,
+  author = 'Tim Riset BedahGadget.id',
+  category,
+  breadcrumbs = [],
+  faqs = [],
+  items = [],
+} = Astro.props;
+
+const siteUrl = 'https://bedahgadget.id';
+const resolvedImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
+
+// Organization Schema (BedahGadget.id as independent publication)
+const organizationSchema = {
+  '@type': 'Organization',
+  '@id': `${siteUrl}/#organization`,
+  name: 'BedahGadget.id',
+  url: siteUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${siteUrl}/brand/png/profile-navy.png`,
+  },
+};
+
+// Referensi WebSite untuk halaman non-beranda. Node WebSite lengkap hanya
+// diterbitkan di beranda, jadi name dan url ikut ditulis ulang di sini agar
+// crawler yang tidak menghubungkan @id antar-halaman tetap membaca identitas situs.
+const websiteRef = {
+  '@id': `${siteUrl}/#website`,
+  name: 'BedahGadget.id',
+  url: siteUrl,
+};
+
+// WebSite Schema (for homepage)
+const websiteSchema =
+  type === 'website'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': `${siteUrl}/#website`,
+        name: 'BedahGadget.id',
+        description: description,
+        url: siteUrl,
+        inLanguage: 'id-ID',
+        publisher: organizationSchema,
+      }
+    : null;
+
+// CollectionPage Schema (for rubric archives and tag pages)
+const collectionSchema =
+  type === 'collection'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        '@id': `${url}#collection`,
+        name: title,
+        description: description,
+        url: url,
+        inLanguage: 'id-ID',
+        isPartOf: websiteRef,
+        publisher: organizationSchema,
+        ...(items.length > 0 && {
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: items.length,
+            itemListElement: items.map((item, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: item.url.startsWith('http') ? item.url : `${siteUrl}${item.url}`,
+              name: item.name,
+            })),
+          },
+        }),
+      }
+    : null;
+
+// AboutPage Schema (for /tentang/)
+const aboutSchema =
+  type === 'about'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'AboutPage',
+        '@id': `${url}#webpage`,
+        name: title,
+        description: description,
+        url: url,
+        inLanguage: 'id-ID',
+        isPartOf: websiteRef,
+        about: { '@id': `${siteUrl}/#organization` },
+      }
+    : null;
+
+// BreadcrumbList Schema
+const breadcrumbSchema =
+  breadcrumbs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((crumb, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: crumb.name,
+          item: crumb.url.startsWith('http') ? crumb.url : `${siteUrl}${crumb.url}`,
+        })),
+      }
+    : null;
+
+// Article Schema (TechArticle)
+const articleSchema =
+  type === 'article' || type === 'review'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'TechArticle',
+        '@id': `${url}#article`,
+        isPartOf: websiteRef,
+        headline: title,
+        description: description,
+        url: url,
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': url,
+        },
+        image: resolvedImage,
+        datePublished: pubDate?.toISOString(),
+        dateModified: (updatedDate || pubDate)?.toISOString(),
+        author: {
+          '@type': 'Organization',
+          name: author,
+          url: siteUrl,
+        },
+        publisher: organizationSchema,
+        articleSection: category || 'Teknologi',
+        inLanguage: 'id-ID',
+      }
+    : null;
+
+// FAQ Schema
+const faqSchema =
+  faqs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+---
+
+{websiteSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+)}
+
+{collectionSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
+)}
+
+{aboutSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
+)}
+
+{breadcrumbSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+)}
+
+{articleSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+)}
+
+{faqSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+)}

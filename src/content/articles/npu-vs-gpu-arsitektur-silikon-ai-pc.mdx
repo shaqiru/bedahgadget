@@ -1,0 +1,72 @@
+---
+title: "NPU vs GPU: Membedah Arsitektur Silikon AI PC (Snapdragon X Elite, Apple M-Series, Intel Lunar Lake)"
+description: "NPU adalah akselerator matriks silikon khusus yang dirancang untuk mengolah inferensi kuantisasi INT8 pada konsumsi daya rendah (2 hingga 8 Watt) tanpa menguras baterai laptop."
+pubDate: 2026-11-01
+category: "ai"
+tags: ["ai", "npu", "silikon", "copilot", "arsitektur-cpu"]
+author: "Tim Riset BedahGadget.id"
+image: "../../assets/stills/ai-silicon-hbm.png"
+featured: true
+fixnowTopic: "ram"
+specDetails: [
+  { label: "Arsitektur Komputasi NPU", value: "Systolic Array MAC (INT8 / INT4 / FP16)" },
+  { label: "Konsumsi Daya Inferensi NPU", value: "2.0 Watt - 8.0 Watt" },
+  { label: "Konsumsi Daya GPU Diskrit", value: "45.0 Watt - 140.0 Watt" },
+  { label: "Standar Minimum Copilot+ PC", value: "40 TOPS (INT8 On-Device)" },
+  { label: "Jalur Memori Utama", value: "LPDDR5X Unified / On-Package (120 - 410 GB/s)" },
+  { label: "Batas Penentu Kecepatan LLM", value: "Memory Bandwidth (GB/detik)" }
+]
+faqs: [
+  {
+    question: "Apakah laptop tanpa NPU bisa menjalankan aplikasi AI?",
+    answer: "Bisa. CPU dan GPU diskrit (seperti NVIDIA RTX) mampu menjalankan beban kerja AI, bahkan GPU lebih cepat untuk model berukuran besar. Namun, GPU menguras daya baterai laptop 10 hingga 20 kali lebih besar dibandingkan NPU."
+  },
+  {
+    question: "Berapa standar minimum TOPS untuk spesifikasi laptop Copilot+ PC?",
+    answer: "Microsoft menetapkan standar minimum 40 NPU TOPS (Tera Operations Per Second) untuk komputasi onboard INT8 agar laptop memenuhi syarat sertifikasi Copilot+ PC."
+  }
+]
+---
+
+Keberadaan NPU (Neural Processing Unit) pada laptop keluaran 2024 hingga 2026 kerap disalahpahami sebagai pengganti kartu grafis gaming. Secara arsitektur silikon, NPU adalah akselerator sirkuit terpadu (*systolic array engine*) yang dikhususkan untuk operasi perkalian dan akumulasi matriks (*Multiply-Accumulate* / MAC) pada format bilangan bulat presisi rendah (INT8 dan INT4) dengan konsumsi daya 2 hingga 8 Watt.
+
+Kartu grafis diskrit (GPU) memang sanggup mengeksekusi matriks paralel dengan throughput jauh lebih tinggi, tetapi membutuhkan daya listrik antara 45 hingga 140 Watt. Menjalankan model bahasa atau efek kamera AI terus-menerus di GPU akan menguras baterai laptop dalam waktu kurang dari satu jam dan memicu putaran kipas pada RPM tinggi.
+
+## Pembagian Tugas Tiga Blok Silikon di Dalam SoC
+
+Di dalam satu keping SoC (*System-on-Chip*) modern, tiga jenis prosesor berbagi jalur memori terpadu dengan karakteristik sirkuit yang berbeda:
+
+### 1. CPU (Central Processing Unit)
+Inti CPU dirancang untuk eksekusi instruksi bercabang dan tugas sekuensial dengan latensi rendah. Fleksibilitasnya membuat CPU sanggup menangani seluruh logika sistem operasi, namun jumlah inti yang terbatas (8 hingga 24 core) membuatnya kurang efisien ketika harus menghitung perkalian matriks dengan miliaran parameter secara serentak.
+
+### 2. GPU (Graphics Processing Unit)
+Ribuan inti *shader* paralel (FP32 dan FP16) pada GPU unggul dalam pemrosesan grafis 3D dan pelatihan model AI (*training*) berskala besar. Konsekuensinya terletak pada anggaran termal: membangunkan seluruh kluster *shader* dan memori GDDR6 membutuhkan suplai daya puluhan watt serta sistem pipa kalor (*heatpipe*) tebal.
+
+### 3. NPU (Neural Processing Unit)
+NPU dibangun dari larik register matriks tetap (*tensor engine*) yang dipadukan dengan memori SRAM lokal berkecepatan tinggi (*scratchpad cache*). Karena sirkuit penjadwalan grafis dan *rasterizer* dihilangkan, NPU mampu mencapai throughput 40 hingga 50 TOPS pada model terkuantisasi (INT8) hanya dengan pendinginan pasif atau putaran kipas rendah.
+
+## Perbandingan Spesifikasi Silikon NPU Modern
+
+| Platform Silikon | Arsitektur Mesin AI | Throughput NPU | Konfigurasi Memori | Daya Rata-Rata NPU |
+| :--- | :--- | :--- | :--- | :--- |
+| **Qualcomm Snapdragon X Elite** | Hexagon NPU | 45 TOPS | LPDDR5X hingga 64 GB (135 GB/s) | ~4.5 Watt |
+| **Intel Core Ultra 200V (Lunar Lake)** | Intel NPU 4.0 | 48 TOPS | On-Package LPDDR5X (8533 MT/s) | ~5.0 Watt |
+| **AMD Ryzen AI 300 (Strix Point)** | XDNA 2 Tile NPU | 50 TOPS | LPDDR5X / DDR5 Dual-Channel | ~6.2 Watt |
+| **Apple M4 Series** | 16-Core Neural Engine | 38 TOPS | Unified Memory (120 – 410 GB/s) | ~3.5 Watt |
+
+## Beban Kerja yang Paling Diuntungkan oleh NPU
+
+Sirkuit NPU bekerja paling efektif pada beban kerja latar belakang yang aktif terus-menerus (*always-on inference*). Pemisahan latar belakang kamera video, koreksi sudut pandang mata, dan peredaman bising mikrofon pada rapat daring dapat dialihkan sepenuhnya ke NPU sehingga beban CPU turun dan suhu sasis tetap dingin.
+
+Selain pemrosesan sinyal audio-visual, NPU memungkinkan transkripsi suara lokal (seperti model Whisper) serta eksekusi model bahasa kecil (*Small Language Models* seperti Phi-3 atau Gemma 2) berjalan langsung di perangkat tanpa koneksi internet.
+
+Kecepatan inferensi model bahasa lokal sangat bergantung pada lebar jalur memori utama selain angka TOPS pada NPU. Untuk menghindari leher botol (*memory bandwidth bottleneck*) saat mengalirkan bobot model dari RAM ke prosesor, pastikan konfigurasi memori laptop berjalan pada mode [RAM dual channel](/bedah/ram-single-vs-dual-channel-performa-laptop/) atau konsultasikan [upgrade RAM dan SSD laptop di Bandung](https://fixnow.id/upgrade-laptop-bandung/?utm_source=bedahgadget&utm_medium=article_inline) agar kapasitas memori mencukupi kebutuhan komputasi modern.
+
+## Sumber
+
+- Qualcomm Technologies, *Snapdragon X Elite Platform Architecture Whitepaper & Hexagon NPU Brief*.
+- Intel Corporation, *Intel Core Ultra Processors (Series 2) Architecture Brief: NPU 4.0*.
+- AMD, *AMD XDNA 2 Architecture Technical White Paper*.
+- Apple Developer, *Core ML & Apple Neural Engine Hardware Overview*.
+- Microsoft Learn, *Copilot+ PC Hardware System Architecture and NPU TOPS Specification*.
+- TrendForce, *AI Semiconductor and Advanced Packaging (HBM / TSV) Market Reports*.

@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import JsonLd from '../components/JsonLd.astro';
+
+const pageTitle = 'Metodologi Teknis & Transparansi Workshop';
+const pageDescription = 'Standar jurnalisme teknis bedahgadget.id, parameter penilaian kemudahan servis (Repairability Score), dan transparansi afiliasi workshop FixNow.id Bandung.';
+const pageUrl = 'https://bedahgadget.id/tentang/';
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+
+const breadcrumbs = [
+  { name: 'Beranda', url: '/' },
+  { name: 'Tentang', url: '/tentang/' },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  type="about"
+  canonicalUrl={pageUrl}
+  image={ogImage}
+>
+  <Fragment slot="schema">
+    <JsonLd
+      type="about"
+      title={pageTitle}
+      description={pageDescription}
+      url={pageUrl}
+      image={ogImage}
+      breadcrumbs={breadcrumbs}
+    />
+  </Fragment>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted">
+      <ol class="flex items-center gap-2">
+        <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+        <li>/</li>
+        <li class="text-ink font-semibold">METODOLOGI &amp; TRANSPARANSI WORKSHOP</li>
+      </ol>
+    </nav>
+
+    <!-- Header -->
+    <header class="space-y-4 border-b border-line pb-8">
+      <h1 class="font-brand text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight tracking-tight">
+        Metodologi Analisis Perangkat Keras &amp; Transparansi Afiliasi
+      </h1>
+      <p class="text-base sm:text-lg text-ink-secondary leading-relaxed max-w-[65ch]">
+        <strong>bedahgadget.id</strong> didirikan untuk menjembatani kesenjangan antara klaim
+        pemasaran pabrikan laptop dan realitas fisik yang dihadapi teknisi ketika perangkat
+        mengalami kegagalan setelah masa garansi berakhir.
+      </p>
+    </header>
+
+    <!-- Instrument & Methodology Table -->
+    <section class="space-y-4">
+      <h2 class="font-brand text-2xl text-ink">
+        Protokol Pemeriksaan Fisik
+      </h2>
+      <p class="text-sm sm:text-base text-ink-secondary leading-relaxed max-w-[68ch]">
+        Setiap analisis di publikasi ini mengacu pada tiga protokol pemeriksaan sirkuit dan mekanik:
+      </p>
+
+      <div class="iso-plate overflow-hidden">
+        <div class="px-5 py-3 bg-elevated border-b border-line font-mono text-xs font-bold text-ink">
+          TABEL 01 // PROTOKOL PEMERIKSAAN FISIK BEDAHGADGET.ID
+        </div>
+        <div class="divide-y divide-line">
+          <div class="p-5 grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="md:col-span-4 font-mono text-xs">
+              <div class="text-ink-muted">PROTOKOL 01</div>
+              <div class="font-bold text-ink text-sm mt-0.5">Penelusuran Skema &amp; Sinyal Daya</div>
+            </div>
+            <div class="md:col-span-8 text-sm text-ink-secondary leading-relaxed">
+              Menggunakan skema elektris (<em>boardview</em>) dan multimeter untuk memeriksa kualitas
+              komponen regulator daya (MOSFET, kapasitor, serta IC PWM) dan titik rawan hubung singkat pada jalur utama 19V.
+            </div>
+          </div>
+
+          <div class="p-5 grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="md:col-span-4 font-mono text-xs">
+              <div class="text-ink-muted">PROTOKOL 02</div>
+              <div class="font-bold text-ink text-sm mt-0.5">Audit Termodinamika Pendingin</div>
+            </div>
+            <div class="md:col-span-8 text-sm text-ink-secondary leading-relaxed">
+              Memeriksa rancangan pipa kalor (<em>heatpipe</em>), kontak keping VRAM, dan efektivitas
+              material antarmuka (<em>thermal paste</em> vs <em>thermal pad</em>) di bawah beban kerja berkelanjutan.
+            </div>
+          </div>
+
+          <div class="p-5 grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="md:col-span-4 font-mono text-xs">
+              <div class="text-ink-muted">PROTOKOL 03</div>
+              <div class="font-bold text-ink text-sm mt-0.5">Audit Mekanika &amp; Indeks Kemudahan Servis</div>
+            </div>
+            <div class="md:col-span-8 text-sm text-ink-secondary leading-relaxed">
+              Menilai struktur dudukan baut engsel (<em>brass insert</em>), ketebalan plastik bos,
+              modularitas port USB-C/DC-in, kemudahan melepas baterai, serta ketersediaan slot
+              ekspansi SO-DIMM dan M.2 NVMe.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Repairability Scoring Rubric -->
+    <section class="space-y-4">
+      <h2 class="font-brand text-2xl text-ink">
+        Rubrik Skor Kemudahan Servis (Skala 1–10)
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs tabular-nums">
+        <div class="iso-plate p-5 space-y-2">
+          <div class="font-bold text-accent-positive text-base">SKOR 7.0 – 10.0 // MODULAR</div>
+          <p class="font-sans text-xs text-ink-secondary leading-relaxed">
+            RAM dan SSD menggunakan soket terpisah (SO-DIMM/M.2), baterai diikat baut (bukan lem
+            permanen), akses heatsink mudah, dan dudukan engsel diperkuat pelat logam.
+          </p>
+        </div>
+        <div class="iso-plate p-5 space-y-2">
+          <div class="font-bold text-accent-link text-base">SKOR 5.0 – 6.9 // SEMI-TERINTEGRASI</div>
+          <p class="font-sans text-xs text-ink-secondary leading-relaxed">
+            Sebagian komponen disolder (misalnya RAM LPDDR5X), namun penyimpanan NVMe, modul Wi-Fi,
+            baterai, dan kipas pendingin masih dapat diganti secara independen.
+          </p>
+        </div>
+        <div class="iso-plate p-5 space-y-2">
+          <div class="font-bold text-accent-danger text-base">SKOR 1.0 – 4.9 // TERTUTUP</div>
+          <p class="font-sans text-xs text-ink-secondary leading-relaxed">
+            RAM dan NAND SSD disolder permanen ke PCB tanpa slot ekspansi, baterai direkatkan penuh,
+            atau susunan <em>inverted motherboard</em> menyulitkan perawatan rutin.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Affiliation Disclosure & FixNow.id Details -->
+    <section class="iso-plate overflow-hidden">
+      <div class="split-rule"></div>
+      <div class="px-5 py-3 bg-elevated border-b border-line flex flex-wrap items-center justify-between gap-2 font-mono text-xs tabular-nums">
+        <span class="font-bold text-ink">PERNYATAAN AFILIASI &amp; WORKSHOP MITRA</span>
+        <span class="text-ink-muted">FIXNOW.ID BANDUNG</span>
+      </div>
+
+      <div class="p-6 sm:p-8 space-y-6">
+        <div class="space-y-3 text-sm sm:text-base text-ink-secondary leading-relaxed max-w-[68ch]">
+          <p>
+            Demi transparansi penuh kepada pembaca: <strong>bedahgadget.id</strong> merupakan unit
+            publikasi edukasi teknis yang berafiliasi langsung dengan workshop perbaikan laptop{' '}
+            <a
+              href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=about_page"
+              target="_blank"
+              rel="noopener"
+              class="text-accent-link font-semibold underline underline-offset-4"
+            >
+              FixNow.id Bandung
+            </a>.
+          </p>
+          <p>
+            Kemitraan ini memberi tim redaksi akses ke sampel motherboard yang mengalami kasus kerusakan
+            nyata, mulai dari kasus korosi cairan, VRM terbakar, engsel pecah, hingga kegagalan keping memori VRAM.
+            Sebaliknya, pembaca yang membutuhkan penanganan teknis dapat berkonsultasi langsung dengan teknisi
+            kami tanpa biaya pengecekan awal.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 font-mono text-xs tabular-nums">
+          <div class="p-4 bg-elevated border border-line space-y-1.5">
+            <div class="text-ink-muted">ALAMAT WORKSHOP RESMI</div>
+            <div class="font-sans text-sm font-semibold text-ink">
+              Jl. Manteron No. 12, Sukaluyu, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40123
+            </div>
+            <div class="text-ink-secondary pt-1">
+              Layanan antar-jemput gratis tersedia untuk area dalam radius 3 km dari workshop.
+            </div>
+          </div>
+
+          <div class="p-4 bg-elevated border border-line space-y-1.5">
+            <div class="text-ink-muted">JADWAL OPERASIONAL &amp; KONTAK</div>
+            <div class="text-ink space-y-0.5">
+              <div>Senin – Kamis: 09.00 – 17.00 WIB</div>
+              <div>Jumat: 13.00 – 16.00 WIB</div>
+              <div>Sabtu &amp; Minggu: 10.00 – 16.00 WIB</div>
+            </div>
+            <div class="pt-1">
+              <a
+                href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20halaman%20metodologi%20bedahgadget.id%20dan%20ingin%20konsultasi%20servis%20laptop."
+                target="_blank"
+                rel="noopener"
+                class="inline-flex min-h-11 items-center text-accent-link font-bold underline"
+              >
+                WhatsApp Resmi: 0851-3950-6080
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

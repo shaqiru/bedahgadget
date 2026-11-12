@@ -1,0 +1,28 @@
+{
+  "name": "website-bedahgadget",
+  "version": "1.0.0",
+  "description": "Portal media bedah anatomi hardware gadget, ulasan AI & review laptop terafiliasi dengan FixNow.id",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build && node scripts/check-theme-css.mjs",
+    "check": "astro check",
+    "check:css": "node scripts/check-theme-css.mjs",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@astrojs/tailwind": "^6.0.2",
+    "astro": "^5.18.2",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@tailwindcss/typography": "^0.5.20",
+    "typescript": "^5.9.3"
+  }
+}

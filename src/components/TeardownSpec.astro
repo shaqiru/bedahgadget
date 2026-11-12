@@ -1,0 +1,94 @@
+---
+export interface SpecItem {
+  label: string;
+  value: string;
+}
+
+export interface Props {
+  specDetails?: SpecItem[];
+  failurePoints?: string[];
+  repairabilityScore?: number;
+  category?: string;
+}
+
+const { specDetails = [], failurePoints = [], repairabilityScore } = Astro.props;
+
+if (specDetails.length === 0 && failurePoints.length === 0 && repairabilityScore === undefined) {
+  return null;
+}
+---
+
+<section
+  aria-label="Parameter teknis dan skor kemudahan servis"
+  class="my-8 iso-plate overflow-hidden"
+>
+  <div class="px-5 py-3 bg-elevated border-b border-line flex flex-wrap items-center justify-between gap-2">
+    <h2 class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+      PARAMETER TEKNIS &amp; PENGUKURAN MEJA KERJA
+    </h2>
+    <span class="font-mono text-[11px] text-ink-muted tabular-nums">
+      SUMBER: CATATAN KERUSAKAN MEJA SERVIS
+    </span>
+  </div>
+
+  <div class="p-5 sm:p-6 space-y-6">
+    {
+      repairabilityScore !== undefined && (
+        <div class="pb-5 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1 max-w-xl">
+            <div class="font-mono text-xs font-bold uppercase text-ink">
+              INDEKS KEMUDAHAN SERVIS (REPAIRABILITY SCORE)
+            </div>
+            <p class="text-xs text-ink-secondary leading-relaxed">
+              Penilaian berdasarkan modularitas komponen (RAM/SSD/baterai), aksesibilitas jalur
+              pendingin, ketersediaan suku cadang, dan kemudahan perbaikan jalur motherboard.
+            </p>
+          </div>
+          <div class="flex items-baseline gap-2 shrink-0 bg-elevated px-4 py-2.5 border border-line font-mono tabular-nums">
+            <span
+              class:list={[
+                'font-brand text-3xl leading-none',
+                repairabilityScore >= 7
+                  ? 'text-accent-positive'
+                  : repairabilityScore >= 5
+                    ? 'text-accent-link'
+                    : 'text-accent-danger',
+              ]}
+            >
+              {repairabilityScore}
+            </span>
+            <span class="text-xs text-ink-muted font-semibold">/ 10 POIN</span>
+          </div>
+        </div>
+      )
+    }
+
+    {
+      specDetails.length > 0 && (
+        <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-line tabular-nums">
+          {specDetails.map((spec) => (
+            <div class="p-3.5 border-r border-b border-line bg-surface">
+              <dt class="text-[11px] font-mono uppercase text-ink-muted mb-1">{spec.label}</dt>
+              <dd class="text-xs sm:text-sm font-mono font-semibold text-ink">{spec.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    {
+      failurePoints.length > 0 && (
+        <div class="p-4 bg-elevated/50 border border-line space-y-2">
+          <div class="font-mono text-xs font-bold uppercase text-accent-danger">
+            TITIK RAWAN KEGAGALAN FISIK YANG TERIDENTIFIKASI
+          </div>
+          <ul class="text-xs sm:text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
+            {failurePoints.map((point) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>

@@ -1,0 +1,232 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import JsonLd from '../components/JsonLd.astro';
+import TeardownSpec from '../components/TeardownSpec.astro';
+import FixNowCallout from '../components/FixNowCallout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { articlePath, getCategory } from '../lib/categories';
+
+export interface Props {
+  article: CollectionEntry<'articles'>;
+  related: CollectionEntry<'articles'>[];
+}
+
+const { article, related } = Astro.props;
+const category = getCategory(article.data.category);
+const { Content } = await article.render();
+
+const wordCount = article.body ? article.body.trim().split(/\s+/).length : 750;
+const readingTime = Math.max(4, Math.ceil(wordCount / 180));
+
+const formattedDate = article.data.pubDate.toLocaleDateString('id-ID', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const siteUrl = 'https://bedahgadget.id';
+const articleUrl = `${siteUrl}${articlePath(article.data.category, article.slug)}`;
+const resolvedImage = article.data.image.src.startsWith('http')
+  ? article.data.image.src
+  : `${siteUrl}${article.data.image.src}`;
+
+const breadcrumbs = [
+  { name: 'Beranda', url: '/' },
+  { name: category.label, url: category.archivePath },
+  { name: article.data.title, url: articlePath(article.data.category, article.slug) },
+];
+
+const showsServiceScore =
+  category.ledgerShowsServiceScore && article.data.repairabilityScore !== undefined;
+---
+
+<BaseLayout
+  title={article.data.title}
+  description={article.data.description}
+  image={resolvedImage}
+  type={category.schemaType}
+  publishDate={article.data.pubDate}
+  updatedDate={article.data.updatedDate}
+  author={article.data.author}
+  canonicalUrl={articleUrl}
+>
+  <Fragment slot="schema">
+    <JsonLd
+      type={category.schemaType}
+      title={article.data.title}
+      description={article.data.description}
+      url={articleUrl}
+      image={resolvedImage}
+      pubDate={article.data.pubDate}
+      updatedDate={article.data.updatedDate}
+      author={article.data.author}
+      category={category.articleSection}
+      breadcrumbs={breadcrumbs}
+      faqs={article.data.faqs}
+    />
+  </Fragment>
+
+  <article class="py-10 lg:py-14">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Breadcrumb Navigation -->
+      <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted mb-6">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+          <li>/</li>
+          <li><a href={category.archivePath} class="inline-flex min-h-11 items-center hover:text-accent-link">{category.breadcrumbLabel}</a></li>
+          <li>/</li>
+          <li class="text-ink font-semibold truncate max-w-[260px] sm:max-w-md">
+            {article.data.title}
+          </li>
+        </ol>
+      </nav>
+
+      <!-- Editorial Header -->
+      <header class="mb-8 space-y-5">
+        <h1 class="font-brand text-2xl sm:text-4xl lg:text-[2.65rem] text-ink leading-[1.12] tracking-tight">
+          {article.data.title}
+        </h1>
+
+        <p class="text-base sm:text-lg text-ink-secondary leading-relaxed max-w-[65ch]">
+          {article.data.description}
+        </p>
+
+        <!-- Technical Metadata Ledger -->
+        <dl class="grid grid-cols-2 sm:grid-cols-4 border-t border-l border-line font-mono text-xs tabular-nums">
+          <div class="p-3 border-r border-b border-line bg-surface">
+            <dt class="text-[10px] text-ink-muted uppercase">RUBRIK</dt>
+            <dd class="font-bold text-accent-link mt-0.5">{category.ledgerRubric}</dd>
+          </div>
+          <div class="p-3 border-r border-b border-line bg-surface">
+            <dt class="text-[10px] text-ink-muted uppercase">TANGGAL TERBIT</dt>
+            <dd class="font-semibold text-ink mt-0.5">
+              <time datetime={article.data.pubDate.toISOString()}>{formattedDate}</time>
+            </dd>
+          </div>
+          <div class="p-3 border-r border-b border-line bg-surface">
+            <dt class="text-[10px] text-ink-muted uppercase">PENULIS / SUMBER</dt>
+            <dd class="font-semibold text-ink mt-0.5 truncate">{article.data.author}</dd>
+          </div>
+          <div class="p-3 border-r border-b border-line bg-surface">
+            <dt class="text-[10px] text-ink-muted uppercase">
+              {showsServiceScore ? 'SKOR SERVIS' : 'ESTIMASI BACA'}
+            </dt>
+            <dd class:list={[
+              category.ledgerShowsServiceScore ? 'font-bold' : 'font-semibold',
+              'text-ink mt-0.5',
+            ]}>
+              {showsServiceScore
+                ? `${article.data.repairabilityScore} / 10 Poin`
+                : `${readingTime} Menit`}
+            </dd>
+          </div>
+        </dl>
+      </header>
+
+      <!-- Isometric Plate Figure (4:3 uncropped diagram with eager LCP) -->
+      <figure class="mb-10 iso-plate overflow-hidden">
+        <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+          <span class="font-bold" set:html={category.heroTitle} />
+          <span set:html={category.heroMeta} />
+        </div>
+        <div class="bg-[#F4F4F4] p-3 sm:p-5 flex items-center justify-center">
+          <Image
+            src={article.data.image}
+            alt={article.data.title}
+            width={1080}
+            height={810}
+            loading="eager"
+            fetchpriority="high"
+            class="w-full h-auto max-h-[580px] object-contain"
+          />
+        </div>
+        <figcaption class="px-4 py-3 bg-elevated border-t border-line text-xs font-mono text-ink-secondary leading-relaxed">
+          <strong class="text-ink">DOKUMENTASI ANATOMI:</strong> {article.data.title}
+        </figcaption>
+      </figure>
+
+      <!-- Teardown Spec Table -->
+      <TeardownSpec
+        specDetails={article.data.specDetails}
+        failurePoints={article.data.failurePoints}
+        repairabilityScore={article.data.repairabilityScore}
+        category={article.data.category}
+      />
+
+      <!-- Main Article Content -->
+      <div class="article-prose mt-8">
+        <Content />
+      </div>
+
+      <!-- Technical FAQs -->
+      {
+        article.data.faqs && article.data.faqs.length > 0 && (
+          <section aria-label="Pertanyaan teknis terkait" class="mt-10 iso-plate overflow-hidden">
+            <div class="px-5 py-3 bg-elevated border-b border-line font-mono text-xs font-bold uppercase text-ink">
+              TANYA JAWAB TEKNIS MEJA KERJA (FAQ)
+            </div>
+            <div class="divide-y divide-line">
+              {article.data.faqs.map((faq) => (
+                <div class="p-5 space-y-2 bg-surface">
+                  <h3 class="font-brand text-base sm:text-lg text-ink">{faq.question}</h3>
+                  <p class="text-sm text-ink-secondary leading-relaxed">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <!-- Topic Tags -->
+      {
+        article.data.tags.length > 0 && (
+          <div class="mt-10 pt-6 border-t border-line flex flex-wrap items-center gap-2 font-mono text-xs">
+            <span class="text-ink-muted mr-2">{category.tagsLabel}</span>
+            {article.data.tags.map((tag) => (
+              <a
+                href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`}
+                class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 bg-surface border border-line text-ink-secondary hover:border-ocean hover:text-accent-link transition-colors"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      <!-- Diagnostic Callout -->
+      {article.data.fixnowTopic && (
+        <FixNowCallout topic={article.data.fixnowTopic} slug={article.slug} />
+      )}
+    </div>
+  </article>
+
+  <!-- Related Documentation -->
+  <section class="py-12 bg-elevated/40 border-t border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-8 pb-4 border-b border-line">
+        <h2 class="font-brand text-xl sm:text-2xl text-ink">
+          Dokumentasi Teknis Terkait
+        </h2>
+        <a
+          href={category.archivePath}
+          class="inline-flex min-h-11 items-center font-mono text-xs font-bold text-accent-link underline underline-offset-4"
+        >
+          LIHAT SEMUA ARSIP
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {
+          related.map((rel, idx) => (
+            <ArticleCard
+              article={rel}
+              indexNumber={String(idx + 1).padStart(2, '0')}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { getCollection } from 'astro:content';
+import { MIN_TAG_ARTICLES } from '../../lib/tags.mjs';
+
+export async function getStaticPaths() {
+  const allArticles = await getCollection('articles');
+  const uniqueTags = [...new Set(allArticles.flatMap((article) => article.data.tags))];
+
+  return uniqueTags.map((tag) => {
+    const slugTag = tag.toLowerCase().replace(/\s+/g, '-');
+    const filteredArticles = allArticles
+      .filter((article) => article.data.tags.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+    return {
+      params: { tag: slugTag },
+      props: { tag, articles: filteredArticles },
+    };
+  });
+}
+
+const { tag, articles } = Astro.props;
+const isThin = articles.length < MIN_TAG_ARTICLES;
+const pageTitle = `Indeks Topik #${tag}: Arsip Teknis bedahgadget.id`;
+const pageDescription = `Kumpulan dokumentasi bedah komponen, arsitektur silikon, dan review laptop dengan topik teknis ${tag} di bedahgadget.id.`;
+const pageUrl = `https://bedahgadget.id/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`;
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={pageUrl}
+  image={ogImage}
+  noindex={isThin}
+>
+  {!isThin && (
+    <Fragment slot="schema">
+      <JsonLd
+        type="collection"
+        title={pageTitle}
+        description={pageDescription}
+        url={pageUrl}
+        image={ogImage}
+        items={articles.map((article) => ({
+          name: article.data.title,
+          url: `/${article.data.category}/${article.slug}/`,
+        }))}
+      />
+    </Fragment>
+  )}
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted mb-6">
+      <ol class="flex items-center gap-2">
+        <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+        <li>/</li>
+        <li class="text-ink font-semibold">TOPIK KOMPONEN: #{tag.toUpperCase()}</li>
+      </ol>
+    </nav>
+
+    <header class="mb-10 pb-8 border-b border-line flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div class="space-y-2">
+        <h1 class="font-brand text-3xl sm:text-4xl text-ink">
+          Topik Teknis: #{tag}
+        </h1>
+        <p class="text-sm sm:text-base text-ink-secondary">
+          Menampilkan {articles.length} dokumentasi teknis yang membahas parameter{' '}
+          <strong>{tag}</strong>.
+        </p>
+      </div>
+      <a
+        href="/"
+        class="inline-flex min-h-11 items-center font-mono text-xs font-semibold text-accent-link underline underline-offset-4 shrink-0"
+      >
+        KEMBALI KE SEMUA ARSIP
+      </a>
+    </header>
+
+    <h2 class="sr-only">Daftar artikel dengan topik {tag}</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        articles.map((article, idx) => (
+          <ArticleCard
+            article={article}
+            indexNumber={String(idx + 1).padStart(2, '0')}
+          />
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>

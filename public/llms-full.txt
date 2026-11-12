@@ -1,0 +1,45 @@
+# BedahGadget.id: Arsip Komprehensif Sains Hardware & Arsitektur Laptop
+
+Dokumen ini memuat rangkuman lengkap materi ilmiah bedah perangkat keras laptop, panduan troubleshooting tingkat mikrosirkuit, dan silikon AI yang dipublikasikan oleh BedahGadget.id.
+
+---
+
+## 1. Bedah VRM & Kerusakan Motherboard Akibat Panas
+- **URL**: https://bedahgadget.id/bedah/kenapa-panas-bikin-laptop-mati-total-vrm/
+- **Topik**: Voltage Regulator Module (VRM), MOSFET, Buck Converter, Die Silikon 12nm, Vcore.
+- **Intisari**: Laptop mati total karena suhu di atas 130°C menembus lapisan isolator gerbang SiO2 12 nanometer pada High-Side MOSFET, menyebabkan tegangan charger 19V bocor langsung ke jalur inti CPU 1V dan menghanguskan logika prosesor.
+- **Solusi Servis**: Pengukuran hambatan sirkuit menggunakan ohmmeter, pengangkatan MOSFET yang korslet via stasiun mikrosolder, dan penggantian modul DrMOS. Kontak FixNow.id untuk penanganan motherboard di Bandung.
+
+## 2. Termal: Pasta vs Thermal Pad
+- **URL**: https://bedahgadget.id/bedah/thermal-paste-vs-thermal-pad-laptop/
+- **Topik**: Pasta Termal, Thermal Pad, Celah Toleransi, Air Gap, Konduktivitas Termal, Pump-Out.
+- **Intisari**: Celah CPU ke heatsink bersifat mikroskopik (<0.08mm) dan wajib memakai pasta. Celah VRAM dan VRM bersifat makroskopik (0.5mm - 1.5mm) dan wajib memakai thermal pad atau putty. Mengganti pad dengan pasta menyisakan rongga udara (0.026 W/mK) yang membakar memori grafis.
+- **Solusi Servis**: Deep cleaning heatsink dan repasting menggunakan pasta non-konduktif kental di FixNow.id.
+
+## 3. Mekanikal: Kegagalan Engsel Laptop
+- **URL**: https://bedahgadget.id/bedah/kenapa-engsel-laptop-sering-patah/
+- **Topik**: Rasio Tuas 25:1, Plastik PC-ABS, Insert Kuningan Knurled, Panas Exhaust 65°C.
+- **Intisari**: Panjang tuas layar 20cm vs jarak sekrup 8mm melipatgandakan beban rotasi 25 kali lipat (125 Newton). Udara panas exhaust kipas 65°C memanggang pilar plastik PC-ABS hingga getas dan merekah.
+- **Solusi Servis**: Rekonstruksi pilar menggunakan senyawa akrilik serat bertulang dan penyesuaian tensi engsel di FixNow.id.
+
+## 4. Kimiawi: Korosi Tumpahan Air & Migrasi Ion Dendrit
+- **URL**: https://bedahgadget.id/bedah/laptop-kena-air-dendrit-korosi-52-detik/
+- **Topik**: Migrasi Elektrokimia, Dendrit, Jalur Standby Baterai Internal, Karat PCB, Pembersih IPA.
+- **Intisari**: Tegangan baterai laptop yang aktif memicu disolusi anoda dan menumbuhkan jarum dendrit tembaga yang menghubungkan dua jalur berbeda (52 detik pada studi lab tembaga terbuka bias 10V). Mitos beras berbahaya karena tidak mampu menembus celah bawah chip BGA.
+- **Solusi Servis**: Pembersihan motherboard menggunakan sikat antistatis dan Isopropil Alkohol 99.9% di FixNow.id.
+
+## 5. Memori: Bandwidth RAM Single vs Dual Channel
+- **URL**: https://bedahgadget.id/bedah/ram-single-vs-dual-channel-performa-laptop/
+- **Topik**: Bus Data 64-bit vs 128-bit, DDR4 3200, DDR5 5600, iGPU Bottleneck, Token AI.
+- **Intisari**: Memori single channel membatasi bus pada 64-bit (25.6 GB/s), membuat iGPU kehilangan 25-40% performa game dan memperlambat inferensi LLM lokal. Mode dual channel 128-bit melipatgandakan throughput data.
+- **Solusi Servis**: Pemasangan modul RAM kompatibel berkecepatan identik di FixNow.id.
+
+## 6. AI & Silikon Komputasi: NPU vs GPU
+- **URL**: https://bedahgadget.id/ai/npu-vs-gpu-arsitektur-silikon-ai-pc/
+- **Topik**: Neural Processing Unit, Kuantisasi INT8, Systolic Array, Copilot+ PC (40+ TOPS), Snapdragon X Elite, Lunar Lake.
+- **Intisari**: NPU mengolah inferensi matriks INT8 dengan efisiensi 2-8 Watt untuk fitur always-on AI di laptop, berbeda dari GPU berdaya 60-140 Watt yang boros baterai.
+
+## 7. Cara Menilai Jeroan Laptop Gaming
+- **URL**: https://bedahgadget.id/review/cara-menilai-jeroan-laptop-gaming/
+- **Topik**: Heatpipe, fase VRM, DrMOS vs MOSFET diskrit, RAM SO-DIMM vs onboard, slot M.2, baterai bersekrup, dudukan engsel.
+- **Intisari**: Checklist untuk membaca kualitas internal laptop gaming dari hasil teardown, dengan tabel tanda baik dan tanda perlu waspada.

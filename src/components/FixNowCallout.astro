@@ -1,0 +1,74 @@
+---
+import type { FixnowTopic } from '../content/config';
+import { fixnowTopicMap } from '../lib/fixnow-topics';
+
+export interface Props {
+  topic: FixnowTopic;
+  slug: string;
+}
+
+const { topic, slug } = Astro.props;
+const entry = fixnowTopicMap[topic];
+
+const anchorIndex =
+  [...slug].reduce((sum, char) => sum + char.charCodeAt(0), 0) % entry.anchors.length;
+const serviceLabel = entry.anchors[anchorIndex];
+const serviceUrl = `${entry.url}?utm_source=bedahgadget&utm_medium=referral&utm_campaign=teardown_contextual&utm_content=${encodeURIComponent(slug)}`;
+---
+
+<aside
+  aria-label="Rujukan perbaikan workshop FixNow.id"
+  class="my-10 iso-plate overflow-hidden"
+>
+  <div class="split-rule"></div>
+  <div class="px-5 py-3 bg-elevated border-b border-line flex flex-wrap items-center justify-between gap-2 font-mono text-xs tabular-nums">
+    <span class="font-bold text-ink">RUJUKAN MEJA SERVIS // FIXNOW.ID BANDUNG</span>
+    <span class="text-ink-muted">CEK AWAL GRATIS &bull; TANPA REBALLING GPU</span>
+  </div>
+
+  <div class="p-6 sm:p-7 space-y-5">
+    <div class="space-y-2">
+      <h3 class="font-brand text-xl sm:text-2xl text-ink leading-snug">
+        {entry.title}
+      </h3>
+      <p class="text-sm sm:text-base text-ink-secondary leading-relaxed max-w-3xl">
+        {entry.issue} Teknisi <strong>FixNow.id Bandung</strong> melakukan pengecekan awal tanpa biaya
+        dan menjelaskan temuan sebelum pekerjaan dimulai.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 border-t border-l border-line font-mono text-xs tabular-nums">
+      <div class="p-3 border-r border-b border-line bg-elevated/40">
+        <div class="text-ink-muted text-[11px]">LOKASI WORKSHOP</div>
+        <div class="font-semibold text-ink mt-0.5">Jl. Manteron No. 12, Sukaluyu, Bandung</div>
+      </div>
+      <div class="p-3 border-r border-b border-line bg-elevated/40">
+        <div class="text-ink-muted text-[11px]">ESTIMASI PENGERJAAN</div>
+        <div class="font-semibold text-ink mt-0.5">Ringan &lt; 24 Jam | Board 3–7 Hari Kerja</div>
+      </div>
+      <div class="p-3 border-r border-b border-line bg-elevated/40">
+        <div class="text-ink-muted text-[11px]">LAYANAN ANTAR-JEMPUT</div>
+        <div class="font-semibold text-ink mt-0.5">Gratis Radius 3 KM dari Workshop</div>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+      <a
+        href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20ulasan%20teknis%20di%20bedahgadget.id%20dan%20ingin%20konsultasi%20cek%20unit%20laptop%20saya."
+        target="_blank"
+        rel="noopener"
+        class="inline-flex min-h-11 items-center justify-center px-5 py-3 text-xs font-mono font-bold uppercase tracking-wider bg-action text-on-action hover:bg-action-hover hover:text-on-action-hover transition-colors"
+      >
+        Konsultasi WhatsApp 0851-3950-6080
+      </a>
+      <a
+        href={serviceUrl}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex min-h-11 items-center justify-center px-5 py-3 text-xs font-mono font-semibold text-ink bg-surface hover:border-ocean border border-line transition-colors"
+      >
+        {serviceLabel}
+      </a>
+    </div>
+  </div>
+</aside>

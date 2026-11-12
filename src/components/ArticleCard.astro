@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  article: CollectionEntry<'articles'>;
+  featured?: boolean;
+  indexNumber?: string;
+}
+
+const { article, featured = false, indexNumber } = Astro.props;
+const { title, description, pubDate, category, image, repairabilityScore } = article.data;
+
+const wordCount = article.body ? article.body.trim().split(/\s+/).length : 750;
+const readingTime = Math.max(4, Math.ceil(wordCount / 180));
+
+const categoryMeta = {
+  bedah: {
+    label: 'BEDAH ANATOMI',
+    code: 'RUBRIK // BEDAH',
+    href: `/bedah/${article.slug}/`,
+  },
+  ai: {
+    label: 'AI & SILIKON',
+    code: 'RUBRIK // SILIKON',
+    href: `/ai/${article.slug}/`,
+  },
+  review: {
+    label: 'REVIEW LAPTOP',
+    code: 'RUBRIK // REVIEW',
+    href: `/review/${article.slug}/`,
+  },
+};
+
+const currentCategory = categoryMeta[category];
+
+const formattedDate = pubDate.toLocaleDateString('id-ID', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<article
+  class:list={[
+    'iso-plate iso-plate-interactive flex flex-col overflow-hidden group',
+    featured ? 'lg:grid lg:grid-cols-12' : '',
+  ]}
+>
+  <!-- Technical Diagram Frame (4:3 Aspect Ratio matching 1080x810 plates) -->
+  <a
+    href={currentCategory.href}
+    class:list={[
+      'block iso-diagram-well relative overflow-hidden',
+      featured ? 'lg:col-span-7 lg:border-b-0 lg:border-r border-line' : '',
+    ]}
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="flex items-center justify-between px-3 py-1.5 bg-[#E6E9F0] border-b border-[#CBD2E0] text-[11px] font-mono tabular-nums text-[#0B132B]">
+      <span class="font-semibold">{indexNumber ? `FIG. ${indexNumber}` : currentCategory.code}</span>
+      <span>
+        {repairabilityScore !== undefined ? `SKOR SERVIS: ${repairabilityScore}/10` : `${readingTime} MENIT BACA`}
+      </span>
+    </div>
+    <div class="aspect-[4/3] w-full bg-[#F4F4F4] flex items-center justify-center p-2">
+      <Image
+        src={image}
+        alt={title}
+        width={720}
+        height={540}
+        class="w-full h-full object-contain"
+      />
+    </div>
+  </a>
+
+  <!-- Content Specification Body -->
+  <div
+    class:list={[
+      'p-5 sm:p-6 flex flex-col justify-between flex-grow bg-surface',
+      featured ? 'lg:col-span-5 lg:p-7' : '',
+    ]}
+  >
+    <div>
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums text-ink-muted mb-3 pb-2 border-b border-line">
+        <span class="font-bold text-accent-link">{currentCategory.label}</span>
+        <div class="flex items-center gap-2">
+          <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+          <span>/</span>
+          <span>{readingTime} mnt</span>
+        </div>
+      </div>
+
+      <h3
+        class:list={[
+          'font-brand text-ink leading-snug tracking-tight group-hover:text-accent-link transition-colors',
+          featured ? 'text-xl sm:text-2xl mb-3' : 'text-lg mb-2.5',
+        ]}
+      >
+        <a href={currentCategory.href} class="focus:outline-none">
+          {title}
+        </a>
+      </h3>
+
+      <p class="text-sm text-ink-secondary leading-relaxed line-clamp-3">
+        {description}
+      </p>
+    </div>
+
+    <div class="mt-5 pt-3 border-t border-line flex items-center justify-between text-xs font-mono tabular-nums">
+      <a
+        href={currentCategory.href}
+        class="inline-flex min-h-11 items-center font-semibold text-ink group-hover:text-accent-link transition-colors underline underline-offset-4"
+      >
+        BACA DOKUMENTASI TEKNIS
+      </a>
+      {
+        repairabilityScore !== undefined && (
+          <span
+            class:list={[
+              'px-2 py-0.5 font-bold border',
+              repairabilityScore >= 7
+                ? 'border-clover text-ink bg-clover/10'
+                : repairabilityScore >= 5
+                  ? 'border-ocean text-ink bg-ocean/10'
+                  : 'border-brandred text-accent-danger bg-brandred/10',
+            ]}
+          >
+            {repairabilityScore}/10
+          </span>
+        )
+      }
+    </div>
+  </div>
+</article>

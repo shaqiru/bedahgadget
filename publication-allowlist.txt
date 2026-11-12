@@ -1,0 +1,19 @@
+# Path yang boleh ada di repo publik BedahGadget.id.
+# Satu pola per baris. `**` = nol atau lebih folder, `*` = apa pun selain "/".
+# Dibaca oleh scripts/check-publication.mjs. Ubah lewat review pemilik.
+
+src/**
+public/**
+scripts/**
+.agents/**
+.github/**
+astro.config.mjs
+tailwind.config.mjs
+tsconfig.json
+package.json
+package-lock.json
+AGENTS.md
+CLAUDE.md
+README.md
+.gitignore
+publication-allowlist.txt

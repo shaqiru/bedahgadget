@@ -1,0 +1,89 @@
+---
+title: "Cara Menilai Jeroan Laptop Gaming: Checklist Pendingin, VRM, dan Kemudahan Servis"
+description: "Panduan mengevaluasi rancangan internal laptop gaming sebelum membeli: konfigurasi pipa kalor heatpipe, jumlah fase VRM, ketersediaan slot SO-DIMM/M.2, hingga konstruksi dudukan engsel."
+pubDate: 2026-11-02
+category: "review"
+tags: ["review-laptop", "teardown", "laptop-gaming", "upgrade-laptop", "heatsink"]
+author: "Tim Riset BedahGadget.id"
+image: "../../assets/stills/jeroan-laptop-gaming.png"
+featured: true
+failurePoints: [
+  "Desain pipa kalor bersama (shared heatpipe) tanpa jalur terpisah membuat beban panas GPU ikut menaikkan suhu inti CPU.",
+  "Komponen VRM atau keping memori VRAM yang tidak terhubung ke pelat heatsink rentan mengalami degradasi termal saat beban penuh.",
+  "Memori RAM atau kartu Wi-Fi yang disolder permanen ke papan induk menghilangkan opsi perbaikan modular saat salah satu keping rusak."
+]
+fixnowTopic: "pendingin"
+specDetails: [
+  { label: "Konfigurasi Heatpipe", value: "Jalur Pipa Terpisah vs Bersama (CPU/GPU)" },
+  { label: "Rangkaian Daya VRM", value: "Jumlah Fase Choke & Kontak Thermal Pad" },
+  { label: "Modularitas RAM", value: "2x Slot SO-DIMM vs LPDDR Onboard" },
+  { label: "Ekspansi Penyimpanan", value: "Jumlah Slot M.2 NVMe & Generasi PCIe" },
+  { label: "Konstruksi Baterai", value: "Sekrup Pengikat vs Perekat Permanen" },
+  { label: "Struktur Braket Engsel", value: "Pelat Logam Sasis vs Pilar Plastik PC-ABS" }
+]
+faqs: [
+  {
+    question: "Apakah membuka penutup bawah laptop untuk menambah SSD membatalkan garansi resmi?",
+    answer: "Kebijakan ini bergantung pada masing-masing distributor resmi di Indonesia. Sebagian pabrikan mengizinkan penambahan RAM/SSD selama tidak merusak komponen internal, sementara sebagian lain memasang stiker segel pada lubang baut tengah. Periksa ketentuan garansi seri laptop Anda sebelum membongkar sasis."
+  },
+  {
+    question: "Kapan waktu yang tepat untuk membersihkan debu radiator laptop gaming?",
+    answer: "Idealnya setiap 8 hingga 12 bulan sekali, atau lebih cepat apabila putaran kipas terdengar jauh lebih bising pada beban ringan, hembusan angin di kisi-kisi ventilasi melemah, dan suhu kerja prosesor naik signifikan dibanding saat unit baru dibeli."
+  }
+]
+---
+
+Daftar spesifikasi pada brosur penjualan (seperti seri prosesor, model kartu grafis, dan kapasitas RAM) hanya menggambarkan potensi awal sebuah laptop di atas kertas. Seberapa stabil performa tersebut bertahan setelah pemakaian 30 menit tanpa henti, serta seberapa mudah laptop tersebut dirawat setelah masa garansi berakhir, sepenuhnya ditentukan oleh rancangan fisik di balik penutup bawahnya.
+
+Daftar periksa (*checklist*) teknis berikut disusun untuk membantu Anda menilai foto hasil pembongkaran (*teardown*) sebelum membeli laptop gaming.
+
+## 1. Arsitektur Pendingin: Pipa Kalor, Sirip Radiator, dan Cakupan Pad
+
+Sistem pendingin laptop gaming bekerja memindahkan panas dari die silikon CPU dan GPU melalui pipa tembaga hampa udara berisi fluida kerja (*heatpipe*) atau ruang uap (*vapor chamber*) menuju sirip radiator di tepi sasis.
+
+Saat mengamati foto bagian dalam laptop, perhatikan empat elemen termal berikut:
+
+### Pemisahan Jalur Heatpipe CPU dan GPU
+Periksa apakah pipa kalor di atas prosesor dan chip grafis seluruhnya saling terhubung (*shared heatpipe*) atau memiliki pipa independen menuju radiator masing-masing. Pada rancangan yang sepenuhnya berbagi pipa, panas tinggi dari GPU saat bermain gim akan langsung merambat ke blok CPU.
+
+### Cakupan Pelat Pendingin pada VRAM dan VRM
+Keping memori grafis (GDDR6) dan deretan transistor daya (MOSFET/DrMOS) di sekeliling GPU wajib tertutup oleh sayap pelat heatsink dengan perantara *thermal pad* atau *thermal putty*. Desain murah yang membiarkan beberapa fase VRM terbuka tanpa kontak ke pelat pendingin lebih berisiko mengalami penurunan performa akibat panas (*VRM throttling*).
+
+### Jumlah Kipas dan Arah Buangan Udara (Exhaust)
+Laptop gaming dengan TGP kartu grafis di atas 80 Watt idealnya memiliki empat titik pembuangan radiator (dua di sisi belakang dan dua di sisi samping) agar luas permukaan pelepasan panas mencukupi. Perhatikan pula apakah kipas dapat dilepas secara terpisah dari pipa kalor; kipas yang dapat dibuka independen jauh lebih mudah dibersihkan tanpa harus mengangkat seluruh modul heatsink.
+
+Apabila laptop gaming yang sedang Anda gunakan mulai mengalami penurunan *frame rate* akibat suhu menyentuh 95 derajat Celsius, jadwalkan pemeriksaan termal melalui layanan [perawatan dan servis laptop gaming di Bandung](https://fixnow.id/service-laptop-gaming-bandung/?utm_source=bedahgadget&utm_medium=article_inline) sebelum akumulasi panas memperpendek usia komponen daya.
+
+## 2. Kualitas Rangkaian Regulator Daya (VRM)
+
+Di sekeliling soket prosesor dan chip GPU terdapat barisan kubus abu-abu yang disebut induktor (*choke* R15/R22/R36). Setiap satu induktor mewakili satu fase regulator tegangan.
+
+Semakin banyak jumlah fase yang terpasang untuk menyuplai daya CPU dan GPU, semakin ringan beban arus (Ampere) yang harus ditanggung oleh masing-masing chip MOSFET. Pembagian beban arus ini menjaga suhu kerja VRM tetap terkendali dan menurunkan risiko terjadinya hubung singkat sebagaimana diulas pada dokumentasi [kenapa panas berlebih membuat laptop mati total](/bedah/kenapa-panas-bikin-laptop-mati-total-vrm/).
+
+## 3. Modularitas Komponen dan Kemudahan Perbaikan
+
+Faktor terakhir yang menentukan usia pakai laptop dalam jangka panjang (3 hingga 5 tahun) adalah seberapa banyak komponen yang masih menggunakan soket modular dibanding disolder permanen ke papan induk:
+
+- **Memori RAM:** Dua slot SO-DIMM memungkinkan pengguna mengganti modul yang rusak atau meningkatkan kapasitas dengan mudah. Sebaliknya, RAM LPDDR yang disolder permanen (*onboard*) tidak dapat ditambah dan memerlukan penanganan tingkat papan apabila salah satu keping memori mengalami kegagalan bit. Pastikan pula kedua kanal memori terisi agar berjalan pada mode [RAM dual channel](/bedah/ram-single-vs-dual-channel-performa-laptop/).
+- **Penyimpanan SSD dan Kartu Wi-Fi:** Ketersediaan dua slot M.2 NVMe ukuran penuh (2280) serta kartu nirkabel M.2 2230 yang tidak disolder mempermudah ekspansi dan penggantian suku cadang.
+- **Konektor Pengisian Daya (DC-In):** Port charger yang terhubung melalui kabel fleksibel modular ke motherboard jauh lebih aman dan hemat biaya perbaikan dibandingkan konektor DC atau USB-C yang disolder langsung ke papan utama.
+- **Konstruksi Dudukan Engsel:** Periksa area sudut kiri dan kanan atas sasis bawah. Braket engsel yang diikat menembus rangka logam lebih tahan terhadap beban buka-tutup layar dibandingkan engsel yang hanya mengandalkan tiga baut pendek pada silinder plastik tipis; lihat analisis lengkap pada artikel [kenapa engsel laptop sering patah](/bedah/kenapa-engsel-laptop-sering-patah/).
+
+## Matriks Evaluasi Cepat Saat Melihat Foto Teardown
+
+| Komponen Internal | Rancangan Berkualitas Baik | Rancangan yang Perlu Diwaspadai |
+| :--- | :--- | :--- |
+| **Sistem Heatsink** | Pipa kalor tebal, 4 ventilasi radiator, kipas bisa dilepas terpisah | Pipa kalor tipis, hanya 1 kipas atau 1 arah buang untuk GPU diskrit |
+| **Cakupan VRAM & VRM** | Seluruh keping VRAM dan MOSFET tertutup pelat tembaga + pad | Sebagian MOSFET atau induktor dibiarkan terbuka tanpa heatsink |
+| **Memori RAM** | 2x slot SO-DIMM terpisah dengan pelindung EMI | Seluruh RAM disolder permanen (*soldered onboard*) tanpa slot kosong |
+| **Slot Penyimpanan** | 2x slot M.2 NVMe 2280 dilengkapi pelat pendingin SSD | Hanya 1 slot M.2 ukuran pendek (2230/2242) atau bertumpuk di atas Wi-Fi |
+| **Pemasangan Baterai** | Diikat menggunakan sekrup Phillips standar, konektor mudah dicabut | Direkatkan penuh menggunakan lem permanen di atas jalur fleksibel |
+| **Konektor Charger** | Modul kabel DC-In terpisah (modular) | Disolder langsung ke PCB utama tanpa penguat sasis |
+
+## Sumber
+
+- Framework Computer, [Heatsink and Fan Replacement Guide](https://guides.frame.work/Guide/Heatsink+and+Fan+Replacement+Guide/84).
+- iFixit, [Thermal Pad Replacement Guide](https://www.ifixit.com/Guide/Thermal+Pad+Replacement/223081).
+- Igor Wallossek (Igor's Lab), [Warpage, Thermal Paste Application and Hotspots on Bare Dies](https://www.igorslab.de/en/warpage-cpu-gpu-dies-thermal-paste-hotspots/).
+- Texas Instruments, *Application Report SLVA882: Understanding MOSFET Failure Modes in Buck Converters*.
+- JEDEC Solid State Technology Association, *JESD79-4 DDR4 SDRAM Standard and Storage Module Form Factors*.

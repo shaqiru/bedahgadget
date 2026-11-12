@@ -1,0 +1,525 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+
+const allArticles = await getCollection('articles');
+const sortedArticles = allArticles.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const featuredArticle = sortedArticles.find((a) => a.data.featured) || sortedArticles[0];
+const featuredWordCount = featuredArticle?.body ? featuredArticle.body.trim().split(/\s+/).length : 750;
+const featuredReadingTime = Math.max(4, Math.ceil(featuredWordCount / 180));
+
+const bedahCount = sortedArticles.filter((a) => a.data.category === 'bedah').length;
+const aiCount = sortedArticles.filter((a) => a.data.category === 'ai').length;
+const reviewCount = sortedArticles.filter((a) => a.data.category === 'review').length;
+
+const failureMatrix = [
+  {
+    code: 'KASUS-01 // JALUR DAYA',
+    parameter: '19.5V → 1.05V Vcore',
+    component: 'MOSFET VRM & Isolator Die 12nm',
+    finding: 'Short-circuit di fase high-side membuat tegangan adaptor 19V langsung menembus inti CPU.',
+    href: '/bedah/kenapa-panas-bikin-laptop-mati-total-vrm/',
+  },
+  {
+    code: 'KASUS-02 // TERMODINAMIKA',
+    parameter: '0.026 W/mK (Udara)',
+    component: 'Thermal Paste vs Celah VRAM',
+    finding: 'Celah 1.0 mm pada memori VRAM yang dipaksa memakai pasta cair menciptakan isolator udara.',
+    href: '/bedah/thermal-paste-vs-thermal-pad-laptop/',
+  },
+  {
+    code: 'KASUS-03 // KOROSI PCB',
+    parameter: '52 Detik (Migrasi ECM)',
+    component: 'Jalur Always-On +3.3VALW / +VBAT',
+    finding: 'Tumpahan cairan di atas PCB bertegangan menumbuhkan jembatan dendrit tembaga dalam hitungan detik.',
+    href: '/bedah/laptop-kena-air-dendrit-korosi-52-detik/',
+  },
+  {
+    code: 'KASUS-04 // MEKANIKA SASIS',
+    parameter: 'Rasio Torsi 25:1',
+    component: 'Knurled Brass Insert & Bos PC-ABS',
+    finding: 'Beban ungkit layar melipatgandakan gaya tarik pada silinder plastik yang getas di dekat ventilasi.',
+    href: '/bedah/kenapa-engsel-laptop-sering-patah/',
+  },
+];
+
+const canonicalURL = 'https://bedahgadget.id/';
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+const pageTitle = 'bedahgadget.id: Jurnalisme Teknis Bedah Hardware, AI Silikon & Review Laptop';
+const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah anatomi motherboard, silikon AI PC, dan mekanika laptop bersama workshop perbaikan FixNow.id Bandung.';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+  canonicalUrl={canonicalURL}
+  image={ogImage}
+>
+  <Fragment slot="schema">
+    <JsonLd
+      type="website"
+      title={pageTitle}
+      description={pageDescription}
+      url={canonicalURL}
+      image={ogImage}
+    />
+  </Fragment>
+
+  <!-- Masthead & Featured Isometric Plate -->
+  <section class="border-b border-line bg-page">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <!-- Left Column: Editorial Thesis + Diagnostic Matrix Table -->
+        <div class="lg:col-span-7 space-y-6">
+          <h1 class="font-brand text-3xl sm:text-4xl lg:text-[2.75rem] text-ink leading-[1.08] tracking-tight">
+            Membongkar Klaim Brosur dengan Analisis Sirkuit, Skema Jalur, dan Dokumentasi Meja Servis.
+          </h1>
+
+          <p class="text-base sm:text-lg text-ink-secondary leading-relaxed max-w-[62ch]">
+            <strong>bedahgadget.id</strong> mendokumentasikan apa yang terjadi di balik sasis laptop
+            modern: bagaimana regulator daya VRM bekerja di bawah beban ekstrem, mengapa arsitektur
+            memori terpadu menggeser GPU diskrit, dan komponen mana yang sengaja dirancang sulit
+            diperbaiki. Seluruh pembahasan didasarkan pada skema elektris dan kasus kerusakan nyata di meja servis{' '}
+            <a
+              href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=hero_text"
+              target="_blank"
+              rel="noopener"
+              class="text-accent-link font-semibold underline underline-offset-4"
+            >
+              FixNow.id Bandung
+            </a>.
+          </p>
+
+          <!-- Engineering Failure Matrix Table -->
+          <div class="iso-plate overflow-hidden">
+            <div class="px-4 py-2.5 bg-elevated border-b border-line flex items-center justify-between font-mono text-xs tabular-nums">
+              <span class="font-bold text-ink">INDEKS CATATAN MEJA SERVIS &amp; TITIK KEGAGALAN</span>
+              <span class="text-ink-muted">4 SAMPEL UTAMA</span>
+            </div>
+            <div class="divide-y divide-line">
+              {
+                failureMatrix.map((item) => (
+                  <a
+                    href={item.href}
+                    class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 p-3.5 sm:px-4 hover:bg-elevated/60 transition-colors group"
+                  >
+                    <div class="sm:col-span-4 font-mono text-xs tabular-nums">
+                      <div class="text-ink-muted text-[11px]">{item.code}</div>
+                      <div class="font-bold text-accent-link group-hover:underline mt-0.5">
+                        {item.parameter}
+                      </div>
+                    </div>
+                    <div class="sm:col-span-8">
+                      <div class="text-xs font-mono font-semibold text-ink">{item.component}</div>
+                      <p class="text-xs text-ink-secondary leading-relaxed mt-0.5">
+                        {item.finding}
+                      </p>
+                    </div>
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Featured Isometric Plate (FIG. 01) -->
+        {
+          featuredArticle && (
+            <div class="lg:col-span-5">
+              <div class="iso-plate iso-plate-interactive overflow-hidden">
+                <div class="split-rule" />
+                <div class="px-4 py-2.5 bg-elevated border-b border-line flex items-center justify-between font-mono text-xs tabular-nums">
+                  <span class="font-bold text-ink">FIG. 01 // LAPORAN UTAMA</span>
+                  <span class="text-accent-link font-semibold uppercase">
+                    RUBRIK: {featuredArticle.data.category}
+                  </span>
+                </div>
+
+                <a
+                  href={`/${featuredArticle.data.category}/${featuredArticle.slug}/`}
+                  class="block iso-diagram-well p-3 bg-[#F4F4F4]"
+                >
+                  <div class="aspect-[4/3] w-full flex items-center justify-center">
+                    <Image
+                      src={featuredArticle.data.image}
+                      alt={featuredArticle.data.title}
+                      width={720}
+                      height={540}
+                      loading="eager"
+                      fetchpriority="high"
+                      class="w-full h-full object-contain"
+                    />
+                  </div>
+                </a>
+
+                <div class="p-5 sm:p-6 bg-surface space-y-3">
+                  <div class="flex items-center justify-between text-xs font-mono tabular-nums text-ink-muted">
+                    <time datetime={featuredArticle.data.pubDate.toISOString()}>
+                      {featuredArticle.data.pubDate.toLocaleDateString('id-ID', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </time>
+                    <span>{featuredReadingTime} MENIT BACA</span>
+                  </div>
+
+                  <h2 class="font-brand text-xl sm:text-2xl text-ink leading-snug">
+                    <a
+                      href={`/${featuredArticle.data.category}/${featuredArticle.slug}/`}
+                      class="hover:text-accent-link transition-colors"
+                    >
+                      {featuredArticle.data.title}
+                    </a>
+                  </h2>
+
+                  <p class="text-sm text-ink-secondary leading-relaxed">
+                    {featuredArticle.data.description}
+                  </p>
+
+                  <div class="pt-3 border-t border-line flex items-center justify-between font-mono text-xs">
+                    <a
+                      href={`/${featuredArticle.data.category}/${featuredArticle.slug}/`}
+                      class="inline-flex min-h-11 items-center font-bold text-accent-link underline underline-offset-4"
+                    >
+                      BACA LAPORAN LENGKAP
+                    </a>
+                    <span class="text-ink-muted">SKEMA &amp; ANALISIS</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Publication Ledger & Filterable Archive -->
+  <section class="py-12 lg:py-16 border-b border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8 pb-6 border-b border-line">
+        <div class="space-y-2 max-w-2xl">
+          <h2 class="font-brand text-2xl sm:text-3xl text-ink tracking-tight">
+            Arsip Dokumentasi &amp; Bedah Komponen
+          </h2>
+          <p class="text-sm sm:text-base text-ink-secondary">
+            Saring laporan berdasarkan rubrik analisis atau cari komponen spesifik (misalnya:
+            <code class="font-mono text-xs px-1.5 py-0.5 bg-elevated border border-line">MOSFET</code>,
+            <code class="font-mono text-xs px-1.5 py-0.5 bg-elevated border border-line">VRAM</code>,
+            <code class="font-mono text-xs px-1.5 py-0.5 bg-elevated border border-line">engsel</code>,
+            <code class="font-mono text-xs px-1.5 py-0.5 bg-elevated border border-line">NPU</code>).
+          </p>
+        </div>
+
+        <!-- Live Search Input -->
+        <div class="w-full lg:w-80">
+          <label for="article-search" class="block font-mono text-[11px] uppercase text-ink-muted mb-1">
+            FILTER KATA KUNCI TEKNIS
+          </label>
+          <input
+            id="article-search"
+            type="search"
+            placeholder="Ketik komponen atau gejala..."
+            class="w-full min-h-11 px-3.5 py-2 text-sm font-mono bg-surface text-ink border border-line focus:border-ocean focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <!-- Rubrik Filter Buttons -->
+      <div
+        role="group"
+        aria-label="Filter rubrik publikasi"
+        class="flex flex-wrap items-center gap-2 mb-3 font-mono text-xs tabular-nums"
+      >
+        <button
+          type="button"
+          aria-pressed="true"
+          data-filter-category="all"
+          class="rubrik-tab inline-flex min-h-11 items-center px-3.5 py-2 border border-line-strong bg-ink text-page font-bold transition-colors"
+        >
+          SEMUA DOKUMENTASI ({sortedArticles.length})
+        </button>
+        <button
+          type="button"
+          aria-pressed="false"
+          data-filter-category="bedah"
+          class="rubrik-tab inline-flex min-h-11 items-center px-3.5 py-2 border border-line bg-surface text-ink hover:border-ocean transition-colors"
+        >
+          BEDAH ANATOMI ({bedahCount})
+        </button>
+        <button
+          type="button"
+          aria-pressed="false"
+          data-filter-category="ai"
+          class="rubrik-tab inline-flex min-h-11 items-center px-3.5 py-2 border border-line bg-surface text-ink hover:border-ocean transition-colors"
+        >
+          AI &amp; SILIKON ({aiCount})
+        </button>
+        <button
+          type="button"
+          aria-pressed="false"
+          data-filter-category="review"
+          class="rubrik-tab inline-flex min-h-11 items-center px-3.5 py-2 border border-line bg-surface text-ink hover:border-ocean transition-colors"
+        >
+          REVIEW &amp; CHECKLIST ({reviewCount})
+        </button>
+      </div>
+
+      <p id="filter-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+
+      <!-- Primary Two-Column Highlight Row -->
+      <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+          sortedArticles.map((article, idx) => (
+            <div
+              class:list={[
+                'article-item',
+                idx === 0 ? 'md:col-span-2 lg:col-span-2' : '',
+              ]}
+              data-category={article.data.category}
+              data-search={`${article.data.title} ${article.data.description} ${article.data.tags.join(' ')}`.toLowerCase()}
+            >
+              <ArticleCard
+                article={article}
+                featured={idx === 0}
+                indexNumber={String(idx + 1).padStart(2, '0')}
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Empty Filter State (R-27) -->
+      <div
+        id="empty-filter-state"
+        class="hidden iso-plate p-8 sm:p-10 text-center max-w-xl mx-auto my-8 space-y-4"
+      >
+        <div class="font-mono text-xs font-bold uppercase text-ink-muted">
+          HASIL PENCARIAN: 0 DOKUMEN
+        </div>
+        <h3 class="font-brand text-xl text-ink">
+          Tidak Ada Dokumentasi yang Cocok dengan Filter Ini
+        </h3>
+        <p class="text-sm text-ink-secondary">
+          Coba gunakan istilah komponen lain (seperti VRM, pasta termal, engsel, korosi, RAM, atau NPU)
+          atau tampilkan kembali seluruh rubrik.
+        </p>
+        <button
+          id="reset-filter-btn"
+          type="button"
+          class="inline-flex min-h-11 items-center justify-center px-4 py-2 text-xs font-mono font-bold bg-action text-on-action hover:bg-action-hover hover:text-on-action-hover transition-colors"
+        >
+          TAMPILKAN SEMUA DOKUMENTASI
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grounded Workshop Affiliation Specification Block -->
+  <section class="py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="iso-plate overflow-hidden">
+        <div class="split-rule"></div>
+        <div class="px-5 py-3 bg-elevated border-b border-line flex flex-wrap items-center justify-between gap-2 font-mono text-xs tabular-nums">
+          <span class="font-bold text-ink">WORKSHOP MITRA &amp; RUJUKAN SERVIS // FIXNOW.ID BANDUNG</span>
+          <span class="text-ink-muted">JL. MANTERON NO. 12, SUKALUYU, KOTA BANDUNG 40123</span>
+        </div>
+
+        <div class="p-6 sm:p-8 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-7 space-y-4">
+            <h2 class="font-brand text-2xl sm:text-3xl text-ink leading-snug">
+              Standar Diagnostik Meja Kerja &amp; Batasan Teknis Tanpa Klaim Berlebihan
+            </h2>
+            <p class="text-sm sm:text-base text-ink-secondary leading-relaxed max-w-[65ch]">
+              Setiap artikel di <strong>bedahgadget.id</strong> berangkat dari temuan fisik di
+              meja kerja{' '}
+              <a
+                href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_lab_section"
+                target="_blank"
+                rel="noopener"
+                class="text-accent-link font-semibold underline underline-offset-4"
+              >
+                FixNow.id Bandung
+              </a>. Kami memisahkan secara tegas antara perbaikan level komponen yang bertahan
+              jangka panjang dan tindakan spekulatif yang merugikan pemilik unit.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="p-4 bg-elevated/50 border border-line space-y-2">
+                <div class="font-mono text-xs font-bold text-ink uppercase border-b border-line pb-1.5">
+                  CAKUPAN PENGERJAAN (BISA DIKERJAKAN)
+                </div>
+                <ul class="text-xs text-ink-secondary space-y-1.5 list-disc pl-4">
+                  <li>Perbaikan jalur daya motherboard (mikrosolder komponen SMD/MOSFET/IC PWM).</li>
+                  <li>Pelacakan jalur komponen dengan skema boardview dan multimeter.</li>
+                  <li>Penggantian keping memori VRAM pada jalur grafis laptop.</li>
+                  <li>Modifikasi penonaktifan VGA diskrit ke grafis terintegrasi prosesor (konversi Discrete-to-UMA).</li>
+                </ul>
+              </div>
+
+              <div class="p-4 bg-elevated/50 border border-line space-y-2">
+                <div class="font-mono text-xs font-bold text-accent-danger uppercase border-b border-line pb-1.5">
+                  TINDAKAN YANG TIDAK DIKERJAKAN
+                </div>
+                <ul class="text-xs text-ink-secondary space-y-1.5 list-disc pl-4">
+                  <li>Tidak melayani reballing chipset atau GPU utama karena tingkat kambuh tinggi.</li>
+                  <li>Tidak melayani penggantian chip GPU utama atau penggunaan BGA Rework Station.</li>
+                  <li>Khusus menangani perangkat laptop (tidak melayani kartu VGA PC desktop).</li>
+                  <li>Tidak menarik biaya pengecekan awal sebelum estimasi disetujui pelanggan.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 bg-elevated border border-line p-5 sm:p-6 space-y-4 font-mono text-xs tabular-nums">
+            <div class="font-bold text-ink uppercase border-b border-line pb-2">
+              DATA OPERASIONAL WORKSHOP RESMI
+            </div>
+
+            <dl class="space-y-3 text-ink-secondary">
+              <div>
+                <dt class="text-[11px] text-ink-muted">ALAMAT RESMI</dt>
+                <dd class="font-sans text-sm font-medium text-ink mt-0.5">
+                  Jl. Manteron No. 12, Sukaluyu, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40123
+                </dd>
+              </div>
+              <div>
+                <dt class="text-[11px] text-ink-muted">JAM OPERASIONAL</dt>
+                <dd class="mt-0.5 space-y-0.5">
+                  <div>Senin – Kamis: 09.00 – 17.00 WIB</div>
+                  <div>Jumat: 13.00 – 16.00 WIB</div>
+                  <div>Sabtu &amp; Minggu: 10.00 – 16.00 WIB</div>
+                </dd>
+              </div>
+              <div>
+                <dt class="text-[11px] text-ink-muted">ESTIMASI DURASI PENGERJAAN</dt>
+                <dd class="mt-0.5 space-y-0.5">
+                  <div>Servis ringan / pembersihan termal: &lt; 24 jam (bisa ditunggu)</div>
+                  <div>Perbaikan jalur motherboard / konversi UMA: 3 – 7 hari kerja</div>
+                </dd>
+              </div>
+              <div>
+                <dt class="text-[11px] text-ink-muted">LAYANAN ANTAR-JEMPUT</dt>
+                <dd class="mt-0.5">Gratis antar-jemput unit dalam radius 3 km dari workshop.</dd>
+              </div>
+            </dl>
+
+            <div class="pt-3 border-t border-line flex flex-col gap-2.5">
+              <a
+                href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
+                target="_blank"
+                rel="noopener"
+                class="inline-flex min-h-11 items-center justify-center w-full text-center px-4 py-3 bg-action text-on-action font-bold hover:bg-action-hover hover:text-on-action-hover transition-colors"
+              >
+                HUBUNGI WHATSAPP 0851-3950-6080
+              </a>
+              <a
+                href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_cta"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex min-h-11 items-center justify-center w-full text-center px-4 py-2.5 bg-surface text-ink border border-line hover:border-ocean transition-colors"
+              >
+                KUNJUNGI SITUS RESMI FIXNOW.ID
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('.rubrik-tab');
+  const items = document.querySelectorAll<HTMLElement>('.article-item');
+  const searchInput = document.getElementById('article-search') as HTMLInputElement | null;
+  const emptyState = document.getElementById('empty-filter-state');
+  const resetBtn = document.getElementById('reset-filter-btn');
+  const filterStatus = document.getElementById('filter-status');
+
+  let activeCategory = 'all';
+  let searchQuery = '';
+
+  function applyFilter() {
+    let visibleCount = 0;
+
+    items.forEach((item, index) => {
+      const itemCat = item.getAttribute('data-category') || '';
+      const itemSearch = item.getAttribute('data-search') || '';
+
+      const matchesCat = activeCategory === 'all' || itemCat === activeCategory;
+      const matchesSearch = !searchQuery || itemSearch.includes(searchQuery);
+
+      if (matchesCat && matchesSearch) {
+        item.classList.remove('hidden');
+        if (activeCategory === 'all' && !searchQuery && index === 0) {
+          item.classList.add('md:col-span-2', 'lg:col-span-2');
+        } else {
+          item.classList.remove('md:col-span-2', 'lg:col-span-2');
+        }
+        visibleCount++;
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+
+    if (emptyState) {
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    if (filterStatus) {
+      filterStatus.textContent =
+        visibleCount === 1 ? '1 artikel ditampilkan.' : `${visibleCount} artikel ditampilkan.`;
+    }
+
+    return visibleCount;
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      activeCategory = button.getAttribute('data-filter-category') || 'all';
+
+      filterButtons.forEach((other) => {
+        const isActive = other === button;
+        other.setAttribute('aria-pressed', String(isActive));
+        if (isActive) {
+          other.classList.add('bg-ink', 'text-page', 'border-line-strong', 'font-bold');
+          other.classList.remove('bg-surface', 'text-ink', 'border-line');
+        } else {
+          other.classList.remove('bg-ink', 'text-page', 'border-line-strong', 'font-bold');
+          other.classList.add('bg-surface', 'text-ink', 'border-line');
+        }
+      });
+
+      applyFilter();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      searchQuery = searchInput.value.trim().toLowerCase();
+      applyFilter();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      activeCategory = 'all';
+      searchQuery = '';
+      if (searchInput) searchInput.value = '';
+      if (filterButtons[0]) filterButtons[0].click();
+    });
+  }
+</script>

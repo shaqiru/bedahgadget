@@ -1,0 +1,99 @@
+---
+title: "RAM Single Channel vs Dual Channel: Kenapa Satu Keping RAM Memangkas Performa Laptop Hingga 30%"
+description: "Mengoperasikan laptop dengan satu keping RAM membatasi lebar jalur bus data hanya pada 64-bit (25.6 GB/s pada DDR4-3200), membatasi throughput grafis terintegrasi (iGPU) dan inferensi AI lokal."
+pubDate: 2026-11-02
+category: "bedah"
+tags: ["ram", "dual-channel", "upgrade-laptop", "performa", "memory-bus"]
+author: "Tim Riset BedahGadget.id"
+image: "../../assets/stills/ram-dual-channel.png"
+featured: false
+repairabilityScore: 9
+failurePoints: [
+  "Bandwidth memori terpangkas 50 persen saat satu slot SO-DIMM kedua dibiarkan kosong dari pabrik.",
+  "Unit grafis terintegrasi (Intel Iris Xe / AMD Radeon 600M-800M) kehilangan frame rate signifikan karena berbagi bus memori utama.",
+  "Pemasangan dua keping RAM dengan profil timing JEDEC/CL yang tidak selaras memaksa pengontrol memori berjalan pada frekuensi terendah."
+]
+fixnowTopic: "ram"
+specDetails: [
+  { label: "Lebar Bus Single Channel", value: "64-Bit Data Bus" },
+  { label: "Lebar Bus Dual Channel", value: "128-Bit Interleaved Data Bus" },
+  { label: "Bandwidth DDR4-3200 Single", value: "25.6 GB / Detik" },
+  { label: "Bandwidth DDR4-3200 Dual", value: "51.2 GB / Detik" },
+  { label: "Bandwidth DDR5-5600 Dual", value: "89.6 GB / Detik" },
+  { label: "Selisih Performa iGPU", value: "20% - 38% Peningkatan Frame Rate" }
+]
+faqs: [
+  {
+    question: "Apakah kapasitas 1x 16GB sama kinerjanya dengan 2x 8GB?",
+    answer: "Kapasitas penyimpanannya sama-sama 16 GB, tetapi lebar jalur datanya berbeda dua kali lipat. Konfigurasi 2x 8GB mengaktifkan antarmuka 128-bit Dual Channel dengan throughput 51.2 GB/s (pada DDR4-3200), sedangkan 1x 16GB berjalan pada jalur tunggal 64-bit dengan batas 25.6 GB/s."
+  },
+  {
+    question: "Bisakah memasang dua keping RAM dari merek yang berbeda?",
+    answer: "Bisa, asalkan generasi memori (DDR4 atau DDR5), tegangan kerja, frekuensi MT/s, dan nilai CAS Latency (CL) sesuai standar JEDEC yang sama agar pengontrol memori tidak menurunkan kecepatan clock."
+  }
+]
+---
+
+import { Image } from 'astro:assets';
+import still_ram_slot from '../../assets/stills/ram-slot.png';
+
+Banyak laptop kelas menengah dan laptop gaming tingkat awal dipasarkan dengan kapasitas RAM 8 GB atau 16 GB yang dipasang hanya pada satu slot (*1x 8 GB* atau *1x 16 GB*). Konfigurasi keping tunggal ini memang memudahkan penambahan memori di kemudian hari, namun selama slot kedua dibiarkan kosong, pengontrol memori di dalam prosesor hanya mengaktifkan jalur bus selebar 64-bit. Akibatnya, laju aliran data (*memory bandwidth*) terpangkas separuh dibandingkan konfigurasi dua keping (*Dual Channel* 128-bit).
+
+Penyempitan jalur data ini paling terasa pada laptop yang mengandalkan pengolah grafis terintegrasi (*iGPU* seperti Intel Iris Xe, Intel Arc Graphics, atau AMD Radeon 680M/780M) karena chip grafis tersebut tidak memiliki memori VRAM terpisah dan harus mengambil data tekstur langsung dari RAM sistem.
+
+## Perhitungan Lebar Jalur: 64-Bit vs 128-Bit Interleaved
+
+Pengontrol memori terintegrasi (*Integrated Memory Controller* / IMC) di dalam prosesor modern dirancang memiliki dua kanal independen (Kanal A dan Kanal B), masing-masing selebar 64-bit.
+
+Saat hanya satu slot SO-DIMM yang terisi, seluruh antrean instruksi CPU, pemrosesan tekstur grafis, dan pembacaan berkas sistem operasi harus bergantian melewati satu kanal 64-bit. Sebaliknya, ketika kedua slot diisi dengan kapasitas yang seimbang, IMC mengaktifkan mode *128-bit Interleaved*: prosesor dapat membaca dan menulis data ke kedua modul secara paralel pada siklus detak (*clock cycle*) yang sama.
+
+<figure class="my-8 iso-plate overflow-hidden">
+  <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+    <span class="font-bold">FIG. 02 // KONFIGURASI DUA SLOT SO-DIMM PADA MOTHERBOARD LAPTOP</span>
+    <span>ARSITEKTUR BUS MEMORI</span>
+  </div>
+  <div class="bg-[#F4F4F4] p-3 flex items-center justify-center">
+    <Image
+      src={still_ram_slot}
+      widths={[640, 1080]}
+      sizes="(min-width: 896px) 896px, 100vw"
+      alt="Slot memori RAM SO-DIMM ganda pada motherboard laptop untuk mode Dual Channel 128-bit"
+      class="w-full h-auto max-h-[520px] object-contain !my-0 !border-0"
+    />
+  </div>
+  <figcaption class="px-4 py-2.5 bg-elevated border-t border-line text-xs font-mono text-ink-secondary">
+    Tata letak dua slot SO-DIMM pada papan induk: pengisian kedua kanal membuka lebar bus penuh 128-bit menuju prosesor.
+  </figcaption>
+</figure>
+
+Secara matematis, batas teoretis laju transfer data pada memori DDR4-3200 (3200 MT/s) dapat dihitung langsung dari lebar busnya:
+
+```
+Bandwidth Single Channel = (3200 MT/s × 64-bit) / 8 = 25,6 GB/detik
+Bandwidth Dual Channel   = (3200 MT/s × 128-bit) / 8 = 51,2 GB/detik
+```
+
+Pada generasi DDR5-5600, meskipun satu keping modul DDR5 sudah terbagi menjadi dua sub-kanal internal 32-bit, pemasangan dua keping fisik tetap menggandakan total lebar bus sistem menjadi 128-bit dengan puncak bandwidth mencapai 89,6 GB/detik.
+
+## Dampak Nyata pada Beban Kerja Grafis dan Inferensi AI
+
+Dalam penggunaan aplikasi komputasi nyata, keterbatasan bandwidth 25,6 GB/detik pada mode *Single Channel* menimbulkan dua gejala penurunan performa:
+
+### 1. Penurunan 1% Low FPS pada Game dan Aplikasi 3D
+Saat menjalankan gim atau perangkat lunak pemodelan 3D, iGPU harus menyalin tekstur resolusi tinggi secara terus-menerus dari RAM. Pada mode *Single Channel*, antrean akses memori antara inti CPU dan inti grafis menyebabkan jeda mikro (*micro-stuttering*). Mengaktifkan mode *Dual Channel* meningkatkan *frame rate* rata-rata sebesar 20 hingga 38 persen sekaligus menstabilkan angka *1% Low FPS*.
+
+### 2. Kecepatan Generasi Token pada Model Bahasa Lokal (LLM)
+Eksekusi model kecerdasan buatan secara lokal di laptop sangat bergantung pada seberapa cepat bobot parameter model (*model weights*) dapat dialirkan dari RAM ke unit komputasi CPU, GPU, atau NPU. Menggandakan bandwidth memori melalui konfigurasi *Dual Channel* berbanding lurus dengan peningkatan jumlah token per detik yang dihasilkan.
+
+## Prosedur Pemeriksaan dan Penambahan Modul RAM
+
+Sebelum membeli keping RAM tambahan, periksa konfigurasi slot di laptop Anda melalui tab *Kinerja > Memori* pada *Task Manager* Windows (lihat informasi *Slots used: 1 of 2*) atau gunakan aplikasi CPU-Z pada tab *Memory* dan *SPD*.
+
+Pastikan modul baru memiliki generasi yang sama (DDR4 atau DDR5), tegangan kerja identik (1,2V untuk DDR4; 1,1V untuk DDR5), serta frekuensi dan *CAS Latency* yang sepadan dengan keping bawaan. Sebelum memasang modul pada sudut 30 derajat ke soket SO-DIMM, lepaskan konektor baterai internal terlebih dahulu untuk menghindari lonjakan arus pendek, atau jadwalkan pemasangan melalui layanan [upgrade RAM dan SSD laptop Bandung](https://fixnow.id/upgrade-laptop-bandung/?utm_source=bedahgadget&utm_medium=article_inline) agar kompatibilitas keping memori diuji langsung di meja kerja.
+
+## Sumber
+
+- JEDEC Solid State Technology Association, *JESD79-4 DDR4 SDRAM Standard* & JESD79-5 DDR5 SDRAM Standard.
+- Peter Norvig, [Teach Yourself Programming in Ten Years](https://norvig.com/21-days.html) (estimasi latensi hierarki komputasi dan akses memori utama ~100 ns).
+- Micron Technology, *TN-40-40: DDR4 Point-to-Point System Design Guidelines*.
+- Microsoft Learn, [Introduction to the Page File](https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/introduction-to-the-page-file) (mekanisme perpanjangan memori fisik Windows ke penyimpanan sekunder).

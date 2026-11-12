@@ -1,0 +1,101 @@
+---
+title: "Laptop Kena Air: Kenapa Dendrit Korosi Bisa Merusak Motherboard dalam 52 Detik"
+description: "Kerusakan motherboard saat terkena cairan dipicu oleh reaksi migrasi elektrokimia: ion tembaga larut dan menumbuhkan jembatan dendrit konduktif di antara jalur bertegangan hanya dalam 52 detik."
+pubDate: 2026-10-29
+category: "bedah"
+tags: ["korosi", "kena-air", "motherboard", "sirkuit", "pertolongan-pertama"]
+author: "Tim Riset BedahGadget.id"
+image: "../../assets/stills/korosi-motherboard.png"
+featured: false
+repairabilityScore: 5
+failurePoints: [
+  "Baterai internal tetap menyuplai tegangan siaga 11.4V - 15.2V ke jalur utama PCB meskipun adaptor charger sudah dicabut.",
+  "Migrasi elektrokimia menumbuhkan jembatan filamen dendrit tembaga di antara kaki komponen bertegangan dalam 52 detik (studi HIT pada bias 10V).",
+  "Endapan korosi melapukkan lubang penghubung antar-lapisan PCB (via holes) hingga memutus jalur sinyal internal."
+]
+fixnowTopic: "air"
+specDetails: [
+  { label: "Waktu Tumbuh Jembatan Dendrit", value: "52 Detik (Studi HIT, Tembaga Bias 10V)" },
+  { label: "Jalur Tegangan Siaga Aktif", value: "+3.3VALW, +5.0VALW, +VBAT (11.4V - 15.2V)" },
+  { label: "Jarak Antar-Kaki IC (Pitch)", value: "0.20 mm - 0.40 mm" },
+  { label: "Elektrolit Pemicu", value: "Ion Mineral Terlarut & Asam Organik (Kopi/Teh)" },
+  { label: "Cairan Pembersih Standar Lab", value: "Isopropil Alkohol (IPA) 99.9%" },
+  { label: "Celah Kolong Chip BGA", value: "< 0.08 mm (Retensi Kapiler)" }
+]
+faqs: [
+  {
+    question: "Apakah merendam laptop di dalam beras efektif mengeringkan cairan?",
+    answer: "Tidak efektif dan justru berisiko. Beras tidak mampu menarik cairan yang terjebak oleh gaya kapiler di celah 0.05 milimeter di bawah chip BGA. Debu pati beras yang masuk ke sela komponen akan bercampur dengan cairan dan membentuk kerak lengket yang menahan kelembapan."
+  },
+  {
+    question: "Apa langkah darurat pertama saat laptop tersiram cairan?",
+    answer: "Segera cabut adaptor charger, tekan dan tahan tombol power selama 10 detik hingga unit mati paksa, lalu posisikan laptop membentuk huruf V terbalik di atas kain kering agar cairan tidak merembes lebih dalam ke papan induk."
+  }
+]
+---
+
+import { Image } from 'astro:assets';
+import still_korosi_dendrit from '../../assets/stills/korosi-dendrit.png';
+
+Laptop yang terkena tumpahan air minum, kopi, atau teh kerap terlihat masih menyala normal selama beberapa menit pertama sebelum akhirnya padam total. Kerusakan ini disebabkan oleh migrasi elektrokimia (*Electrochemical Migration* / ECM): arus listrik dari baterai yang bertemu larutan berion melarutkan logam tembaga dan menumbuhkan jarum konduktif bernama dendrit di antara dua jalur PCB. Dalam pengujian laboratorium Harbin Institute of Technology pada konduktor tembaga terbuka dengan bias tegangan 10 Volt, jembatan dendrit tersebut menutup celah isolasi hanya dalam waktu 52 detik.
+
+Air murni terdestilasi memiliki hambatan listrik yang tinggi. Namun, begitu cairan tumpahan menyentuh debu pada sasis dan residu fluks di atas papan sirkuit, mineral serta garam organik langsung larut dan mengubah tetesan cairan menjadi jembatan elektrolit penghantar arus.
+
+## Mekanisme Pertumbuhan Dendrit dalam 52 Detik
+
+Di atas permukaan motherboard laptop, jalur catu daya positif (seperti jalur baterai 12 Volt atau jalur siaga 5 Volt) terbentang berdampingan dengan jalur *ground* (0 Volt) dengan jarak pisah hanya 0,2 hingga 0,4 milimeter pada kaki-kaki kapasitor dan IC pengontrol.
+
+<figure class="my-8 iso-plate overflow-hidden">
+  <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+    <span class="font-bold">FIG. 02 // MIGRASI ION TEMBAGA &amp; PEMBENTUKAN JEMBATAN DENDRIT</span>
+    <span>ELEKTROKIMIA PCB</span>
+  </div>
+  <div class="bg-[#F4F4F4] p-3 flex items-center justify-center">
+    <Image
+      src={still_korosi_dendrit}
+      widths={[640, 1080]}
+      sizes="(min-width: 896px) 896px, 100vw"
+      alt="Ilustrasi pertumbuhan jarum dendrit tembaga di bawah tetesan air pada permukaan PCB"
+      class="w-full h-auto max-h-[520px] object-contain !my-0 !border-0"
+    />
+  </div>
+  <figcaption class="px-4 py-2.5 bg-elevated border-t border-line text-xs font-mono text-ink-secondary">
+    Tahapan migrasi elektrokimia: ion tembaga terlepas dari anoda, bergerak melintasi cairan, lalu mengendap di katoda membentuk filamen dendrit bercabang.
+  </figcaption>
+</figure>
+
+Ketika lapisan cairan menghubungkan kedua kutub bertegangan tersebut, reaksi elektrokimia berlangsung melalui tiga tahap berurutan:
+
+1. Pada sisi anoda (kutub positif), medan listrik menarik elektron dari logam sehingga ion tembaga (Cu²⁺) dan timah solder (Sn²⁺) larut ke dalam cairan.
+2. Ion-ion logam bermuatan positif tersebut bermigrasi melintasi lapisan cairan menuju katoda (kutub negatif).
+3. Sesampainya di katoda, ion menerima elektron dan mengendap kembali menjadi kristal logam padat yang tumbuh memanjang menyerupai ranting pohon menuju arah anoda.
+
+Begitu ujung ranting dendrit menyentuh sisi anoda pada detik ke-52, terbentuk jalur hubung singkat logam murni yang mengalirkan arus berlebih, membakar kaki IC maupun jalur tembaga tipis (*via holes*) di papan induk.
+
+## Mengapa Mencabut Charger Saja Belum Menghentikan Korosi
+
+Banyak pemilik laptop mengira reaksi korsleting sudah berhenti setelah kabel charger dicabut dan layar laptop dimatikan. Kenyataannya, hampir seluruh laptop modern menggunakan baterai internal bertegangan 11,4 hingga 15,2 Volt yang terhubung langsung ke jalur daya utama (*Main Power Rail* / `B+`).
+
+Selama konektor baterai belum dilepas dari soket motherboard, sirkuit tegangan siaga (`+3.3VALW` dan `+5VALW`) serta chip *Embedded Controller* (EC) tetap dialiri listrik untuk memantau sinyal tombol daya. Tegangan siaga inilah yang terus menggerakkan proses elektrolisis dan merontokkan kaki-kaki komponen SMD meskipun laptop dalam keadaan mati.
+
+## Mengapa Beras Tidak Mampu Mengeringkan Celah Komponen
+
+Menimbun laptop yang terkena cairan di dalam beras tidak menyelesaikan masalah fisika kapiler di atas papan sirkuit. Di bawah chip BGA (seperti prosesor, chipset, atau keping VRAM), tinggi celah antara bola-bola timah ke permukaan PCB kurang dari 0,08 milimeter. Gaya kapiler mengunci cairan di kolong chip tersebut sehingga tidak dapat menguap hanya dengan didiamkan di udara terbuka.
+
+Selain itu, debu tepung pati dari beras yang masuk melalui celah ventilasi kipas dan sela tombol keyboard akan bereaksi dengan sisa cairan menjadi lapisan kerak asam yang mempercepat pengikisan tembaga.
+
+## Protokol Pertolongan Pertama Sebelum Dibawa ke Meja Servis
+
+Langkah penanganan darurat yang tepat bertujuan memutus suplai arus listrik dan mencegah cairan mengalir ke permukaan motherboard:
+
+1. Cabut konektor adaptor daya dari laptop saat itu juga.
+2. Tekan dan tahan tombol daya selama 10 detik penuh untuk mematikan paksa unit tanpa menunggu proses penutupan sistem operasi.
+3. Bukalah layar hingga sudut sekitar 90 derajat, lalu balikkan laptop menyerupai tenda huruf V terbalik di atas kain penyerap agar gravitasi mengarahkan sisa cairan keluar melalui sela papan ketik.
+4. Jangan mencoba menyalakan kembali laptop atau mencolokkan charger untuk mengetes apakah unit masih hidup.
+5. Bawa unit ke layanan [pembersihan laptop kena air di Bandung](https://fixnow.id/service-laptop-kena-air-bandung/?utm_source=bedahgadget&utm_medium=article_inline) agar konektor baterai segera dilepas, residu elektrolit dibilas menggunakan Isopropil Alkohol (IPA) 99,9% di bawah mikroskop, dan jalur yang terdampak korosi diperbaiki melalui teknik mikrosolder sebelum arus daya dinyalakan kembali.
+
+## Sumber
+
+- Harbin Institute of Technology, [Failure mechanisms of PBGA packages under coupled humidity-thermal-electrical stress](https://scholar.hit.edu.cn/en/publications/failure-mechanisms-of-pbga-packages-under-coupled-humidity-therma/) (pengukuran pembentukan jembatan dendrit 52 detik pada konduktor tembaga dengan bias 10 V).
+- Technical University of Denmark / *Journal of Electronic Materials* (2018), [Water film formation on PCBA surface](https://link.springer.com/article/10.1007/s11664-018-06862-4).
+- Apple Support, [If you see a liquid-detection alert on your MacBook](https://support.apple.com/120854).

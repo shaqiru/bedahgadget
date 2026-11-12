@@ -1,0 +1,356 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Archivo Black';
+  src: url('/brand/fonts/ArchivoBlack-Regular.woff2') format('woff2'),
+    url('/brand/fonts/ArchivoBlack-Regular.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --color-navy: #0B132B;
+  --color-ocean: #0169E9;
+  --color-clover: #25D366;
+  --color-chalk: #F4F4F4;
+  --color-gray: #7C869B;
+  --color-red: #E5484D;
+
+  /* Pasangan hex dan kanal RGB wajib identik (diperiksa scripts/check-theme-css.mjs). */
+  --bg-page: #F4F4F4;
+  --bg-page-rgb: 244 244 244;
+  --bg-surface: #FFFFFF;
+  --bg-surface-rgb: 255 255 255;
+  --bg-elevated: #E9ECF2;
+  --bg-elevated-rgb: 233 236 242;
+  --bg-plate: #F4F4F4;
+  --bg-plate-rgb: 244 244 244;
+
+  --text-primary: #0B132B;
+  --text-primary-rgb: 11 19 43;
+  --text-secondary: #24304D;
+  --text-secondary-rgb: 36 48 77;
+  --text-muted: #4A5673;
+  --text-muted-rgb: 74 86 115;
+
+  --accent-link: #0152B7;
+  --accent-link-rgb: 1 82 183;
+  --accent-positive: #137337;
+  --accent-positive-rgb: 19 115 55;
+  --accent-danger: #B4232A;
+  --accent-danger-rgb: 180 35 42;
+
+  --border-hairline: #CBD2E0;
+  --border-hairline-rgb: 203 210 224;
+  --border-strong: #0B132B;
+  --border-strong-rgb: 11 19 43;
+
+  /* Aksi utama (tombol CTA): latar navy dengan teks terang di tema terang. */
+  --bg-action: #0B132B;
+  --bg-action-rgb: 11 19 43;
+  --bg-action-hover: #0152B7;
+  --bg-action-hover-rgb: 1 82 183;
+  --text-on-action: #F4F4F4;
+  --text-on-action-rgb: 244 244 244;
+  --text-on-action-hover: #FFFFFF;
+  --text-on-action-hover-rgb: 255 255 255;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --bg-page: #0B132B;
+  --bg-page-rgb: 11 19 43;
+  --bg-surface: #101A38;
+  --bg-surface-rgb: 16 26 56;
+  --bg-elevated: #16234A;
+  --bg-elevated-rgb: 22 35 74;
+  --bg-plate: #F4F4F4;
+  --bg-plate-rgb: 244 244 244;
+
+  --text-primary: #F4F4F4;
+  --text-primary-rgb: 244 244 244;
+  --text-secondary: #D5DCE8;
+  --text-secondary-rgb: 213 220 232;
+  --text-muted: #96A2BA;
+  --text-muted-rgb: 150 162 186;
+
+  --accent-link: #5EA2F5;
+  --accent-link-rgb: 94 162 245;
+  --accent-positive: #25D366;
+  --accent-positive-rgb: 37 211 102;
+  --accent-danger: #FF7A7E;
+  --accent-danger-rgb: 255 122 126;
+
+  --border-hairline: #1E2D5A;
+  --border-hairline-rgb: 30 45 90;
+  --border-strong: #41568F;
+  --border-strong-rgb: 65 86 143;
+
+  /* Aksi utama (tombol CTA): latar clover dengan teks navy di tema gelap. */
+  --bg-action: #25D366;
+  --bg-action-rgb: 37 211 102;
+  --bg-action-hover: #3388EE;
+  --bg-action-hover-rgb: 51 136 238;
+  --text-on-action: #0B132B;
+  --text-on-action-rgb: 11 19 43;
+  --text-on-action-hover: #0B132B;
+  --text-on-action-hover-rgb: 11 19 43;
+}
+
+/* Theme visibility helpers for dual SVGs */
+html:not([data-theme='dark']) .theme-dark-only {
+  display: none !important;
+}
+
+html[data-theme='dark'] .theme-light-only {
+  display: none !important;
+}
+
+::selection {
+  background-color: #0169E9;
+  color: #FFFFFF;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0169E9;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus ring for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #0169E9;
+  outline-offset: 2px;
+}
+
+.font-brand {
+  font-family: 'Archivo Black', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Isometric Engineering Plate System */
+.iso-plate {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.iso-plate-interactive:hover {
+  border-color: #0169E9;
+}
+
+.iso-diagram-well {
+  background-color: #F4F4F4;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+/* Split-cut rule inspired by the BEDAH wordmark */
+.split-rule {
+  height: 4px;
+  background: linear-gradient(90deg, #0169E9 0%, #0169E9 68%, #25D366 68%, #25D366 100%);
+}
+
+/* Editorial prose rules for MDX articles */
+.article-prose {
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+
+.article-prose > p,
+.article-prose > ul,
+.article-prose > ol,
+.article-prose > blockquote {
+  max-width: 68ch;
+}
+
+.article-prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  color: var(--text-secondary);
+}
+
+.article-prose h2 {
+  font-family: 'Archivo Black', system-ui, sans-serif;
+  color: var(--text-primary);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.875rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-hairline);
+  max-width: 56ch;
+}
+
+.article-prose h3 {
+  font-family: 'Archivo Black', system-ui, sans-serif;
+  color: var(--text-primary);
+  font-size: clamp(1.125rem, 1.8vw, 1.35rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  max-width: 60ch;
+}
+
+.article-prose strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.article-prose a {
+  color: var(--accent-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.article-prose a:hover {
+  color: var(--accent-link);
+  text-decoration-thickness: 2px;
+}
+
+.article-prose ul {
+  list-style-type: square;
+  padding-left: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.article-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.article-prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.article-prose li::marker {
+  color: var(--accent-link);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.article-prose code:not(pre code) {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875em;
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 0.15rem 0.375rem;
+  border: 1px solid var(--border-hairline);
+}
+
+.article-prose pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  background-color: #0B132B;
+  color: #F4F4F4;
+  padding: 1.25rem;
+  border: 1px solid var(--border-hairline);
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.article-prose blockquote {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-hairline);
+  font-style: normal;
+  color: var(--text-primary);
+}
+
+.article-prose img {
+  background-color: #F4F4F4;
+  border: 1px solid var(--border-hairline);
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.article-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+.article-prose th {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  text-align: left;
+  font-weight: 700;
+}
+
+.article-prose th,
+.article-prose td {
+  border: 1px solid var(--border-hairline);
+  padding: 0.5rem 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.article-prose th[align='right'],
+.article-prose td[align='right'] {
+  text-align: right;
+}
+
+.article-prose th[align='center'],
+.article-prose td[align='center'] {
+  text-align: center;
+}
+
+.article-prose th[align='left'],
+.article-prose td[align='left'] {
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import JsonLd from '../../components/JsonLd.astro';
+import { getCollection } from 'astro:content';
+import { categories } from '../../lib/categories';
+
+const category = categories.review;
+
+const articles = await getCollection(
+  'articles',
+  ({ data }) => data.category === 'review'
+);
+const sortedArticles = articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const allTags = [...new Set(sortedArticles.flatMap((a) => a.data.tags))];
+
+const pageTitle = 'Review & Checklist Jeroan Laptop Gaming';
+const pageDescription = 'Evaluasi rancangan internal laptop berdasarkan kualitas desain termal, struktur sasis, modularitas komponen, dan kemudahan servis jangka panjang.';
+const pageUrl = `https://bedahgadget.id${category.archivePath}`;
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+  canonicalUrl={pageUrl}
+  image={ogImage}
+>
+  <Fragment slot="schema">
+    <JsonLd
+      type="collection"
+      title={pageTitle}
+      description={pageDescription}
+      url={pageUrl}
+      image={ogImage}
+      items={sortedArticles.map((article) => ({
+        name: article.data.title,
+        url: `${categories[article.data.category].archivePath}${article.slug}/`,
+      }))}
+    />
+  </Fragment>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted mb-6">
+      <ol class="flex items-center gap-2">
+        <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+        <li>/</li>
+        <li class="text-ink font-semibold">RUBRIK: {category.archiveRubric}</li>
+      </ol>
+    </nav>
+
+    <header class="mb-10 pb-8 border-b border-line flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div class="space-y-3 max-w-3xl">
+        <h1 class="font-brand text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight tracking-tight">
+          Review &amp; Checklist Jeroan Laptop
+        </h1>
+        <p class="text-base sm:text-lg text-ink-secondary leading-relaxed">
+          Evaluasi perangkat dari sudut pandang meja teknisi: ketahanan pipa kalor di bawah beban
+          kontinu, ketersediaan slot ekspansi SO-DIMM/M.2, kualitas dudukan engsel, serta parameter
+          kemudahan perbaikan sasis dan motherboard.
+        </p>
+      </div>
+      <div class="font-mono text-xs tabular-nums bg-surface border border-line px-4 py-3 shrink-0">
+        <div class="text-ink-muted">TOTAL DOKUMENTASI</div>
+        <div class="font-bold text-ink text-lg mt-0.5">{sortedArticles.length} PANDUAN TEKNIS</div>
+      </div>
+    </header>
+
+    {
+      allTags.length > 0 && (
+        <div class="mb-8 flex flex-wrap items-center gap-2 font-mono text-xs">
+          <span class="text-ink-muted mr-1">TOPIK:</span>
+          {allTags.map((tag) => (
+            <a
+              href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`}
+              class="inline-flex min-h-11 min-w-11 items-center justify-center px-2.5 py-1 bg-surface border border-line text-ink-secondary hover:border-ocean hover:text-accent-link transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <h2 class="sr-only">Daftar artikel review dan checklist laptop</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        sortedArticles.map((article, idx) => (
+          <div class:list={[idx === 0 ? 'md:col-span-2 lg:col-span-2' : '']}>
+            <ArticleCard
+              article={article}
+              featured={idx === 0}
+              indexNumber={String(idx + 1).padStart(2, '0')}
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>

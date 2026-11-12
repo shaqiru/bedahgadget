@@ -1,0 +1,95 @@
+---
+title: "Pasta vs Thermal Pad: Kenapa Salah Pasang Bisa Bikin Chipset Gosong?"
+description: "Mengganti thermal pad tebal dengan thermal paste pada komponen VRM atau VRAM laptop meninggalkan kantong udara berinsulasi (konduktivitas 0.026 W/mK) yang menghambat pelepasan panas ke heatsink."
+pubDate: 2026-10-28
+category: "bedah"
+tags: ["thermal", "heatsink", "pendingin", "pasta", "vram"]
+author: "Tim Riset BedahGadget.id"
+image: "../../assets/stills/thermal-paste-pad.png"
+featured: true
+repairabilityScore: 7
+failurePoints: [
+  "Penggunaan pasta cair pada celah 1.0 mm VRAM menyisakan rongga udara kosong karena pasta terdorong keluar (pump-out).",
+  "Pemasangan thermal pad yang terlalu tebal atau kaku pada area VRAM menahan pelat tembaga sehingga tidak menempel rapat ke die CPU.",
+  "Degradasi pelarut pada pasta termal viskositas rendah setelah terpapar siklus suhu di atas 85 derajat Celsius."
+]
+fixnowTopic: "thermal"
+specDetails: [
+  { label: "Celah Die CPU ke Heatsink", value: "0.02 mm - 0.08 mm (Kontak Langsung)" },
+  { label: "Celah VRAM/MOSFET ke Heatsink", value: "0.50 mm - 1.50 mm (Toleransi PCB)" },
+  { label: "Konduktivitas Pasta Termal", value: "8.5 W/mK - 14.2 W/mK" },
+  { label: "Konduktivitas Thermal Pad", value: "3.0 W/mK - 12.0 W/mK" },
+  { label: "Konduktivitas Udara (Air Gap)", value: "0.026 W/mK (Isolator Termal)" },
+  { label: "Tekanan Baut Pegas Heatsink", value: "35 psi - 50 psi (Spring-Loaded)" }
+]
+faqs: [
+  {
+    question: "Bolehkah mengganti thermal pad dengan thermal paste biasa?",
+    answer: "Tidak boleh. Thermal paste memiliki viskositas semi-cair yang hanya efektif mengisi pori mikroskopik di bawah 0.1 milimeter. Pada celah 0.5 hingga 1.5 milimeter di atas VRAM, pasta tidak mampu menjembatani ruang secara utuh dan menyisakan kantong udara yang menghambat perpindahan panas."
+  },
+  {
+    question: "Apa itu thermal putty dan kapan digunakan?",
+    answer: "Thermal putty adalah senyawa penghantar panas bertekstur dempul lunak yang mampu mengikuti celah bervariasi antara 0.2 hingga 2.0 milimeter tanpa memberikan gaya dorong balik berlebih pada pelat heatsink."
+  }
+]
+---
+
+import { Image } from 'astro:assets';
+import still_thermal_heatsink from '../../assets/stills/thermal-heatsink.png';
+
+Mengganti bantalan termal (*thermal pad*) dengan olesan pasta termal (*thermal paste*) pada memori VRAM atau sirkuit VRM laptop merupakan salah satu penyebab kegagalan komponen grafis pasca-servis mandiri. Pasta termal hanya dirancang untuk mengisi pori-pori mikroskopik pada celah di bawah 0,08 milimeter, sedangkan jarak fisik antara permukaan keping VRAM dan pelat pendingin tembaga berkisar antara 0,5 hingga 1,5 milimeter.
+
+Ketika celah selebar 1 milimeter hanya diberi pasta cair, tegangan permukaan pasta tidak sanggup mempertahankan kontak penuh saat terjadi pemuaian logam. Akibatnya terbentuk kantong udara (*air gap*) dengan nilai konduktivitas termal hanya 0,026 W/mK yang justru menahan panas di dalam keping memori.
+
+## Perbedaan Geometri Kontak pada Sistem Pendingin Laptop
+
+Satu unit pipa kalor (*heatpipe*) pada laptop gaming harus menyerap panas dari dua kelompok komponen dengan profil mekanis yang berbeda:
+
+<figure class="my-8 iso-plate overflow-hidden">
+  <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+    <span class="font-bold">FIG. 02 // GEOMETRI KONTAK HEATSINK TEMBAGA TERHADAP DIE DAN VRAM</span>
+    <span>ANALISIS TERMODINAMIKA</span>
+  </div>
+  <div class="bg-[#F4F4F4] p-3 flex items-center justify-center">
+    <Image
+      src={still_thermal_heatsink}
+      widths={[640, 1080]}
+      sizes="(min-width: 896px) 896px, 100vw"
+      alt="Modul heatsink tembaga laptop gaming dan perbandingan celah die prosesor vs VRAM"
+      class="w-full h-auto max-h-[520px] object-contain !my-0 !border-0"
+    />
+  </div>
+  <figcaption class="px-4 py-2.5 bg-elevated border-t border-line text-xs font-mono text-ink-secondary">
+    Penampang modul heatsink: blok tembaga utama menekan die CPU secara langsung, sedangkan sayap pelat sekunder membutuhkan bantalan elastis untuk menjangkau VRAM dan VRM.
+  </figcaption>
+</figure>
+
+### 1. Inti Silikon Utama (Die CPU dan GPU)
+Prosesor laptop modern menggunakan kemasan *bare-die* tanpa tudung pelindung logam (*Integrated Heat Spreader*). Permukaan silikon murni bersentuhan langsung dengan pelat tembaga yang dikencangkan oleh baut berpegas (*spring-loaded screws*) dengan tekanan 35 hingga 50 psi. Karena celahnya kurang dari 0,05 milimeter, media antarmuka yang dibutuhkan adalah pasta termal berviskositas tinggi atau *Phase Change Material* (PCM) seperti PTM7950.
+
+### 2. Komponen Pendukung (Memori VRAM dan MOSFET VRM)
+Keping memori GDDR6 dan transistor MOSFET memiliki ketinggian kemasan yang berbeda-beda di atas permukaan PCB. Untuk mengakomodasi toleransi produksi tanpa mematahkan sambungan timah BGA di bawah chip, pabrikan menyisakan celah 0,5 mm hingga 1,5 mm antara komponen tersebut dan pelat heatsink. Celah ini wajib diisi dengan *thermal pad* silikon elastis sesuai ukuran milimeter aslinya atau menggunakan *thermal putty*.
+
+## Dua Kesalahan Pemasangan yang Sering Terjadi
+
+Kesalahan pemilihan ketebalan material antarmuka termal memicu dua masalah berlawanan di meja kerja:
+
+### Bantalan Terlalu Tebal Mengangkat Blok CPU
+Memasang *thermal pad* berukuran 1,5 mm atau berbahan terlalu keras (*Shore OO hardness* tinggi) pada celah VRAM yang seharusnya berukuran 0,75 mm akan mengganjal pelat heatsink. Blok tembaga utama terangkat sepersekian milimeter dari atas die CPU. Begitu laptop dinyalakan, suhu inti prosesor langsung menyentuh 95–100 derajat Celsius dan mengalami *thermal throttling* berat meskipun kipas berputar maksimum.
+
+### Pasta Cair pada Celah Lebar (Efek Pump-Out)
+Sebaliknya, apabila *thermal pad* bawaan pabrik dilepas lalu diganti dengan olesan pasta termal tebal di atas VRAM, siklus pemuaian dan penyusutan pelat tembaga akan memompa pasta keluar dari permukaan chip (*pump-out effect*). Dalam beberapa minggu pemakaian, keping memori grafis kehilangan kontak termal ke heatsink, memicu munculnya garis kotak-kotak (*artefak VRAM*) atau kode galat *Error 43* pada pengelola perangkat.
+
+## Standar Perawatan Termal Berkala
+
+Untuk menjaga perpindahan panas tetap presisi dan mencegah [kerusakan modul VRM akibat suhu berlebih](/bedah/kenapa-panas-bikin-laptop-mati-total-vrm/), pemeriksaan debu radiator serta penggantian material antarmuka melalui layanan [cleaning dan repaste laptop di Bandung](https://fixnow.id/cleaning-repaste-laptop-bandung/?utm_source=bedahgadget&utm_medium=article_inline) disarankan setiap 8 hingga 12 bulan. Pengukuran ketebalan celah setiap seri laptop harus dicocokkan terlebih dahulu agar tekanan mekanis baut heatsink tetap seimbang di atas die silikon maupun komponen memori.
+
+## Sumber
+
+- S. V. Garimella, ["Prediction of Thermal Contact Resistance", *Electronics Cooling*, Nov 2003](https://www.electronics-cooling.com/2003/11/prediction-of-thermal-contact-resistance/).
+- The Engineering ToolBox, [*Thermal Conductivity of Common Materials and Gases*](https://www.engineeringtoolbox.com/thermal-conductivity-d_429.html).
+- ARCTIC GmbH, [*Technical Documentation: Thermal Interface Materials*](https://arctic.de/en/products/cooling/thermal-interface).
+- Framework Computer, [*Heatsink and Fan Replacement Guide*](https://guides.frame.work/Guide/Heatsink+and+Fan+Replacement+Guide/84).
+- Igor Wallossek (Igor's Lab), [*Warpage, Thermal Paste Application and Hotspots on Bare Dies*](https://www.igorslab.de/en/warpage-cpu-gpu-dies-thermal-paste-hotspots/).
+- Laird Technologies, *Tflex Series High Performance Thermal Gap Filler Datasheets*.
+- Honeywell Electronic Materials, *PTM7950 Phase Change Material Technical Note*.

@@ -1,0 +1,102 @@
+---
+title: "Kenapa Panas Berlebih Bikin Laptop Mati Total? (Bedah Sirkuit VRM & Die 12nm)"
+description: "Suhu di atas 130 derajat Celsius menembus lapisan isolator silikon dioksida (SiO2) setebal 12 nanometer pada MOSFET modul VRM hingga mengalirkan tegangan 19 Volt langsung ke inti CPU."
+pubDate: 2026-10-28
+category: "bedah"
+tags: ["vrm", "motherboard", "panas", "mosfet", "cpu"]
+author: "Tim Riset BedahGadget.id"
+image: "../../assets/stills/vrm-motherboard.png"
+featured: true
+repairabilityScore: 4
+failurePoints: [
+  "Lapisan isolator SiO2 12nm pada gerbang MOSFET tembus saat suhu melampaui 130 derajat Celsius secara berkelanjutan.",
+  "Tegangan adaptor 19V bocor langsung ke jalur inti prosesor (Vcore 1.0V) ketika MOSFET sisi tinggi mengalami hubung singkat.",
+  "Kapasitor filter mengering dan mengalami penurunan resistansi isolasi akibat siklus panas tinggi di sekitar induktor VRM."
+]
+fixnowTopic: "vrm"
+specDetails: [
+  { label: "Tegangan Masuk (Vin)", value: "19.0 Volt - 20.0 Volt DC" },
+  { label: "Tegangan Keluar Inti (Vcore)", value: "0.80 Volt - 1.25 Volt DC" },
+  { label: "Arus Puncak (Peak Current)", value: "60 Ampere - 120 Ampere / Fase" },
+  { label: "Ketebalan Gerbang Die MOSFET", value: "12 Nanometer (Lapisan SiO2)" },
+  { label: "Ambang Kerusakan Termal Die", value: "> 135 Derajat Celsius" },
+  { label: "Induktor Filter", value: "Choke Ferrite R22 / R36" }
+]
+faqs: [
+  {
+    question: "Apakah laptop yang mati total akibat VRM rusak masih bisa diperbaiki?",
+    answer: "Bisa, selama tegangan 19V belum menembus dan merusak die silikon CPU utama. Teknisi mikrosolder akan melepas MOSFET yang mengalami hubung singkat, memeriksa resistansi jalur Vcore terhadap ground, dan mengganti komponen power stage serta IC driver PWM sesuai skema boardview."
+  },
+  {
+    question: "Kenapa thermal paste tidak cukup untuk melindungi VRM?",
+    answer: "Thermal paste dirancang untuk celah mikroskopik antara die prosesor dan pelat tembaga heatsink. Komponen VRM memiliki selisih tinggi 0.5 hingga 1.5 milimeter terhadap heatsink sehingga memerlukan thermal pad atau thermal putty untuk menghantarkan panas."
+  }
+]
+---
+
+import { Image } from 'astro:assets';
+import still_vrm_die from '../../assets/stills/vrm-die.png';
+
+Laptop yang mati total setelah bekerja pada suhu tinggi jarang diawali oleh kerusakan inti prosesor itu sendiri. Titik kegagalan paling sering ditemukan pada sirkuit VRM (*Voltage Regulator Module*), khususnya lapisan isolator silikon dioksida (SiO₂) setebal 12 nanometer di dalam gerbang transistor MOSFET yang mengalami kerusakan dielektrik ketika suhu komponen melampaui 130 derajat Celsius.
+
+Ketika isolator mikroskopik tersebut tembus, transistor daya kehilangan fungsi pemutus arus. Tegangan searah 19 Volt dari adaptor yang semestinya diturunkan menjadi sekitar 1 Volt langsung mengalir menuju jalur catu daya inti CPU (*Vcore*).
+
+## Rantai Penurunan Tegangan: 19 Volt Menjadi 1 Volt
+
+Motherboard laptop menerima suplai listrik searah 19 Volt hingga 20 Volt dari adaptor daya. Sebaliknya, transistor logika di dalam prosesor dan chip grafis beroperasi pada rentang tegangan rendah antara 0,8 Volt hingga 1,25 Volt dengan kebutuhan arus mencapai 60 hingga 120 Ampere.
+
+Proses konversi daya ini dijalankan oleh sirkuit VRM bertipe *synchronous buck converter* yang tersusun atas tiga komponen utama pada setiap fasenya:
+
+1. *High-Side MOSFET* bertugas sebagai sakelar frekuensi tinggi yang membuka dan menutup 300.000 hingga 1.000.000 kali per detik (300 kHz – 1 MHz) untuk mencacah tegangan 19 Volt.
+2. *Low-Side MOSFET* menghubungkan sirkuit ke jalur *ground* saat *high-side* tertutup agar arus induksi tetap mengalir terkendali.
+3. *Choke Induktor* (R22/R36) berupa kumparan tembaga berinti ferit yang meratakan denyut arus bersama deretan kapasitor MLCC dan tantalum.
+
+<figure class="my-8 iso-plate overflow-hidden">
+  <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+    <span class="font-bold">FIG. 02 // PENAMPANG DIE SILIKON MOSFET &amp; ISOLATOR 12NM</span>
+    <span>ANALISIS MIKROSTRUKTUR</span>
+  </div>
+  <div class="bg-[#F4F4F4] p-3 flex items-center justify-center">
+    <Image
+      src={still_vrm_die}
+      widths={[640, 1080]}
+      sizes="(min-width: 896px) 896px, 100vw"
+      alt="Penampang mikroskopik die MOSFET VRM dan lapisan isolator silikon 12nm"
+      class="w-full h-auto max-h-[520px] object-contain !my-0 !border-0"
+    />
+  </div>
+  <figcaption class="px-4 py-2.5 bg-elevated border-t border-line text-xs font-mono text-ink-secondary">
+    Penampang gerbang die silikon MOSFET: lapisan isolator oksida 12nm mengalami kegagalan dielektrik ketika suhu melampaui batas spesifikasi.
+  </figcaption>
+</figure>
+
+## Mekanisme Tembusnya Lapisan Die 12 Nanometer
+
+Di dalam kemasan MOSFET berukuran 5×6 milimeter terdapat lempengan silikon murni. Gerbang pengatur arus (*Gate*) dipisahkan dari kanal penghantar oleh lapisan isolator silikon dioksida (SiO₂) setebal kurang lebih 12 nanometer, atau setara dengan sekitar 60 lapis atom silikon.
+
+Saat sirip radiator laptop tertutup debu dan bantalan termal VRM mengering, suhu lokal pada badan MOSFET dapat naik melampaui 115 derajat Celsius. Kombinasi medan listrik tinggi dan akumulasi panas ini memicu kebocoran arus gerbang (*Time-Dependent Dielectric Breakdown*). Struktur silikon di dalam kemasan meleleh, menyatukan terminal *Drain* (19V) dan *Source* (1V) pada *High-Side MOSFET* secara permanen.
+
+Pada kondisi hubung singkat (*short-circuit*) antara *Drain* dan *Source*, jalur 19 Volt terhubung langsung ke jalur *Vcore*. Jika rangkaian proteksi *Over-Voltage Protection* (OVP) pada IC pengontrol PWM terlambat memutus gerbang utama, tegangan 19 Volt akan merusak inti silikon prosesor dalam hitungan mikrodetik.
+
+## Gejala Awal Sebelum VRM Mengalami Hubung Singkat
+
+Sensor suhu yang terbaca oleh aplikasi pemantau sistem umumnya hanya menampilkan suhu inti CPU dan GPU, bukan suhu komponen MOSFET pada papan induk. Namun, degradasi termal pada area VRM dapat dikenali dari tiga gejala fisik di meja kerja:
+
+- Penurunan frekuensi prosesor secara tiba-tiba ke angka dasar (misalnya 0,79 GHz atau 0,40 GHz) saat menjalankan beban berat meskipun suhu inti CPU terlihat masih di bawah 80 derajat Celsius.
+- Suhu permukaan bodi di area atas papan ketik (dekat engsel layar) terasa jauh lebih panas dibandingkan area pembuangan angin kipas.
+- Indikator lampu pada adaptor charger langsung padam atau berkedip ketika kabel daya dicolokkan ke laptop, menandakan proteksi arus pendek adaptor sedang bekerja menahan korslet di jalur 19 Volt.
+
+## Pencegahan dan Prosedur Penanganan di Meja Servis
+
+Mengganti pasta termal pada CPU saja tidak melindungi sirkuit daya apabila bantalan termal di atas deretan MOSFET dan induktor sudah getas atau robek. Komponen VRM memiliki selisih tinggi terhadap pelat pendingin sehingga wajib dilapisi [thermal pad atau thermal putty](/bedah/thermal-paste-vs-thermal-pad-laptop/) dengan ketebalan dan kompresibilitas yang sesuai.
+
+Apabila laptop sudah mati total dengan gejala lampu adaptor padam saat dicolokkan, hindari memaksa menyalakan unit atau menyuntikkan tegangan tanpa pengukuran. Prosedur perbaikan di workshop [service motherboard laptop Bandung](https://fixnow.id/service-motherboard-laptop-bandung/?utm_source=bedahgadget&utm_medium=article_inline) diawali dengan pengukuran hambatan jalur *Vcore* terhadap *ground* menggunakan multimeter, pemeriksaan skema boardview, serta penggantian komponen *power stage* menggunakan teknik mikrosolder terukur.
+
+## Sumber
+
+- USB Implementers Forum, *USB Power Delivery Specification Revision 3.1* (19V-20V charging rails).
+- Intel Corporation, *13th Generation Intel Core Processor Families Datasheet, Volume 1 of 2* (VCC Core specifications and Absolute Maximum Ratings).
+- AMD, *AMD Ryzen 7000 Series Processor Power and Thermal Design Guidelines*.
+- Texas Instruments, *Application Report SLVA882: Understanding MOSFET Failure Modes in Buck Converters*.
+- B. Jayant Baliga, *Fundamentals of Power Semiconductor Devices*, Springer Science & Business Media.
+- Alpha & Omega Semiconductor, *AON6414A 30V N-Channel MOSFET Datasheet* (RDS(on) vs Junction Temperature).
