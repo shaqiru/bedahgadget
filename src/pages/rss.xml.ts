@@ -1,12 +1,11 @@
+import { compareArticles } from '../lib/articles';
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
   const articles = await getCollection('articles');
-  const sortedArticles = articles.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  const sortedArticles = articles.sort(compareArticles);
 
   return rss({
     title: 'BedahGadget.id: Sains Hardware & Bedah Anatomi Laptop',

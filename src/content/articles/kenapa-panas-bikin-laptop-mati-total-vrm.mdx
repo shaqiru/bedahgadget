@@ -32,6 +32,12 @@ faqs: [
     answer: "Thermal paste dirancang untuk celah mikroskopik antara die prosesor dan pelat tembaga heatsink. Komponen VRM memiliki selisih tinggi 0.5 hingga 1.5 milimeter terhadap heatsink sehingga memerlukan thermal pad atau thermal putty untuk menghantarkan panas."
   }
 ]
+llms:
+  heading: "Bedah VRM & Kerusakan Motherboard Akibat Panas"
+  summary: "Bedah sirkuit buck converter VRM, tembusnya die SiO2 12nm, dan lonjakan tegangan adaptor 19V ke prosesor."
+  topics: "Voltage Regulator Module (VRM), MOSFET, Buck Converter, Die Silikon 12nm, Vcore."
+  digest: "Laptop mati total karena suhu di atas 130°C menembus lapisan isolator gerbang SiO2 12 nanometer pada High-Side MOSFET, menyebabkan tegangan charger 19V bocor langsung ke jalur inti CPU 1V dan menghanguskan logika prosesor."
+  service: "Pengukuran hambatan sirkuit menggunakan ohmmeter, pengangkatan MOSFET yang korslet via stasiun mikrosolder, dan penggantian modul DrMOS. Kontak FixNow.id untuk penanganan motherboard di Bandung."
 ---
 
 import { Image } from 'astro:assets';

@@ -1,4 +1,5 @@
 ---
+import { compareArticles } from '../../lib/articles';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import JsonLd from '../../components/JsonLd.astro';
@@ -11,7 +12,7 @@ const articles = await getCollection(
   'articles',
   ({ data }) => data.category === 'bedah'
 );
-const sortedArticles = articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const sortedArticles = articles.sort(compareArticles);
 
 const allTags = [...new Set(sortedArticles.flatMap((a) => a.data.tags))];
 

@@ -1,4 +1,5 @@
 ---
+import { compareArticles } from '../../lib/articles';
 import { getCollection } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 
@@ -17,7 +18,7 @@ const { article } = Astro.props;
 const allArticles = await getCollection('articles');
 const related = allArticles
   .filter((a) => a.slug !== article.slug)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .sort(compareArticles)
   .slice(0, 3);
 ---
 
