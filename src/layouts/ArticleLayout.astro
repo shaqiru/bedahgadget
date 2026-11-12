@@ -127,11 +127,11 @@ const showsServiceScore =
 
       <!-- Isometric Plate Figure (4:3 uncropped diagram with eager LCP) -->
       <figure class="mb-10 iso-plate overflow-hidden">
-        <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+        <div class="px-4 py-2 bg-plate-head border-b border-plate-line flex items-center justify-between font-mono text-[11px] tabular-nums text-plate-ink">
           <span class="font-bold" set:html={category.heroTitle} />
           <span set:html={category.heroMeta} />
         </div>
-        <div class="bg-[#F4F4F4] p-3 sm:p-5 flex items-center justify-center">
+        <div class="bg-plate p-3 sm:p-5 flex items-center justify-center">
           <Image
             src={article.data.image}
             alt={article.data.title}
@@ -187,7 +187,7 @@ const showsServiceScore =
             {article.data.tags.map((tag) => (
               <a
                 href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`}
-                class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 bg-surface border border-line text-ink-secondary hover:border-ocean hover:text-accent-link transition-colors"
+                class="inline-flex min-h-11 min-w-11 items-center justify-center px-3 bg-surface border border-line text-ink-secondary hover:border-line-strong hover:text-accent-link transition-colors"
               >
                 #{tag}
               </a>

@@ -7,32 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy: {
-          DEFAULT: '#0B132B',
-          900: '#070C1B',
-          800: '#0B132B',
-          700: '#15224D',
-          600: '#1F326E',
+        // Plate: latar gambar still dan header figur, tetap terang di kedua tema karena gambar berlatar putih.
+        plate: {
+          DEFAULT: '#F5F4F1',
+          head: '#E4DDD1',
+          line: '#CFC6B8',
+          ink: '#17120F',
         },
-        ocean: {
-          DEFAULT: '#0169E9',
-          light: '#3388EE',
-          dark: '#0152B7',
-        },
-        clover: {
-          DEFAULT: '#25D366',
-          light: '#4AE182',
-          dark: '#1CA850',
-        },
-        chalk: {
-          DEFAULT: '#F4F4F4',
-          50: '#FFFFFF',
-          100: '#F4F4F4',
-          200: '#E8E8E8',
-          300: '#D5D5D5',
-        },
-        brandgray: '#7C869B',
-        brandred: '#E5484D',
         page: 'rgb(var(--bg-page-rgb) / <alpha-value>)',
         surface: 'rgb(var(--bg-surface-rgb) / <alpha-value>)',
         elevated: 'rgb(var(--bg-elevated-rgb) / <alpha-value>)',
@@ -49,7 +30,11 @@ export default {
           link: 'rgb(var(--accent-link-rgb) / <alpha-value>)',
           positive: 'rgb(var(--accent-positive-rgb) / <alpha-value>)',
           danger: 'rgb(var(--accent-danger-rgb) / <alpha-value>)',
+          // Isian saja; dilarang sebagai warna teks (scripts/check-theme-css.mjs).
+          hot: 'rgb(var(--accent-hot-rgb) / <alpha-value>)',
+          heat: 'rgb(var(--accent-heat-rgb) / <alpha-value>)',
         },
+        'on-heat': 'rgb(var(--text-on-heat-rgb) / <alpha-value>)',
         action: {
           DEFAULT: 'rgb(var(--bg-action-rgb) / <alpha-value>)',
           hover: 'rgb(var(--bg-action-hover-rgb) / <alpha-value>)',
@@ -62,8 +47,9 @@ export default {
       fontFamily: {
         brand: ['"Archivo Black"', 'system-ui', 'sans-serif'],
         heading: ['"Archivo Black"', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+        sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        // Font mono sistem: tanpa unduhan, supaya FCP tidak tertahan (spec brand-system).
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace'],
       },
       typography: {
         DEFAULT: {

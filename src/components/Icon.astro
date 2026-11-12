@@ -1,0 +1,21 @@
+---
+// Ikon Phosphor (@phosphor-icons/core), dirender sebagai SVG inline saat build. Tidak ada JS ikon di browser.
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+
+export interface Props {
+  name: string;
+  weight?: 'regular' | 'bold' | 'fill';
+  class?: string;
+  label?: string; // isi hanya bila ikon berdiri sendiri tanpa teks
+}
+
+const { name, weight = 'regular', class: className = 'h-4 w-4', label } = Astro.props;
+const require = createRequire(import.meta.url);
+const file = weight === 'regular' ? `${name}.svg` : `${name}-${weight}.svg`;
+const raw = readFileSync(require.resolve(`@phosphor-icons/core/assets/${weight}/${file}`), 'utf8');
+const a11y = label ? `role="img" aria-label="${label.replace(/"/g, '&quot;')}"` : 'aria-hidden="true" focusable="false"';
+const svg = raw.replace('<svg ', `<svg class="${className}" ${a11y} `);
+---
+
+<Fragment set:html={svg} />

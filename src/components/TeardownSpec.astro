@@ -1,4 +1,6 @@
 ---
+import Icon from './Icon.astro';
+
 export interface SpecItem {
   label: string;
   value: string;
@@ -79,7 +81,8 @@ if (specDetails.length === 0 && failurePoints.length === 0 && repairabilityScore
     {
       failurePoints.length > 0 && (
         <div class="p-4 bg-elevated/50 border border-line space-y-2">
-          <div class="font-mono text-xs font-bold uppercase text-accent-danger">
+          <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-danger">
+            <Icon name="warning" weight="bold" class="h-4 w-4 shrink-0" />
             TITIK RAWAN KEGAGALAN FISIK YANG TERIDENTIFIKASI
           </div>
           <ul class="text-xs sm:text-sm text-ink-secondary space-y-1.5 list-disc pl-4">

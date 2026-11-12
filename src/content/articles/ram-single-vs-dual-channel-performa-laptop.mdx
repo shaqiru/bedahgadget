@@ -48,11 +48,11 @@ Pengontrol memori terintegrasi (*Integrated Memory Controller* / IMC) di dalam p
 Saat hanya satu slot SO-DIMM yang terisi, seluruh antrean instruksi CPU, pemrosesan tekstur grafis, dan pembacaan berkas sistem operasi harus bergantian melewati satu kanal 64-bit. Sebaliknya, ketika kedua slot diisi dengan kapasitas yang seimbang, IMC mengaktifkan mode *128-bit Interleaved*: prosesor dapat membaca dan menulis data ke kedua modul secara paralel pada siklus detak (*clock cycle*) yang sama.
 
 <figure class="my-8 iso-plate overflow-hidden">
-  <div class="px-4 py-2 bg-[#E6E9F0] border-b border-[#CBD2E0] flex items-center justify-between font-mono text-[11px] tabular-nums text-[#0B132B]">
+  <div class="px-4 py-2 bg-plate-head border-b border-plate-line flex items-center justify-between font-mono text-[11px] tabular-nums text-plate-ink">
     <span class="font-bold">FIG. 02 // KONFIGURASI DUA SLOT SO-DIMM PADA MOTHERBOARD LAPTOP</span>
     <span>ARSITEKTUR BUS MEMORI</span>
   </div>
-  <div class="bg-[#F4F4F4] p-3 flex items-center justify-center">
+  <div class="bg-plate p-3 flex items-center justify-center">
     <Image
       src={still_ram_slot}
       widths={[640, 1080]}

@@ -57,13 +57,13 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
     tabindex="-1"
     aria-hidden="true"
   >
-    <div class="flex items-center justify-between px-3 py-1.5 bg-[#E6E9F0] border-b border-[#CBD2E0] text-[11px] font-mono tabular-nums text-[#0B132B]">
+    <div class="flex items-center justify-between px-3 py-1.5 bg-plate-head border-b border-plate-line text-[11px] font-mono tabular-nums text-plate-ink">
       <span class="font-semibold">{indexNumber ? `FIG. ${indexNumber}` : currentCategory.code}</span>
       <span>
         {repairabilityScore !== undefined ? `SKOR SERVIS: ${repairabilityScore}/10` : `${readingTime} MENIT BACA`}
       </span>
     </div>
-    <div class="aspect-[4/3] w-full bg-[#F4F4F4] flex items-center justify-center p-2">
+    <div class="aspect-[4/3] w-full bg-plate flex items-center justify-center p-2">
       <Image
         src={image}
         alt={title}
@@ -120,10 +120,10 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
             class:list={[
               'px-2 py-0.5 font-bold border',
               repairabilityScore >= 7
-                ? 'border-clover text-ink bg-clover/10'
+                ? 'border-accent-positive text-ink bg-accent-positive/10'
                 : repairabilityScore >= 5
-                  ? 'border-ocean text-ink bg-ocean/10'
-                  : 'border-brandred text-accent-danger bg-brandred/10',
+                  ? 'border-accent-link text-ink bg-accent-link/10'
+                  : 'border-accent-danger text-accent-danger bg-accent-danger/10',
             ]}
           >
             {repairabilityScore}/10

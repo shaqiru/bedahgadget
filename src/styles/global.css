@@ -11,94 +11,104 @@
   font-display: swap;
 }
 
+/* Palet termal. Pasangan hex dan kanal RGB wajib identik (diperiksa scripts/check-theme-css.mjs). */
 :root {
   color-scheme: light;
-  --color-navy: #0B132B;
-  --color-ocean: #0169E9;
-  --color-clover: #25D366;
-  --color-chalk: #F4F4F4;
-  --color-gray: #7C869B;
-  --color-red: #E5484D;
 
-  /* Pasangan hex dan kanal RGB wajib identik (diperiksa scripts/check-theme-css.mjs). */
-  --bg-page: #F4F4F4;
-  --bg-page-rgb: 244 244 244;
-  --bg-surface: #FFFFFF;
-  --bg-surface-rgb: 255 255 255;
-  --bg-elevated: #E9ECF2;
-  --bg-elevated-rgb: 233 236 242;
-  --bg-plate: #F4F4F4;
-  --bg-plate-rgb: 244 244 244;
+  --bg-page: #EFE9DF;
+  --bg-page-rgb: 239 233 223;
+  --bg-surface: #F8F5EF;
+  --bg-surface-rgb: 248 245 239;
+  --bg-elevated: #E4DDD1;
+  --bg-elevated-rgb: 228 221 209;
 
-  --text-primary: #0B132B;
-  --text-primary-rgb: 11 19 43;
-  --text-secondary: #24304D;
-  --text-secondary-rgb: 36 48 77;
-  --text-muted: #4A5673;
-  --text-muted-rgb: 74 86 115;
+  --text-primary: #17120F;
+  --text-primary-rgb: 23 18 15;
+  --text-secondary: #3D352F;
+  --text-secondary-rgb: 61 53 47;
+  --text-muted: #5A5048;
+  --text-muted-rgb: 90 80 72;
 
-  --accent-link: #0152B7;
-  --accent-link-rgb: 1 82 183;
-  --accent-positive: #137337;
-  --accent-positive-rgb: 19 115 55;
-  --accent-danger: #B4232A;
-  --accent-danger-rgb: 180 35 42;
+  --accent-link: #1F4E79;
+  --accent-link-rgb: 31 78 121;
+  --accent-positive: #2F6B3A;
+  --accent-positive-rgb: 47 107 58;
+  /* Teks merah (label bahaya, ikon kecil). */
+  --accent-danger: #B02E0E;
+  --accent-danger-rgb: 176 46 14;
+  /* Isian saja, jangan dipakai sebagai warna teks. */
+  --accent-hot: #E2401C;
+  --accent-hot-rgb: 226 64 28;
+  --accent-heat: #FFB81C;
+  --accent-heat-rgb: 255 184 28;
+  --text-on-heat: #17120F;
+  --text-on-heat-rgb: 23 18 15;
 
-  --border-hairline: #CBD2E0;
-  --border-hairline-rgb: 203 210 224;
-  --border-strong: #0B132B;
-  --border-strong-rgb: 11 19 43;
+  --border-hairline: #CFC6B8;
+  --border-hairline-rgb: 207 198 184;
+  --border-strong: #17120F;
+  --border-strong-rgb: 23 18 15;
 
-  /* Aksi utama (tombol CTA): latar navy dengan teks terang di tema terang. */
-  --bg-action: #0B132B;
-  --bg-action-rgb: 11 19 43;
-  --bg-action-hover: #0152B7;
-  --bg-action-hover-rgb: 1 82 183;
-  --text-on-action: #F4F4F4;
-  --text-on-action-rgb: 244 244 244;
+  /* Aksi utama (CTA perbaikan): merah termal gelap dengan teks putih. */
+  --bg-action: #B02E0E;
+  --bg-action-rgb: 176 46 14;
+  --bg-action-hover: #8E240A;
+  --bg-action-hover-rgb: 142 36 10;
+  --text-on-action: #FFFFFF;
+  --text-on-action-rgb: 255 255 255;
   --text-on-action-hover: #FFFFFF;
   --text-on-action-hover-rgb: 255 255 255;
+
+  /* Material glass (layer fungsional saja). */
+  --glass-fill: rgb(248 245 239 / 0.78);
+  --glass-edge: rgb(255 255 255 / 0.4);
 }
 
 html[data-theme='dark'] {
   color-scheme: dark;
-  --bg-page: #0B132B;
-  --bg-page-rgb: 11 19 43;
-  --bg-surface: #101A38;
-  --bg-surface-rgb: 16 26 56;
-  --bg-elevated: #16234A;
-  --bg-elevated-rgb: 22 35 74;
-  --bg-plate: #F4F4F4;
-  --bg-plate-rgb: 244 244 244;
+  --bg-page: #17120F;
+  --bg-page-rgb: 23 18 15;
+  --bg-surface: #201A16;
+  --bg-surface-rgb: 32 26 22;
+  --bg-elevated: #2B241F;
+  --bg-elevated-rgb: 43 36 31;
 
-  --text-primary: #F4F4F4;
-  --text-primary-rgb: 244 244 244;
-  --text-secondary: #D5DCE8;
-  --text-secondary-rgb: 213 220 232;
-  --text-muted: #96A2BA;
-  --text-muted-rgb: 150 162 186;
+  --text-primary: #EFE9DF;
+  --text-primary-rgb: 239 233 223;
+  --text-secondary: #CFC6B8;
+  --text-secondary-rgb: 207 198 184;
+  --text-muted: #A89E93;
+  --text-muted-rgb: 168 158 147;
 
-  --accent-link: #5EA2F5;
-  --accent-link-rgb: 94 162 245;
-  --accent-positive: #25D366;
-  --accent-positive-rgb: 37 211 102;
-  --accent-danger: #FF7A7E;
-  --accent-danger-rgb: 255 122 126;
+  --accent-link: #7FB3E0;
+  --accent-link-rgb: 127 179 224;
+  --accent-positive: #6FCF8A;
+  --accent-positive-rgb: 111 207 138;
+  --accent-danger: #FF6A45;
+  --accent-danger-rgb: 255 106 69;
+  --accent-hot: #FF6A45;
+  --accent-hot-rgb: 255 106 69;
+  --accent-heat: #FFB81C;
+  --accent-heat-rgb: 255 184 28;
+  --text-on-heat: #17120F;
+  --text-on-heat-rgb: 23 18 15;
 
-  --border-hairline: #1E2D5A;
-  --border-hairline-rgb: 30 45 90;
-  --border-strong: #41568F;
-  --border-strong-rgb: 65 86 143;
+  --border-hairline: #3A322B;
+  --border-hairline-rgb: 58 50 43;
+  --border-strong: #EFE9DF;
+  --border-strong-rgb: 239 233 223;
 
-  /* Aksi utama (tombol CTA): latar clover dengan teks navy di tema gelap. */
-  --bg-action: #25D366;
-  --bg-action-rgb: 37 211 102;
-  --bg-action-hover: #3388EE;
-  --bg-action-hover-rgb: 51 136 238;
-  --text-on-action: #0B132B;
-  --text-on-action-rgb: 11 19 43;
-  --text-on-action-hover: #0B132B;
-  --text-on-action-hover-rgb: 11 19 43;
+  --bg-action: #FF6A45;
+  --bg-action-rgb: 255 106 69;
+  --bg-action-hover: #FF8A6B;
+  --bg-action-hover-rgb: 255 138 107;
+  --text-on-action: #17120F;
+  --text-on-action-rgb: 23 18 15;
+  --text-on-action-hover: #17120F;
+  --text-on-action-hover-rgb: 23 18 15;
+
+  --glass-fill: rgb(23 18 15 / 0.74);
+  --glass-edge: rgb(255 255 255 / 0.12);
 }
 
 /* Theme visibility helpers for dual SVGs */
@@ -111,8 +121,8 @@ html[data-theme='dark'] .theme-light-only {
 }
 
 ::selection {
-  background-color: #0169E9;
-  color: #FFFFFF;
+  background-color: var(--accent-heat);
+  color: var(--text-on-heat);
 }
 
 ::-webkit-scrollbar {
@@ -129,20 +139,20 @@ html[data-theme='dark'] .theme-light-only {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0169E9;
+  background: var(--accent-hot);
 }
 
 body {
   background-color: var(--bg-page);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Focus ring for keyboard navigation */
+/* Cincin fokus: 2px line-strong, offset 2px (design.md Decisions 9). */
 :focus-visible {
-  outline: 2px solid #0169E9;
+  outline: 2px solid var(--border-strong);
   outline-offset: 2px;
 }
 
@@ -163,18 +173,18 @@ body {
 }
 
 .iso-plate-interactive:hover {
-  border-color: #0169E9;
+  border-color: var(--accent-hot);
 }
 
 .iso-diagram-well {
-  background-color: #F4F4F4;
+  background-color: #F5F4F1;
   border-bottom: 1px solid var(--border-hairline);
 }
 
 /* Split-cut rule inspired by the BEDAH wordmark */
 .split-rule {
   height: 4px;
-  background: linear-gradient(90deg, #0169E9 0%, #0169E9 68%, #25D366 68%, #25D366 100%);
+  background: linear-gradient(90deg, var(--accent-hot) 0%, var(--accent-hot) 68%, var(--accent-heat) 68%, var(--accent-heat) 100%);
 }
 
 /* Editorial prose rules for MDX articles */
@@ -261,11 +271,11 @@ body {
 
 .article-prose li::marker {
   color: var(--accent-link);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 .article-prose code:not(pre code) {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 0.875em;
   background-color: var(--bg-elevated);
   color: var(--text-primary);
@@ -274,11 +284,11 @@ body {
 }
 
 .article-prose pre {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 0.875rem;
   line-height: 1.6;
-  background-color: #0B132B;
-  color: #F4F4F4;
+  background-color: #17120F;
+  color: #EFE9DF;
   padding: 1.25rem;
   border: 1px solid var(--border-hairline);
   overflow-x: auto;
@@ -297,7 +307,7 @@ body {
 }
 
 .article-prose img {
-  background-color: #F4F4F4;
+  background-color: #F5F4F1;
   border: 1px solid var(--border-hairline);
   margin-top: 1.75rem;
   margin-bottom: 1.75rem;
@@ -342,6 +352,193 @@ body {
 .article-prose th[align='left'],
 .article-prose td[align='left'] {
   text-align: left;
+}
+
+
+/* ---------- Primitif Instrument UI ---------- */
+@layer components {
+  .panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-hairline);
+  }
+
+  .panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background-color: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-hairline);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+  }
+
+  /* Readout: label kecil di atas nilai, selalu angka tabular. */
+  .readout {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .readout > dt,
+  .readout-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
+  .readout > dd,
+  .readout-value {
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  /* Designator PCB untuk bagian figur (Q3, U1, J2). */
+  .part-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    padding: 0.125rem 0.375rem;
+    border: 1px solid var(--border-strong);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background-color: var(--bg-surface);
+  }
+
+  /* Titik status selalu berdampingan dengan teks. */
+  .status-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* Garis skala bertick, dekoratif (aria-hidden di markup). */
+  .scale-rule {
+    height: 10px;
+    border-bottom: 1px solid var(--border-strong);
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--border-strong) 0 1px,
+      transparent 1px 12px
+    );
+    background-size: 100% 6px;
+    background-repeat: no-repeat;
+    background-position: bottom;
+  }
+
+  .btn {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    text-align: center;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
+  }
+
+  .btn-primary {
+    background-color: var(--bg-action);
+    color: var(--text-on-action);
+    border: 1px solid var(--bg-action);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--bg-action-hover);
+    border-color: var(--bg-action-hover);
+    color: var(--text-on-action-hover);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-strong);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-elevated);
+  }
+
+  .btn-ghost {
+    color: var(--accent-link);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .btn-ghost:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+/* ---------- Material glass (design.md Decisions 7) ----------
+   Hanya untuk layer fungsional: navbar, bar filter arsip, popover figur, CTA mengambang. */
+.glass {
+  background-color: var(--glass-fill);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: inset 0 1px 0 var(--glass-edge);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: var(--bg-surface);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background-color: var(--bg-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .glass {
+    background-color: var(--bg-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: var(--border-strong) !important;
+    border-width: 2px;
+  }
+}
+
+/* Scroll edge: pita pudar di bawah bar glass. Elemennya harus sticky atau fixed. */
+.glass-edge::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 16px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--glass-fill), transparent);
+}
+
+@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
+  .glass-edge::after {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

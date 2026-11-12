@@ -1,0 +1,227 @@
+---
+import '../styles/anatomy.css';
+import figure from '../generated/laptop-figure.svg?raw';
+import figureUrl from '../generated/laptop-figure.svg?url';
+import Icon from './Icon.astro';
+import type { ResolvedPart } from '../lib/laptop-parts';
+
+export interface Props {
+  parts: ResolvedPart[];
+}
+
+const { parts } = Astro.props;
+
+// Validasi saat build: setiap bagian harus punya hotspot di SVG hasil skrip figur.
+for (const part of parts) {
+  if (!figure.includes(`<a data-hit="${part.id}"`)) {
+    throw new Error(`Hotspot "${part.id}" tidak ada di laptop-figure.svg. Jalankan npm run figure.`);
+  }
+}
+
+// Data hotspot untuk browser: href, nama aksesibel, dan isi popover.
+const hotspots = parts.map((part) => ({
+  id: part.id,
+  href: part.href,
+  label: `${part.designator} ${part.name}: ${part.title}`,
+  designator: part.designator,
+  name: part.name,
+  title: part.title,
+  minutes: String(part.minutes),
+}));
+---
+
+<figure class="anatomy-hero border-t border-line bg-surface" aria-label="Laptop dibalik dengan panel bawah dilepas">
+  <!-- SVG (sekitar 30 KB gzip) diambil sebagai aset terpisah lalu dipasang setelah paint pertama,
+       supaya tidak memperberat HTML dan menunda FCP. -->
+  <div
+    class="anatomy-stage iso relative aspect-[760/490] w-full bg-surface"
+    data-anatomy
+    data-src={figureUrl}
+    data-hotspots={JSON.stringify(hotspots)}
+  >
+    <!-- Kartu bagian: muncul saat bagian disorot (tur, hover, fokus) dan bisa diklik ke artikelnya.
+         Pengguna keyboard memakai hotspot di figur, jadi kartu ini tidak masuk urutan Tab. -->
+    <a
+      class="anatomy-pop glass group absolute left-0 top-0 z-10 w-64 max-w-[80%] border border-line-strong p-3 shadow-sm hover:border-accent-hot"
+      aria-hidden="true"
+      tabindex="-1"
+      hidden
+      data-pop
+    >
+      <div class="flex items-center gap-2">
+        <span class="part-tag" data-pop-designator></span>
+        <span class="text-sm font-semibold text-ink" data-pop-name></span>
+      </div>
+      <p class="mt-2 text-xs leading-snug text-ink-secondary" data-pop-title></p>
+      <p class="mt-2 flex items-center justify-between font-mono text-xs tabular-nums">
+        <span class="text-ink-muted"><span data-pop-minutes></span> mnt baca</span>
+        <span class="inline-flex items-center gap-1 font-bold uppercase text-ink group-hover:underline">
+          Baca <Icon name="arrow-right" weight="bold" class="h-3.5 w-3.5" />
+        </span>
+      </p>
+    </a>
+  </div>
+
+</figure>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('[data-anatomy]');
+  const pop = stage?.querySelector<HTMLAnchorElement>('[data-pop]');
+
+  interface Hotspot {
+    id: string;
+    href: string;
+    label: string;
+    designator: string;
+    name: string;
+    title: string;
+    minutes: string;
+  }
+
+  if (stage && pop && stage.dataset.src) {
+    const src = stage.dataset.src;
+    // Ambil SVG baru setelah paint pertama supaya tidak bersaing dengan sumber daya kritis.
+    new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)))
+      .then(() => fetch(src))
+      .then((response) => (response.ok ? response.text() : Promise.reject()))
+      .then((text) => mount(stage, pop, text))
+      .catch(() => {
+        // Figur gagal dimuat: area figur tetap kosong dengan ukuran yang sudah dipesan.
+      });
+  }
+
+  function mount(stage: HTMLElement, pop: HTMLAnchorElement, text: string) {
+    // Aset SVG berasal dari build situs sendiri (same-origin), bukan masukan pengguna.
+    stage.insertAdjacentHTML('afterbegin', text);
+    const svg = stage.querySelector('svg')!;
+    const spots: Hotspot[] = JSON.parse(stage.dataset.hotspots || '[]');
+    for (const spot of spots) {
+      const hit = svg.querySelector<SVGAElement>(`a[data-hit="${spot.id}"]`);
+      if (!hit) continue;
+      hit.setAttribute('href', spot.href);
+      hit.setAttribute('aria-label', spot.label);
+      Object.assign(hit.dataset, { designator: spot.designator, name: spot.name, title: spot.title, minutes: spot.minutes });
+    }
+    const hits = [...stage.querySelectorAll<SVGAElement>('a[data-hit]')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const field = (name: string) => pop.querySelector<HTMLElement>(`[data-pop-${name}]`)!;
+
+    let active: string | null = null;
+    let hideTimer = 0;
+    let tourTimer = 0;
+    let resumeTimer = 0;
+    let tourIndex = 0;
+    let visible = false;
+
+    const hitOf = (id: string) => hits.find((hit) => hit.dataset.hit === id);
+
+    function setActive(id: string | null) {
+      if (id === active) return;
+      stage.querySelectorAll('[data-part].is-active').forEach((el) => el.classList.remove('is-active'));
+      active = id;
+      if (id) stage.querySelectorAll(`[data-part="${id}"]`).forEach((el) => el.classList.add('is-active'));
+    }
+
+    function showPop(id: string) {
+      const hit = hitOf(id);
+      if (!hit) return;
+      clearTimeout(hideTimer);
+      field('designator').textContent = hit.dataset.designator || '';
+      field('name').textContent = hit.dataset.name || '';
+      field('title').textContent = hit.dataset.title || '';
+      field('minutes').textContent = hit.dataset.minutes || '';
+      pop.href = hit.getAttribute('href') || '#';
+      pop.hidden = false;
+      const box = stage.getBoundingClientRect();
+      const scale = box.width / svg.viewBox.baseVal.width;
+      const x = Number(hit.dataset.x) * scale;
+      const y = Number(hit.dataset.y) * scale;
+      const width = pop.offsetWidth;
+      const height = pop.offsetHeight;
+      const left = Math.min(Math.max(x - width / 2, 8), box.width - width - 8);
+      const top = y - height - 14 > 8 ? y - height - 14 : Math.min(y + 14, box.height - height - 8);
+      pop.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+    }
+
+    function hidePop() {
+      pop.hidden = true;
+    }
+
+    const scheduleHide = () => {
+      clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(() => {
+        hidePop();
+        setActive(null);
+        scheduleResume();
+      }, 160);
+    };
+
+    function stopTour() {
+      clearInterval(tourTimer);
+      tourTimer = 0;
+      clearTimeout(resumeTimer);
+    }
+
+    function startTour() {
+      // Tanpa tombol jeda (keputusan proyek, design.md Decisions 8); reduced motion tetap menghentikan tur.
+      if (tourTimer || still.matches || !visible) return;
+      const step = () => {
+        // Tur hanya menyorot bagian; kartu muncul saat hover atau fokus saja.
+        setActive(hits[tourIndex % hits.length].dataset.hit || null);
+        tourIndex++;
+      };
+      step();
+      tourTimer = window.setInterval(step, 2400);
+    }
+
+    function scheduleResume() {
+      clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(startTour, 4000);
+    }
+
+    const engage = (id: string) => {
+      stopTour();
+      setActive(id);
+      showPop(id);
+    };
+
+    for (const hit of hits) {
+      const id = hit.dataset.hit!;
+      hit.addEventListener('pointerenter', () => engage(id));
+      hit.addEventListener('pointerleave', scheduleHide);
+      hit.addEventListener('focus', () => engage(id));
+      hit.addEventListener('blur', scheduleHide);
+    }
+    // Kursor di kartu: tur berhenti supaya kartu tidak berpindah saat hendak diklik.
+    pop.addEventListener('pointerenter', () => {
+      clearTimeout(hideTimer);
+      stopTour();
+    });
+    pop.addEventListener('pointerleave', scheduleHide);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !pop.hidden) hidePop();
+    });
+
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) startTour();
+      else {
+        stopTour();
+        setActive(null);
+        hidePop();
+      }
+    }).observe(stage);
+
+    still.addEventListener('change', () => {
+      if (still.matches) {
+        stopTour();
+        setActive(null);
+        hidePop();
+      } else {
+        startTour();
+      }
+    });
+
+  }
+</script>

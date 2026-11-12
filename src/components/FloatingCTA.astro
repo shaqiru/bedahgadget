@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+
+// CTA mengambang khusus layar sempit: muncul setelah hero lewat, bisa ditutup, tidak menutupi footer.
+export interface Props {
+  watch: string; // selector elemen hero
+}
+
+const { watch } = Astro.props;
+---
+
+<div id="floating-cta" data-watch={watch} hidden>
+<div class="glass fixed inset-x-3 bottom-3 z-40 flex items-center gap-2 border border-line p-2 md:hidden">
+  <a
+    href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=floating_cta"
+    target="_blank"
+    rel="noopener"
+    class="btn btn-primary flex-1"
+  >
+    Cek gratis di FixNow.id
+  </a>
+  <button
+    type="button"
+    id="floating-cta-close"
+    aria-label="Tutup ajakan servis"
+    class="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-line-strong text-ink"
+  >
+    <Icon name="x" weight="bold" class="h-4 w-4" />
+  </button>
+</div>
+</div>
+
+<script>
+  const cta = document.getElementById('floating-cta');
+  const close = document.getElementById('floating-cta-close');
+  const hero = cta && document.querySelector(cta.dataset.watch || '');
+  const footer = document.querySelector('footer');
+
+  if (cta && close && hero && footer) {
+    let heroVisible = true;
+    let footerVisible = false;
+    let dismissed = false;
+    const update = () => {
+      cta.hidden = dismissed || heroVisible || footerVisible;
+    };
+    new IntersectionObserver(([entry]) => {
+      heroVisible = entry.isIntersecting;
+      update();
+    }).observe(hero);
+    new IntersectionObserver(([entry]) => {
+      footerVisible = entry.isIntersecting;
+      update();
+    }).observe(footer);
+    close.addEventListener('click', () => {
+      dismissed = true;
+      update();
+    });
+  }
+</script>

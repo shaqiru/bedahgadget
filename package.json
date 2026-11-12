@@ -10,7 +10,8 @@
     "check": "astro check",
     "check:css": "node scripts/check-theme-css.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "figure": "node scripts/anatomy/laptop.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "@phosphor-icons/core": "^2.1.1",
     "@tailwindcss/typography": "^0.5.20",
     "typescript": "^5.9.3"
   }

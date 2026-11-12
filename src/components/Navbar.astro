@@ -1,4 +1,6 @@
 ---
+import Icon from './Icon.astro';
+
 const pathname = new URL(Astro.request.url).pathname;
 const currentPath = pathname.slice(1);
 
@@ -11,67 +13,41 @@ const navItems = [
 ];
 ---
 
-<header class="sticky top-0 z-50 bg-surface/95 backdrop-blur-sm border-b border-line">
-  <!-- Technical status strip: responsive with no mobile truncation -->
-  <div class="border-b border-line bg-elevated/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-11 flex items-center justify-between text-[11px] font-mono tabular-nums text-ink-muted">
-      <div class="flex items-center gap-2 sm:gap-4 truncate">
-        <span class="hidden sm:inline font-semibold text-ink">PUBLIKASI TEKNIS PERANGKAT KERAS</span>
-        <span class="sm:hidden font-semibold text-ink">BEDAHGADGET.ID</span>
-        <span class="text-line">|</span>
-        <span class="truncate">WORKSHOP FIXNOW.ID (JL. MANTERON NO. 12)</span>
-      </div>
-      <div class="flex items-center gap-2 shrink-0 ml-2">
-        <button
-          id="theme-toggle"
-          type="button"
-          aria-label="Ganti mode tampilan terang atau gelap"
-          class="inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-0.5 border border-line bg-surface text-ink hover:border-ocean transition-colors font-mono text-[11px]"
-        >
-          <span class="theme-light-only sm:hidden">TERANG</span>
-          <span class="theme-light-only hidden sm:inline">MODE: KERTAS (#F4F4F4)</span>
-          <span class="theme-dark-only sm:hidden">GELAP</span>
-          <span class="theme-dark-only hidden sm:inline">MODE: GELAP (#0B132B)</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main navigation bar -->
+<header class="glass glass-edge sticky top-0 z-50 border-b border-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+    <div class="flex items-center justify-between gap-3 h-16">
       <!-- Brand Logo -->
       <a href="/" class="flex min-h-11 items-center gap-2 shrink-0" aria-label="Beranda bedahgadget.id">
         <img
           src="/brand/svg/lockup-horizontal-light.svg"
-          alt="bedahgadget.id"
+          alt=""
           class="h-8 sm:h-9 w-auto hidden sm:block theme-light-only"
           width="210"
           height="36"
         />
         <img
           src="/brand/svg/lockup-horizontal-dark.svg"
-          alt="bedahgadget.id"
+          alt=""
           class="h-8 sm:h-9 w-auto hidden sm:block theme-dark-only"
           width="210"
           height="36"
         />
         <img
           src="/brand/svg/icon-light.svg"
-          alt="bedahgadget.id"
+          alt=""
           class="h-8 w-8 sm:hidden theme-light-only"
           width="32"
           height="32"
         />
         <img
           src="/brand/svg/icon-dark.svg"
-          alt="bedahgadget.id"
+          alt=""
           class="h-8 w-8 sm:hidden theme-dark-only"
           width="32"
           height="32"
         />
         <span class="font-brand text-base tracking-tight sm:hidden text-ink">
-          BEDAH<span class="text-accent-link">GADGET</span><span class="text-ink-muted text-xs">.id</span>
+          BEDAHGADGET<span class="text-ink-muted text-xs">.id</span>
         </span>
       </a>
 
@@ -83,10 +59,10 @@ const navItems = [
               href={item.href}
               aria-current={item.active ? 'page' : undefined}
               class:list={[
-                'h-16 inline-flex items-center px-4 text-sm font-medium border-b-2 transition-colors',
+                'h-16 inline-flex items-center px-3 lg:px-4 text-sm border-b-2 transition-colors',
                 item.active
-                  ? 'border-ocean text-ink font-semibold'
-                  : 'border-transparent text-ink-secondary hover:text-ink hover:border-line',
+                  ? 'border-accent-hot text-ink font-semibold'
+                  : 'border-transparent text-ink-secondary hover:text-ink hover:border-line-strong',
               ]}
             >
               {item.name}
@@ -95,38 +71,43 @@ const navItems = [
         }
       </nav>
 
-      <!-- Direct Workshop Link -->
-      <div class="hidden lg:flex items-center">
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- Toggle tema: posisi thumb mengikuti html[data-theme], jadi tidak berkedip saat dimuat. -->
+        <button
+          id="theme-toggle"
+          type="button"
+          role="switch"
+          aria-checked="false"
+          aria-label="Mode gelap"
+          class="group inline-flex min-h-11 min-w-11 items-center justify-center px-1"
+        >
+          <span class="relative inline-flex h-7 w-[3.25rem] items-center rounded-full border border-line-strong bg-elevated transition-colors group-hover:bg-surface">
+            <span class="absolute left-[3px] inline-flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-ink text-page transition-transform duration-200 ease-out dark:translate-x-6">
+              <span class="theme-light-only inline-flex"><Icon name="sun" weight="bold" class="h-3.5 w-3.5" /></span>
+              <span class="theme-dark-only inline-flex"><Icon name="moon" weight="bold" class="h-3.5 w-3.5" /></span>
+            </span>
+          </span>
+        </button>
+
         <a
           href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=navbar"
           target="_blank"
           rel="noopener"
-          class="inline-flex min-h-11 items-center gap-2 px-3.5 py-2 text-xs font-mono font-semibold bg-action text-on-action hover:bg-action-hover hover:text-on-action-hover transition-colors border border-line-strong"
+          class="btn btn-secondary hidden lg:inline-flex text-xs"
         >
-          <span>MEJA SERVIS FIXNOW.ID</span>
+          Meja servis FixNow.id
         </a>
-      </div>
 
-      <!-- Mobile Menu Toggle -->
-      <div class="flex md:hidden">
+        <!-- Mobile Menu Toggle -->
         <button
           id="mobile-menu-btn"
           type="button"
           aria-expanded="false"
           aria-controls="mobile-menu"
-          class="inline-flex min-h-11 min-w-11 items-center justify-center p-2 text-ink border border-line bg-surface hover:border-ocean"
+          class="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center p-2 text-ink border border-line-strong hover:bg-elevated"
           aria-label="Buka menu navigasi"
         >
-          <svg
-            id="menu-icon-open"
-            class="h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <Icon name="list" weight="bold" class="h-5 w-5" />
         </button>
       </div>
     </div>
@@ -141,9 +122,9 @@ const navItems = [
             href={item.href}
             aria-current={item.active ? 'page' : undefined}
             class:list={[
-              'block px-3 py-2.5 text-sm font-medium border-l-2 transition-colors',
+              'flex min-h-11 items-center px-3 text-sm font-medium border-l-2 transition-colors',
               item.active
-                ? 'border-ocean bg-elevated text-ink font-semibold'
+                ? 'border-accent-hot bg-elevated text-ink font-semibold'
                 : 'border-transparent text-ink-secondary hover:bg-elevated hover:text-ink',
             ]}
           >
@@ -156,9 +137,9 @@ const navItems = [
           href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=navbar_mobile"
           target="_blank"
           rel="noopener"
-          class="inline-flex min-h-11 items-center justify-center w-full text-center px-4 py-2.5 text-xs font-mono font-semibold bg-action text-on-action hover:bg-action-hover hover:text-on-action-hover transition-colors"
+          class="btn btn-primary w-full"
         >
-          MEJA SERVIS FIXNOW.ID BANDUNG
+          Meja servis FixNow.id Bandung
         </a>
       </div>
     </nav>
@@ -186,11 +167,14 @@ const navItems = [
   }
 
   if (themeBtn) {
+    const html = document.documentElement;
+    const sync = () => themeBtn.setAttribute('aria-checked', String(html.getAttribute('data-theme') === 'dark'));
+    sync();
     themeBtn.addEventListener('click', () => {
-      const html = document.documentElement;
       const current = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
+      sync();
       try {
         localStorage.setItem('bg-theme', next);
       } catch (e) {}

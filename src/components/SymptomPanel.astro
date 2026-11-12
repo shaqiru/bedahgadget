@@ -1,0 +1,39 @@
+---
+import { fixnowTopicMap } from '../lib/fixnow-topics';
+import type { FixnowTopic } from '../content/config';
+
+export interface Props {
+  label: string;
+  href: string;
+  title: string;
+  summary: string;
+  topic: FixnowTopic;
+  slug: string;
+}
+
+const { label, href, title, summary, topic, slug } = Astro.props;
+const service = fixnowTopicMap[topic];
+const serviceUrl = `${service.url}?utm_source=bedahgadget&utm_medium=home_symptom&utm_content=${encodeURIComponent(slug)}`;
+---
+
+<article class="panel flex flex-col">
+  <div class="split-rule" aria-hidden="true"></div>
+  <div class="panel-head">
+    <span class="inline-flex items-center gap-2 font-bold uppercase">
+      <span class="status-dot text-accent-danger" aria-hidden="true"></span>
+      Gejala: {label}
+    </span>
+  </div>
+  <div class="flex flex-col flex-1 gap-3 p-5">
+    <h3 class="font-brand text-lg leading-snug text-ink">
+      <a href={href} class="hover:text-accent-link transition-colors">{title}</a>
+    </h3>
+    <p class="text-sm text-ink-secondary leading-relaxed line-clamp-4">{summary}</p>
+    <div class="mt-auto pt-3 border-t border-line flex flex-col gap-1">
+      <a href={href} class="btn btn-ghost justify-start">Baca bedahnya</a>
+      <a href={serviceUrl} target="_blank" rel="noopener" class="btn btn-ghost justify-start">
+        Cek gratis di FixNow.id
+      </a>
+    </div>
+  </div>
+</article>

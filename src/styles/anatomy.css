@@ -1,0 +1,113 @@
+/* Gaya figur isometrik (diturunkan dari kit Anatomy, MIT, lihat scripts/anatomy/kit/LICENSE).
+   Nada dipetakan ke palet termal situs dan mengikuti html[data-theme]. */
+.iso {
+  --anatomy-paper: #f8f5ef;
+  --anatomy-face: #fffdf9;
+  --anatomy-top: #fffdf9;
+  --anatomy-shade-0: #d9cfbf;
+  --anatomy-shade-1: #e3dacc;
+  --anatomy-shade-2: #ece5d9;
+  --anatomy-shade-3: #f3eee5;
+  --anatomy-lit-top: #ffffff;
+  --anatomy-lit-shade: #eee7dc;
+  --anatomy-hi: #17120f;
+  --anatomy-mid: #8c8276;
+  --anatomy-lo: #b5ab9c;
+  --anatomy-faint: #d8cfc2;
+  --anatomy-lit: #17120f;
+  --anatomy-halo: #8a7f6e;
+  --anatomy-halo-opacity: 0.32;
+  --anatomy-dot: #3d352f;
+  --anatomy-weight: 0.75px;
+  --anatomy-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html[data-theme='dark'] .iso {
+  --anatomy-paper: #201a16;
+  --anatomy-face: #2a231e;
+  --anatomy-top: #2c251f;
+  --anatomy-shade-0: #171310;
+  --anatomy-shade-1: #1b1613;
+  --anatomy-shade-2: #1f1a16;
+  --anatomy-shade-3: #241e19;
+  --anatomy-lit-top: #3a312a;
+  --anatomy-lit-shade: #2e2621;
+  --anatomy-hi: #e4ddd1;
+  --anatomy-mid: #7d7368;
+  --anatomy-lo: #4e443b;
+  --anatomy-faint: #362e28;
+  --anatomy-lit: #ffffff;
+  --anatomy-halo: #000000;
+  --anatomy-halo-opacity: 0.85;
+  --anatomy-dot: #efe9df;
+}
+
+/* Bagian yang sedang diperiksa: ramp termal (bukan data suhu). */
+.iso [data-part].is-active {
+  --anatomy-top: #ffcf5c;
+  --anatomy-face: #ffe2a0;
+  --anatomy-paper: #fff0c2;
+  --anatomy-shade-0: #9e290c;
+  --anatomy-shade-1: #c23514;
+  --anatomy-shade-2: #e2401c;
+  --anatomy-shade-3: #f2683f;
+  --anatomy-hi: #4a1207;
+  --anatomy-mid: #9e290c;
+  --anatomy-lo: #c23514;
+  --anatomy-faint: #e88a62;
+  --anatomy-dot: #4a1207;
+}
+
+.iso-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.iso-svg path, .iso-svg circle { vector-effect: non-scaling-stroke; }
+.iso-fill { fill: var(--anatomy-paper); stroke: none; }
+.iso-solid[data-lit] > .iso-fill { fill: var(--anatomy-face); }
+.iso-shade, .iso-top { stroke: none; }
+.iso-shade[data-shade='0'] { fill: var(--anatomy-shade-0); }
+.iso-shade[data-shade='1'] { fill: var(--anatomy-shade-1); }
+.iso-shade[data-shade='2'] { fill: var(--anatomy-shade-2); }
+.iso-shade[data-shade='3'] { fill: var(--anatomy-shade-3); }
+.iso-top { fill: var(--anatomy-top); }
+.iso-solid[data-lit] > .iso-top { fill: var(--anatomy-lit-top); }
+.iso-solid[data-lit] > .iso-shade { fill: var(--anatomy-lit-shade); }
+.iso-solid[data-lit] > .iso-edge { stroke: var(--anatomy-lit); }
+.iso-halo { fill: var(--anatomy-halo); stroke: none; filter: blur(9px); opacity: var(--anatomy-halo-opacity); transform: translateY(3px); }
+.iso-line { fill: none; stroke: var(--anatomy-lo); stroke-width: var(--anatomy-weight); stroke-linecap: round; stroke-linejoin: round; }
+.iso-line[data-tone='hi'] { stroke: var(--anatomy-hi); }
+.iso-line[data-tone='mid'] { stroke: var(--anatomy-mid); }
+.iso-line[data-tone='lo'] { stroke: var(--anatomy-lo); }
+.iso-line[data-tone='faint'] { stroke: var(--anatomy-faint); }
+.iso-line[data-tone='lit'] { stroke: var(--anatomy-lit); }
+.iso-dots circle { fill: var(--anatomy-dot); stroke: none; opacity: 0.32; }
+.iso-dots[data-tone='hi'] circle { opacity: 0.85; }
+.iso-dots[data-tone='mid'] circle { opacity: 0.45; }
+.iso-dots[data-tone='lo'] circle { opacity: 0.22; }
+.iso-dots[data-tone='faint'] circle { opacity: 0.12; }
+.iso-face-text { fill: var(--anatomy-mid); font-family: var(--anatomy-mono); letter-spacing: 0.04em; }
+.iso-face-text[data-tone='hi'] { fill: var(--anatomy-hi); }
+.iso-face-text[data-tone='lo'] { fill: var(--anatomy-lo); }
+.iso-face-text[data-tone='faint'] { fill: var(--anatomy-faint); }
+
+.iso-svg .iso-shade, .iso-svg .iso-top, .iso-svg .iso-fill, .iso-svg .iso-line {
+  transition: fill 200ms ease-out, stroke 200ms ease-out;
+}
+
+/* Lapisan hit: tak terlihat, kecuali saat hover atau fokus keyboard. */
+.anatomy-hits a { outline: none; cursor: pointer; }
+.hit-shape { fill: transparent; stroke: transparent; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.hit-edge { fill: none; stroke-width: 14; pointer-events: visibleStroke; }
+.anatomy-hits a:focus-visible .hit-shape:not(.hit-edge) {
+  stroke: var(--border-strong);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+.anatomy-hits a:focus-visible .hit-edge {
+  stroke: var(--border-strong);
+  stroke-opacity: 0.6;
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.iso-wire-end { fill: var(--anatomy-paper); stroke: var(--anatomy-lo); stroke-width: var(--anatomy-weight); }
+.iso-wire[data-tone='mid'] .iso-wire-end { stroke: var(--anatomy-mid); }
+.iso-wire[data-tone='hi'] .iso-wire-end { stroke: var(--anatomy-hi); }

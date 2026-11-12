@@ -11,7 +11,8 @@ const SEMANTIC = /^--(bg|text|accent|border)-/;
 // diperiksa sama persis dengan kelas yang dihasilkan Tailwind.
 const OPACITY_CLASS =
   /(?<![\w:-])((?:[a-z0-9-]+:)*(?:bg|text|border|ring|divide)-(?:page|surface|elevated|ink|line)[a-z-]*\/\d+)/g;
-const RAW_ACCENT_TEXT = /\btext-(?:ocean|clover|brandred)\b/g;
+// Merah isian dan kuning panas hanya untuk isian; teks merah memakai text-accent-danger.
+const RAW_ACCENT_TEXT = /\btext-accent-(?:hot|heat)\b/g;
 
 function walk(dir, allowed) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -71,7 +72,7 @@ function checkRawAccentText() {
   }
   if (violations.length) {
     throw new Error(
-      `Warna brand mentah dipakai sebagai warna teks (pakai text-accent-link/positive/danger):\n  ${violations.join('\n  ')}`,
+      `Warna isian dipakai sebagai warna teks (pakai text-accent-danger atau text-ink):\n  ${violations.join('\n  ')}`,
     );
   }
 }
@@ -146,7 +147,14 @@ function checkAccentContrast(css) {
     ['terang', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
     ['gelap', parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
   ];
-  const accents = ['--accent-link', '--accent-positive', '--accent-danger'];
+  const accents = [
+    '--text-primary',
+    '--text-secondary',
+    '--text-muted',
+    '--accent-link',
+    '--accent-positive',
+    '--accent-danger',
+  ];
   const backgrounds = ['--bg-page', '--bg-surface', '--bg-elevated'];
   const problems = [];
 
@@ -173,7 +181,7 @@ function checkAccentContrast(css) {
   }
 
   if (problems.length) {
-    throw new Error(`Kontras teks aksen di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
+    throw new Error(`Kontras teks di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
   }
 }
 
@@ -185,6 +193,7 @@ function checkActionContrast(css) {
   const pairs = [
     ['--text-on-action', '--bg-action'],
     ['--text-on-action-hover', '--bg-action-hover'],
+    ['--text-on-heat', '--accent-heat'],
   ];
   const problems = [];
 
@@ -209,6 +218,40 @@ function checkActionContrast(css) {
   }
 }
 
+// Kasus terburuk teks di atas glass: fill glass dicampur dengan isian paling mencolok di bawahnya.
+function checkGlassContrast(css) {
+  const blocks = [
+    ['terang', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
+    ['gelap', parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
+  ];
+  const problems = [];
+  for (const [label, vars] of blocks) {
+    const fill = vars?.get('--glass-fill')?.match(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/);
+    if (!fill) {
+      problems.push(`${label}: --glass-fill tidak ditemukan atau formatnya bukan rgb(r g b / a)`);
+      continue;
+    }
+    const [, r, g, b, alpha] = fill.map(Number);
+    const ink = vars.get('--text-primary');
+    for (const under of ['--accent-hot', '--accent-heat', '--text-primary', '--bg-page']) {
+      const below = vars.get(under).replace('#', '');
+      const mixed =
+        '#' +
+        [r, g, b]
+          .map((channel, i) => {
+            const base = parseInt(below.slice(i * 2, i * 2 + 2), 16);
+            return Math.round(channel * alpha + base * (1 - alpha)).toString(16).padStart(2, '0');
+          })
+          .join('');
+      const ratio = contrastRatio(ink, mixed);
+      if (ratio < 4.5) problems.push(`${label}: teks di glass di atas ${under} hanya ${ratio.toFixed(2)}:1`);
+    }
+  }
+  if (problems.length) {
+    throw new Error(`Kontras teks di atas glass di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
+  }
+}
+
 try {
   const total = collectOpacityClasses().length;
   checkOpacityClasses();
@@ -216,8 +259,9 @@ try {
   checkTokenPairs(source);
   checkAccentContrast(source);
   checkActionContrast(source);
+  checkGlassContrast(source);
   checkRawAccentText();
-  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras aksen dan tombol aksi >= 4.5:1, tanpa warna brand mentah untuk teks).`);
+  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks, tombol aksi, dan glass >= 4.5:1, tanpa warna isian untuk teks).`);
 } catch (error) {
   console.error(`check:css gagal: ${error.message}`);
   process.exit(1);
