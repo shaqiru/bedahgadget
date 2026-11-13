@@ -7,7 +7,8 @@ import SymptomPanel from '../components/SymptomPanel.astro';
 import FloatingCTA from '../components/FloatingCTA.astro';
 import Icon from '../components/Icon.astro';
 import Glyph from '../components/Glyph.astro';
-import GlyphCapsule from '../components/GlyphCapsule.astro';
+import GlyphGrid from '../components/GlyphGrid.astro';
+import GlyphStrip from '../components/GlyphStrip.astro';
 import type { GlyphName } from '../lib/glyphs';
 import { getCollection } from 'astro:content';
 import { articlePath, categories } from '../lib/categories';
@@ -298,112 +299,68 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
   <section aria-labelledby="workshop-title" class="py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="panel overflow-hidden">
-        <div class="split-rule" aria-hidden="true"></div>
-        <div class="panel-head">
-          <span class="font-bold">WORKSHOP MITRA // FIXNOW.ID BANDUNG</span>
-          <span class="text-ink-muted">JL. MANTERON NO. 12, SUKALUYU, KOTA BANDUNG 40123</span>
-        </div>
+        <GlyphStrip id="strip-workshop" size={48} class="lg:hidden" />
 
-        <div class="p-6 sm:p-8 lg:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <div class="lg:col-span-6 space-y-4">
-            <h2 id="workshop-title" class="font-brand text-2xl sm:text-3xl text-ink leading-snug">
-              Apa yang dikerjakan di meja servis, dan apa yang tidak
-            </h2>
-            <p class="text-sm sm:text-base text-ink-secondary leading-relaxed max-w-[65ch]">
-              Artikel di <strong>bedahgadget.id</strong> berangkat dari temuan fisik di meja kerja{' '}
-              <a
-                href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_lab_section"
-                target="_blank"
-                rel="noopener"
-                class="text-accent-link font-semibold underline underline-offset-4"
-              >
-                FixNow.id Bandung
-              </a>. Batas pengerjaannya ditulis terbuka supaya kamu tahu sejak awal.
-            </p>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div class="p-4 bg-elevated border border-line space-y-2">
-                <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-positive border-b border-line pb-1.5">
-                  <Icon name="check" weight="bold" class="h-4 w-4 shrink-0" />
-                  Bisa dikerjakan
-                </h3>
-                <ul class="text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
-                  <li>Perbaikan jalur daya motherboard (mikrosolder komponen SMD/MOSFET/IC PWM).</li>
-                  <li>Pelacakan jalur komponen dengan skema boardview dan multimeter.</li>
-                  <li>Penggantian keping memori VRAM pada jalur grafis laptop.</li>
-                  <li>Konversi VGA diskrit ke grafis terintegrasi prosesor (Discrete-to-UMA).</li>
-                </ul>
-              </div>
-
-              <div class="p-4 bg-elevated border border-line space-y-2">
-                <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-danger border-b border-line pb-1.5">
-                  <Icon name="x" weight="bold" class="h-4 w-4 shrink-0" />
-                  Tidak dikerjakan
-                </h3>
-                <ul class="text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
-                  <li>Tidak melayani reballing chipset atau GPU utama karena tingkat kambuh tinggi.</li>
-                  <li>Tidak melayani penggantian chip GPU utama atau penggunaan BGA Rework Station.</li>
-                  <li>Khusus laptop (tidak melayani kartu VGA PC desktop).</li>
-                  <li>Tidak menarik biaya pengecekan awal sebelum estimasi disetujui pelanggan.</li>
-                </ul>
-              </div>
-            </div>
+        <div class="lg:grid lg:grid-cols-12">
+          <div
+            class="hidden lg:block lg:col-span-5 relative overflow-hidden border-r border-line g-tile-fill g-tile-plate"
+            aria-hidden="true"
+          >
+            <GlyphGrid class="absolute inset-0 h-full w-full" />
           </div>
 
-          <div class="hidden lg:flex lg:col-span-1 justify-center">
-            <GlyphCapsule
-              id="capsule-workshop"
-              glyphs={[['screw-phillips', 'heat'], ['choke', 'plate'], ['trace', 'ink'], ['capacitor', 'plate'], ['fan', 'accent']]}
-              class="w-14"
-            />
-          </div>
+          <div class="lg:col-span-7 p-6 sm:p-8 lg:p-10">
+            <div class="max-w-[52ch] lg:mx-auto">
+              <h2 id="workshop-title" class="font-brand text-2xl sm:text-3xl text-ink leading-snug">
+                Apa yang dikerjakan di meja servis, dan apa yang tidak
+              </h2>
 
-          <div class="lg:col-span-5 bg-elevated border border-line p-5 sm:p-6 space-y-4">
-            <dl class="space-y-3 text-sm text-ink-secondary">
-              <div class="readout">
-                <dt>Alamat</dt>
-                <dd class="font-sans font-medium">
-                  Jl. Manteron No. 12, Sukaluyu, Kec. Cibeunying Kaler, Kota Bandung, Jawa Barat 40123
-                </dd>
-              </div>
-              <div class="readout">
-                <dt>Jam operasional</dt>
-                <dd class="font-normal text-ink-secondary space-y-0.5">
-                  <div>Senin sampai Kamis: 09.00 sampai 17.00 WIB</div>
-                  <div>Jumat: 13.00 sampai 16.00 WIB</div>
-                  <div>Sabtu dan Minggu: 10.00 sampai 16.00 WIB</div>
-                </dd>
-              </div>
-              <div class="readout">
-                <dt>Estimasi pengerjaan</dt>
-                <dd class="font-normal text-ink-secondary space-y-0.5">
-                  <div>Servis ringan atau pembersihan termal: kurang dari 24 jam</div>
-                  <div>Jalur motherboard atau konversi UMA: 3 sampai 7 hari kerja</div>
-                </dd>
-              </div>
-              <div class="readout">
-                <dt>Antar-jemput</dt>
-                <dd class="font-normal text-ink-secondary">Gratis dalam radius 3 km dari workshop.</dd>
-              </div>
-            </dl>
+              <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                  <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-positive">
+                    <Icon name="check" weight="bold" class="h-4 w-4 shrink-0" />
+                    Bisa dikerjakan
+                  </h3>
+                  <ul class="text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
+                    <li>Perbaikan jalur daya motherboard (mikrosolder)</li>
+                    <li>Penggantian VRAM</li>
+                    <li>Konversi Discrete-to-UMA</li>
+                  </ul>
+                </div>
 
-            <div class="pt-3 border-t border-line flex flex-col gap-2.5">
-              <a
-                href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
-                target="_blank"
-                rel="noopener"
-                class="btn btn-primary w-full"
-              >
-                WhatsApp 0851-3950-6080
-              </a>
-              <a
-                href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_cta"
-                target="_blank"
-                rel="noopener"
-                class="btn btn-secondary w-full"
-              >
-                Kunjungi FixNow.id
-              </a>
+                <div class="space-y-3">
+                  <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-danger">
+                    <Icon name="x" weight="bold" class="h-4 w-4 shrink-0" />
+                    Tidak dikerjakan
+                  </h3>
+                  <ul class="text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
+                    <li>Reballing atau ganti chip GPU utama</li>
+                    <li>Kartu VGA PC desktop</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mt-8 pt-6 border-t border-line flex flex-col gap-2.5">
+                <a
+                  href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
+                  target="_blank"
+                  rel="noopener"
+                  class="btn btn-primary w-full"
+                >
+                  WhatsApp 0851-3950-6080
+                </a>
+                <a
+                  href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_cta"
+                  target="_blank"
+                  rel="noopener"
+                  class="btn btn-secondary w-full"
+                >
+                  Kunjungi FixNow.id
+                </a>
+                <p class="font-mono text-xs text-ink-muted pt-1">
+                  Cek awal gratis <span aria-hidden="true">&middot;</span> Jl. Manteron No. 12, Bandung
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -1,0 +1,43 @@
+---
+// Grid tile glyph 3 x 4: bidang dekorasi yang dipotong di tepi panel lewat preserveAspectRatio slice.
+import { tileMarkup } from '../lib/glyphs';
+import type { GlyphName, TileKind } from '../lib/glyphs';
+
+export interface Props {
+  class?: string;
+}
+
+const COLS = 3;
+const ROWS = 4;
+const TILE = 64;
+
+const sequence: [GlyphName, TileKind][] = [
+  ['screw-phillips', 'heat'],
+  ['choke', 'plate'],
+  ['trace', 'ink'],
+  ['capacitor', 'plate'],
+  ['chip', 'ink'],
+  ['fan', 'accent'],
+  ['resistor', 'plate'],
+  ['bga', 'ink'],
+  ['hotspot', 'heat'],
+  ['heatsink', 'plate'],
+  ['battery', 'accent'],
+  ['screw-torx', 'plate'],
+];
+
+const { class: className = '' } = Astro.props;
+
+const tiles = (
+  await Promise.all(
+    sequence.map(([name, kind], i) =>
+      tileMarkup(name, kind, (i % COLS) * TILE, Math.floor(i / COLS) * TILE, TILE),
+    ),
+  )
+).join('');
+const svg =
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${COLS * TILE} ${ROWS * TILE}" preserveAspectRatio="xMaxYMin slice" class="block h-full w-full ${className}" aria-hidden="true" focusable="false">` +
+  `${tiles}</svg>`;
+---
+
+<Fragment set:html={svg} />
