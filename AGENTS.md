@@ -62,7 +62,7 @@ Kategori menentukan URL: `category: "bedah"` -> `/bedah/<slug>/`, `"ai"` -> `/ai
    import { Image } from 'astro:assets';
    import still_foo from '../../assets/stills/foo.png';
 
-   <Image src={still_foo} alt="..." widths={[640, 1080]} sizes="(min-width: 896px) 896px, 100vw" class="rounded-xl border border-navy-700 w-full" />
+   <Image src={still_foo} alt="..." widths={[640, 1080]} sizes="(min-width: 896px) 896px, 100vw" class="border border-line w-full" />
    ```
 4. `fixnowTopic` memilih CTA, URL layanan, dan variasi anchor lewat `src/lib/fixnow-topics.ts`. Peta itu bertipe `Record<FixnowTopic, ...>` dari enum di `src/content/config.ts`, jadi topik baru di enum tanpa entri peta menggagalkan type check. Tanpa `fixnowTopic`, artikel tidak merender callout sama sekali. Isi hanya jika artikel memang membahas kerusakan yang relevan dengan layanan itu.
 5. Tambahkan entri di `public/llms.txt` dan `public/llms-full.txt`.
@@ -96,31 +96,30 @@ Situs menggunakan sistem **Dual Theme** (terang & gelap) yang dikendalikan oleh 
 
 ### Aturan Token Semantik (WAJIB bagi Agent)
 
-**Jangan pernah** menggunakan token warna statis gelap seperti `bg-navy`, `bg-navy-700`, `text-chalk`, `text-chalk-100` pada markup halaman baru atau kartu komponen. Penggunaan warna statis tersebut akan membuat teks tidak terbaca (kontras hancur) ketika pengguna beralih ke mode terang.
+**Jangan pernah** memakai warna mentah (hex, `bg-white`, `text-black`, atau palet Tailwind bawaan) pada markup halaman atau komponen. Palet hanya hidup sebagai CSS variable di `src/styles/global.css`, jadi warna mentah akan rusak (kontras hancur) saat pengguna berganti tema.
 
-Selalu gunakan **token semantik dinamis** yang terdaftar di `tailwind.config.mjs` dan `src/styles/global.css`:
+Selalu gunakan **token semantik dinamis** yang terdaftar di `tailwind.config.mjs` dan `src/styles/global.css` (nilai: terang / gelap):
 
-| Kategori | Token Tailwind | CSS Variable | Karakteristik (Light / Dark) |
+| Kategori | Token Tailwind | CSS Variable | Karakteristik (Terang / Gelap) |
 |---|---|---|---|
-| **Latar Belakang** | `bg-page` | `--bg-page` | Kanvas utama halaman (`#F4F4F4` / `#0B132B`) |
-| | `bg-surface` | `--bg-surface` | Kontainer kartu, plate, isi box (`#FFFFFF` / `#101A38`) |
-| | `bg-elevated` | `--bg-elevated` | Header kartu, tab, badge kode (`#E9ECF2` / `#16234A`) |
-| **Tipografi** | `text-ink` | `--text-primary` | Judul dan teks utama (`#0B132B` / `#F4F4F4`) |
-| | `text-ink-secondary` | `--text-secondary` | Paragraf body dan deskripsi (`#24304D` / `#D5DCE8`) |
-| | `text-ink-muted` | `--text-muted` | Label kecil, metadata, timestamp (`#4A5673` / `#96A2BA`) |
-| **Garis Pembatas** | `border-line` | `--border-hairline` | Garis pemisah hairline kartu (`#CBD2E0` / `#1E2D5A`) |
-| | `border-line-strong` | `--border-strong` | Garis aksen bingkai tebal (`#0B132B` / `#41568F`) |
-| **Aksen Teks** | `text-accent-link` | `--accent-link` | Tautan, label interaktif (`#0152B7` / `#5EA2F5`) |
-| | `text-accent-positive` | `--accent-positive` | Status positif, skor tinggi (`#137337` / `#25D366`) |
-| | `text-accent-danger` | `--accent-danger` | Peringatan, jalur putus (`#B4232A` / `#FF7A7E`) |
-| **Aksen Brand (non-teks)** | `bg-ocean` / `border-ocean` | `#0169E9` | Latar tombol, garis aksen, sorotan dekoratif |
-| | `bg-clover` / `border-clover` | `#25D366` | Latar indikator positif, garis status |
-| | `bg-brandred` / `border-brandred` | `#E5484D` | Latar peringatan, garis bahaya |
-| **Aksi (tombol CTA)** | `bg-action` | `--bg-action` | Latar tombol utama (`#0B132B` / `#25D366`) |
-| | `text-on-action` | `--text-on-action` | Teks di atas `bg-action` (`#F4F4F4` / `#0B132B`) |
-| | `bg-action-hover` / `text-on-action-hover` | `--bg-action-hover` / `--text-on-action-hover` | Status hover (`#0152B7` + putih / `#3388EE` + navy) |
+| **Latar Belakang** | `bg-page` | `--bg-page` | Kanvas halaman (`#EFE9DF` / `#17120F`) |
+| | `bg-surface` | `--bg-surface` | Kartu, plate, isi box (`#F8F5EF` / `#201A16`) |
+| | `bg-elevated` | `--bg-elevated` | Header kartu, tab, readout (`#E4DDD1` / `#2B241F`) |
+| **Tipografi** | `text-ink` | `--text-primary` | Judul dan teks utama (`#17120F` / `#EFE9DF`) |
+| | `text-ink-secondary` | `--text-secondary` | Paragraf dan deskripsi (`#3D352F` / `#CFC6B8`) |
+| | `text-ink-muted` | `--text-muted` | Metadata, timestamp (`#5A5048` / `#A89E93`) |
+| **Garis** | `border-line` | `--border-hairline` | Garis hairline (`#CFC6B8` / `#3A322B`) |
+| | `border-line-strong` | `--border-strong` | Bingkai tebal, cincin fokus (`#17120F` / `#EFE9DF`) |
+| **Aksen Teks** | `text-accent-link` | `--accent-link` | Tautan dan label interaktif (`#1F4E79` / `#7FB3E0`) |
+| | `text-accent-positive` | `--accent-positive` | Status positif (`#2F6B3A` / `#6FCF8A`) |
+| | `text-accent-danger` | `--accent-danger` | Peringatan (`#B02E0E` / `#FF6A45`) |
+| **Aksen Isian (non-teks)** | `bg-accent-hot` / `border-accent-hot` | `--accent-hot` | Garis aktif, sorotan (`#E2401C` / `#FF6A45`) |
+| | `bg-accent-heat` + `text-on-heat` | `--accent-heat` | Sorotan hangat (`#FFB81C`, teks `#17120F`) |
+| **Aksi (tombol CTA)** | `bg-action` | `--bg-action` | Latar tombol utama (`#B02E0E` / `#FF6A45`) |
+| | `text-on-action` | `--text-on-action` | Teks di atas `bg-action` (`#FFFFFF` / `#17120F`) |
+| | `bg-action-hover` / `text-on-action-hover` | `--bg-action-hover` / `--text-on-action-hover` | Hover (`#8E240A` + putih / `#FF8A6B` + `#17120F`) |
 
-**Warna brand mentah dilarang untuk teks.** Jangan memakai `text-ocean`, `text-clover`, atau `text-brandred`; ketiganya gagal WCAG AA di salah satu tema. Gunakan `text-accent-link`, `text-accent-positive`, atau `text-accent-danger`. Untuk tombol CTA, gunakan pasangan `bg-action text-on-action` (dan `hover:bg-action-hover hover:text-on-action-hover`), bukan `bg-navy text-chalk` atau `dark:bg-clover dark:text-navy`. `scripts/check-theme-css.mjs` menggagalkan build bila pola itu muncul di `src/`, memeriksa kontras pasangan tombol aksi, serta memeriksa kelas opasitas token (termasuk varian seperti `hover:` dan prefiks `ring-`/`divide-`) terhadap CSS hasil build.
+**Warna isian dilarang untuk teks.** Jangan memakai `text-accent-hot` atau `text-accent-heat`; keduanya gagal WCAG AA di salah satu tema. Gunakan `text-accent-link`, `text-accent-positive`, atau `text-accent-danger`. Untuk tombol CTA, pakai pasangan `bg-action text-on-action` (dan `hover:bg-action-hover hover:text-on-action-hover`). `scripts/check-theme-css.mjs` menggagalkan build bila pasangan hex dan kanal RGB di `:root` tidak identik, memeriksa kontras teks, tombol aksi, dan glass (>= 4.5:1), memeriksa bentuk grafis A/B (>= 3:1), serta memeriksa kelas opasitas token (termasuk varian seperti `hover:` dan prefiks `ring-`/`divide-`) terhadap CSS hasil build.
 
 - **Kelas Komponen & Visual**:
   - `.iso-plate`: Bingkai panel blueprint modular dengan border tipis dan latar `bg-surface`.
@@ -129,8 +128,8 @@ Selalu gunakan **token semantik dinamis** yang terdaftar di `tailwind.config.mjs
   - `.theme-dark-only` dan `.theme-light-only`: Helper untuk menampilkan logo/ikon yang berbeda antara mode gelap dan terang.
 - **Tipografi**:
   - Judul: Archivo Black (self-hosted WOFF2 via kelas `font-brand` atau `font-heading`).
-  - Body: Font stack sistem modern cepat (`Inter`, `system-ui`, `-apple-system`, `sans-serif`).
-  - Data / Metrik / Waktu: `font-mono` (`JetBrains Mono`, `Menlo`, `monospace`) dengan `tabular-nums`.
+  - Body: Font stack sistem modern cepat (`system-ui`, `-apple-system`, `Segoe UI`, `Roboto`, `sans-serif`).
+  - Data / Metrik / Waktu: `font-mono` (`ui-monospace`, `SFMono-Regular`, `Menlo`, `Consolas`, `monospace`) dengan `tabular-nums`.
 - Aset logo di `public/brand/` adalah file master resmi; jangan dimodifikasi.
 
 ## SEO & Schema.org

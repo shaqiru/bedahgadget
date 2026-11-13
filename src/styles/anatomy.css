@@ -96,6 +96,12 @@ html[data-theme='dark'] .iso {
 .anatomy-hits a { outline: none; cursor: pointer; }
 .hit-shape { fill: transparent; stroke: transparent; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .hit-edge { fill: none; stroke-width: 14; pointer-events: visibleStroke; }
+/* Daftar tautan bagian: pengganti area sentuh kecil di layar sentuh (tanpa hover) dan saat figur gagal dimuat. */
+.part-list { display: none; }
+@media (pointer: coarse) {
+  .part-list { display: flex; }
+}
+.part-list.is-on { display: flex; }
 .anatomy-hits a:focus-visible .hit-shape:not(.hit-edge) {
   stroke: var(--border-strong);
   stroke-width: 2;

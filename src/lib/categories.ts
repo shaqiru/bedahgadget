@@ -11,7 +11,6 @@ export interface CategoryConfig {
   articleSection: string;
   ledgerRubric: string;
   heroTitle: string;
-  heroMeta: string;
   tagsLabel: string;
   schemaType: 'article' | 'review';
   ledgerShowsServiceScore: boolean;
@@ -27,7 +26,6 @@ export const categories: Record<CategoryKey, CategoryConfig> = {
     articleSection: 'Bedah Anatomi Hardware',
     ledgerRubric: 'BEDAH ANATOMI',
     heroTitle: 'FIG. 01 // DIAGRAM ANATOMI TEKNIS',
-    heroMeta: 'FORMAT PRESISE &bull; 1080&times;810 PX',
     tagsLabel: 'INDEKS KOMPONEN:',
     schemaType: 'article',
     ledgerShowsServiceScore: false,
@@ -41,7 +39,6 @@ export const categories: Record<CategoryKey, CategoryConfig> = {
     articleSection: 'Arsitektur AI & Silikon',
     ledgerRubric: 'AI & SILIKON',
     heroTitle: 'FIG. 01 // ARSITEKTUR SILIKON &amp; JALUR MEMORI',
-    heroMeta: 'DIAGRAM ANATOMI TEKNIS &bull; 1080&times;810 PX',
     tagsLabel: 'INDEKS SILIKON:',
     schemaType: 'article',
     ledgerShowsServiceScore: false,
@@ -55,7 +52,6 @@ export const categories: Record<CategoryKey, CategoryConfig> = {
     articleSection: 'Review & Checklist Laptop',
     ledgerRubric: 'REVIEW & CHECKLIST',
     heroTitle: 'FIG. 01 // DIAGRAM ANATOMI TEKNIS',
-    heroMeta: 'FORMAT PRESISE &bull; 1080&times;810 PX',
     tagsLabel: 'INDEKS TOPIK:',
     schemaType: 'review',
     ledgerShowsServiceScore: true,

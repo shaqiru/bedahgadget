@@ -99,21 +99,21 @@ const showsServiceScore =
         <!-- Technical Metadata Ledger -->
         <dl class="grid grid-cols-2 sm:grid-cols-4 border-t border-l border-line font-mono text-xs tabular-nums">
           <div class="p-3 border-r border-b border-line bg-surface">
-            <dt class="text-[10px] text-ink-muted uppercase">RUBRIK</dt>
+            <dt class="text-xs text-ink-muted uppercase">RUBRIK</dt>
             <dd class="font-bold text-accent-link mt-0.5">{category.ledgerRubric}</dd>
           </div>
           <div class="p-3 border-r border-b border-line bg-surface">
-            <dt class="text-[10px] text-ink-muted uppercase">TANGGAL TERBIT</dt>
+            <dt class="text-xs text-ink-muted uppercase">TANGGAL TERBIT</dt>
             <dd class="font-semibold text-ink mt-0.5">
               <time datetime={article.data.pubDate.toISOString()}>{formattedDate}</time>
             </dd>
           </div>
           <div class="p-3 border-r border-b border-line bg-surface">
-            <dt class="text-[10px] text-ink-muted uppercase">PENULIS / SUMBER</dt>
-            <dd class="font-semibold text-ink mt-0.5 truncate">{article.data.author}</dd>
+            <dt class="text-xs text-ink-muted uppercase">PENULIS / SUMBER</dt>
+            <dd class="font-semibold text-ink mt-0.5 break-words">{article.data.author}</dd>
           </div>
           <div class="p-3 border-r border-b border-line bg-surface">
-            <dt class="text-[10px] text-ink-muted uppercase">
+            <dt class="text-xs text-ink-muted uppercase">
               {showsServiceScore ? 'SKOR SERVIS' : 'ESTIMASI BACA'}
             </dt>
             <dd class:list={[
@@ -130,9 +130,8 @@ const showsServiceScore =
 
       <!-- Isometric Plate Figure (4:3 uncropped diagram with eager LCP) -->
       <figure class="mb-10 iso-plate overflow-hidden">
-        <div class="px-4 py-2 bg-plate-head border-b border-plate-line flex items-center justify-between font-mono text-[11px] tabular-nums text-plate-ink">
+        <div class="px-4 py-2 bg-plate-head border-b border-plate-line font-mono text-xs tabular-nums text-plate-ink">
           <span class="font-bold" set:html={category.heroTitle} />
-          <span set:html={category.heroMeta} />
         </div>
         <div class="bg-plate p-3 sm:p-5 flex items-center justify-center">
           <Image
@@ -146,7 +145,7 @@ const showsServiceScore =
           />
         </div>
         <figcaption class="px-4 py-3 bg-elevated border-t border-line text-xs font-mono text-ink-secondary leading-relaxed">
-          <strong class="text-ink">DOKUMENTASI ANATOMI:</strong> {article.data.title}
+          Ilustrasi BedahGadget.id
         </figcaption>
       </figure>
 
@@ -222,12 +221,7 @@ const showsServiceScore =
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {
-          related.map((rel, idx) => (
-            <ArticleCard
-              article={rel}
-              indexNumber={String(idx + 1).padStart(2, '0')}
-            />
-          ))
+          related.map((rel) => <ArticleCard article={rel} />)
         }
       </div>
     </div>

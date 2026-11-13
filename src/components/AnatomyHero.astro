@@ -62,6 +62,17 @@ const hotspots = parts.map((part) => ({
     </a>
   </div>
 
+  <ul class="part-list max-w-7xl mx-auto flex-wrap gap-2 px-4 py-4 sm:px-6 lg:px-8 m-0 list-none" aria-label="Bagian laptop">
+    {
+      parts.map((part) => (
+        <li>
+          <a href={part.href} class="btn btn-secondary">
+            {part.designator} {part.name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </figure>
 
 <script>
@@ -85,9 +96,7 @@ const hotspots = parts.map((part) => ({
       .then(() => fetch(src))
       .then((response) => (response.ok ? response.text() : Promise.reject()))
       .then((text) => mount(stage, pop, text))
-      .catch(() => {
-        // Figur gagal dimuat: area figur tetap kosong dengan ukuran yang sudah dipesan.
-      });
+      .catch(() => document.querySelector('.part-list')?.classList.add('is-on'));
   }
 
   function mount(stage: HTMLElement, pop: HTMLAnchorElement, text: string) {

@@ -35,7 +35,6 @@ const parts: ResolvedPart[] = laptopParts.map((part) => {
   };
 });
 
-const latest = sortedArticles.slice(0, 4);
 const categoryKeys = Object.keys(categories) as (keyof typeof categories)[];
 const categoryCounts = categoryKeys.map((key) => ({
   ...categories[key],
@@ -117,12 +116,9 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
   <!-- GEJALA -->
   <section aria-labelledby="gejala-title" class="py-12 lg:py-16 border-b border-line">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="mb-8 max-w-2xl space-y-2">
-        <p class="font-mono text-xs uppercase tracking-wider text-ink-muted">Mulai dari gejalanya</p>
-        <h2 id="gejala-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight">
-          Laptop kamu kenapa?
-        </h2>
-      </div>
+      <h2 id="gejala-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight mb-8">
+        Laptop kamu kenapa?
+      </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {
           symptoms.map((symptom) => {
@@ -138,24 +134,6 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
               />
             );
           })
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- TERBARU -->
-  <section aria-labelledby="terbaru-title" class="py-12 lg:py-16 border-b border-line">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 id="terbaru-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight mb-8">
-        Terbaru
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {
-          latest.map((article, idx) => (
-            <div class:list={[idx === 0 ? 'md:col-span-2 lg:col-span-3' : '']}>
-              <ArticleCard article={article} featured={idx === 0} />
-            </div>
-          ))
         }
       </div>
     </div>
@@ -200,7 +178,7 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
       </h2>
     </div>
 
-    <div class="glass glass-edge sticky top-16 z-30 border-y border-line mt-6">
+    <div class="glass glass-edge lg:sticky lg:top-16 z-30 border-y border-line mt-6">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col lg:flex-row lg:items-center gap-3">
         <div
           role="group"
@@ -229,11 +207,11 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
           }
         </div>
         <div class="lg:ml-auto w-full lg:w-80">
-          <label for="article-search" class="sr-only">Cari komponen atau gejala</label>
+          <label for="article-search" class="block mb-1 font-mono text-xs text-ink-secondary">Cari komponen atau gejala</label>
           <input
             id="article-search"
             type="search"
-            placeholder="Cari komponen atau gejala"
+            placeholder="mis. VRM, engsel, NPU"
             class="w-full min-h-11 px-3.5 text-sm font-mono bg-surface text-ink border border-line-strong placeholder:text-ink-muted"
           />
         </div>
@@ -245,13 +223,13 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
 
       <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
-          sortedArticles.map((article, idx) => (
+          sortedArticles.map((article) => (
             <div
               class="article-item"
               data-category={article.data.category}
               data-search={`${article.data.title} ${article.data.description} ${article.data.tags.join(' ')}`.toLowerCase()}
             >
-              <ArticleCard article={article} indexNumber={String(idx + 1).padStart(2, '0')} />
+              <ArticleCard article={article} />
             </div>
           ))
         }

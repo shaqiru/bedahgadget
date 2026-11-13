@@ -21,16 +21,16 @@ const navItems = [
         <img
           src="/brand/svg/lockup-horizontal-light.svg"
           alt=""
-          class="h-8 sm:h-9 w-auto hidden sm:block theme-light-only"
-          width="210"
-          height="36"
+          class="h-8 sm:h-11 w-auto hidden sm:block theme-light-only"
+          width="163"
+          height="44"
         />
         <img
           src="/brand/svg/lockup-horizontal-dark.svg"
           alt=""
-          class="h-8 sm:h-9 w-auto hidden sm:block theme-dark-only"
-          width="210"
-          height="36"
+          class="h-8 sm:h-11 w-auto hidden sm:block theme-dark-only"
+          width="163"
+          height="44"
         />
         <img
           src="/brand/svg/icon-light.svg"
@@ -176,7 +176,10 @@ const navItems = [
       html.setAttribute('data-theme', next);
       sync();
       try {
-        localStorage.setItem('bg-theme', next);
+        // Pilihan sama dengan tema sistem: hapus preferensi supaya situs kembali mengikuti sistem.
+        const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (next === system) localStorage.removeItem('bg-theme');
+        else localStorage.setItem('bg-theme', next);
       } catch (e) {}
     });
   }

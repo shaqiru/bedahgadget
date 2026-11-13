@@ -88,7 +88,7 @@ const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.pn
         articles.map((article, idx) => (
           <ArticleCard
             article={article}
-            indexNumber={String(idx + 1).padStart(2, '0')}
+            eager={idx < 3}
           />
         ))
       }

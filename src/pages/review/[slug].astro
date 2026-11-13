@@ -1,4 +1,5 @@
 ---
+import { relatedArticles } from '../../lib/related';
 import { getCollection } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 
@@ -15,10 +16,7 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const allArticles = await getCollection('articles');
-const related = allArticles
-  .filter((a) => a.slug !== article.slug)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+const related = relatedArticles(article, allArticles);
 ---
 
 <ArticleLayout article={article} related={related} />

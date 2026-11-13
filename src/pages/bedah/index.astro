@@ -4,6 +4,7 @@ import ArticleCard from '../../components/ArticleCard.astro';
 import JsonLd from '../../components/JsonLd.astro';
 import { getCollection } from 'astro:content';
 import { categories } from '../../lib/categories';
+import { indexableTags } from '../../lib/related';
 
 const category = categories.bedah;
 
@@ -13,7 +14,7 @@ const articles = await getCollection(
 );
 const sortedArticles = articles.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-const allTags = [...new Set(sortedArticles.flatMap((a) => a.data.tags))];
+const allTags = indexableTags(await getCollection('articles'), [...new Set(sortedArticles.flatMap((a) => a.data.tags))]);
 
 const pageTitle = 'Bedah Anatomi Hardware & Elektronika Laptop';
 const pageDescription = 'Dokumentasi teknis bedah anatomi motherboard, jalur daya VRM, termodinamika pendingin, mekanika engsel, dan elektrokimia korosi bersama workshop FixNow.id Bandung.';
@@ -94,7 +95,7 @@ const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.pn
             <ArticleCard
               article={article}
               featured={idx === 0}
-              indexNumber={String(idx + 1).padStart(2, '0')}
+              eager={idx < 3}
             />
           </div>
         ))
