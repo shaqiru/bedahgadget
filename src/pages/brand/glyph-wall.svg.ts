@@ -1,6 +1,6 @@
 // Dinding glyph untuk bagian bawah footer: 12x3 tile, dibuat saat build menjadi /brand/glyph-wall.svg.
 // Footer mengambil file ini saat footer mendekati viewport lalu menyisipkannya inline, supaya warna
-// mengikuti token tema dan varian A/B tanpa menambah ukuran HTML setiap halaman.
+// mengikuti token tema tanpa menambah ukuran HTML setiap halaman.
 import type { APIRoute } from 'astro';
 import { glyphNames, tileMarkup } from '../../lib/glyphs';
 import type { TileKind } from '../../lib/glyphs';

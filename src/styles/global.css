@@ -63,7 +63,7 @@
   --glass-fill: rgb(248 245 239 / 0.78);
   --glass-edge: rgb(255 255 255 / 0.4);
 
-  /* Grafis brand, varian A (design brand-graphics Decision 4). Dekorasi saja, bukan untuk teks atau status. */
+  /* Grafis brand (design brand-graphics Decision 4). Dekorasi saja, bukan untuk teks atau status. */
   --g-1: #17120F;
   --g-1-rgb: 23 18 15;
   --g-2: #E2401C;
@@ -132,21 +132,6 @@ html[data-theme='dark'] {
   --g-4-rgb: 43 36 31;
   --g-line: #EFE9DF;
   --g-line-rgb: 239 233 223;
-}
-
-/* Grafis brand, varian B: ujung dingin skala ironbow (indigo, magenta). Dipilih lewat ?g=b. */
-html[data-graphics='b'] {
-  --g-1: #2B1A6B;
-  --g-1-rgb: 43 26 107;
-  --g-2: #9B1D74;
-  --g-2-rgb: 155 29 116;
-}
-
-html[data-theme='dark'][data-graphics='b'] {
-  --g-1: #9D8CFF;
-  --g-1-rgb: 157 140 255;
-  --g-2: #F062B0;
-  --g-2-rgb: 240 98 176;
 }
 
 /* Glyph membaca slot --gs-*; komposisi menyetel slot itu per jenis tile. */

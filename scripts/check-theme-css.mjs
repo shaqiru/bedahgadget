@@ -97,8 +97,6 @@ function checkTokenPairs(css) {
   const blocks = [
     [':root', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
     ["html[data-theme='dark']", parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
-    ["html[data-graphics='b']", parseBlock(css, GRAPHICS_B)],
-    ["html[data-theme='dark'][data-graphics='b']", parseBlock(css, GRAPHICS_B_DARK)],
   ];
   const problems = [];
 
@@ -129,21 +127,13 @@ function checkTokenPairs(css) {
   }
 }
 
-const GRAPHICS_B = /html\[data-graphics=['"]b['"]\]\s*\{([\s\S]*?)\}/;
-const GRAPHICS_B_DARK = /html\[data-theme=['"]dark['"]\]\[data-graphics=['"]b['"]\]\s*\{([\s\S]*?)\}/;
-
-// Empat kombinasi grafis: varian A/B di atas tema terang/gelap. Blok B hanya menimpa sebagian token.
+// Kombinasi grafis: token grafis di atas tema terang dan gelap.
 function graphicCombos(css) {
   const light = parseBlock(css, /:root\s*\{([\s\S]*?)\}/);
   const dark = new Map([...light, ...parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)]);
-  const bLight = parseBlock(css, GRAPHICS_B);
-  const bDark = parseBlock(css, GRAPHICS_B_DARK);
-  if (!bLight || !bDark) throw new Error('Blok token grafis varian B tidak ditemukan di global.css');
   return [
-    ['A terang', light],
-    ['A gelap', dark],
-    ['B terang', new Map([...light, ...bLight])],
-    ['B gelap', new Map([...dark, ...bLight, ...bDark])],
+    ['terang', light],
+    ['gelap', dark],
   ];
 }
 
@@ -295,7 +285,7 @@ try {
   checkGlassContrast(source);
   checkGraphicContrast(source);
   checkRawAccentText();
-  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks, tombol aksi, dan glass >= 4.5:1, bentuk grafis A/B >= 3:1, tanpa warna isian untuk teks).`);
+  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks, tombol aksi, dan glass >= 4.5:1, bentuk grafis >= 3:1, tanpa warna isian untuk teks).`);
 } catch (error) {
   console.error(`check:css gagal: ${error.message}`);
   process.exit(1);
