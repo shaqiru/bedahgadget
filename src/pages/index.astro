@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ArticleCard from '../components/ArticleCard.astro';
+import ArchiveRow from '../components/ArchiveRow.astro';
 import JsonLd from '../components/JsonLd.astro';
 import AnatomyHero from '../components/AnatomyHero.astro';
 import SymptomPanel from '../components/SymptomPanel.astro';
@@ -221,18 +221,20 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
       <p id="filter-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
 
-      <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {
-          sortedArticles.map((article) => (
-            <div
-              class="article-item"
-              data-category={article.data.category}
-              data-search={`${article.data.title} ${article.data.description} ${article.data.tags.join(' ')}`.toLowerCase()}
-            >
-              <ArticleCard article={article} />
-            </div>
-          ))
-        }
+      <div class="panel">
+        <ul id="articles-grid">
+          {
+            sortedArticles.map((article) => (
+              <li
+                class="article-item"
+                data-category={article.data.category}
+                data-search={`${article.data.title} ${article.data.description} ${article.data.tags.join(' ')}`.toLowerCase()}
+              >
+                <ArchiveRow article={article} />
+              </li>
+            ))
+          }
+        </ul>
       </div>
 
       <div id="empty-filter-state" class="hidden panel p-8 sm:p-10 text-center max-w-xl mx-auto my-8 space-y-4">

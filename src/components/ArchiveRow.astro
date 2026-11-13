@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { articlePath, categories } from '../lib/categories';
+import { readingTime } from '../lib/reading-time';
+
+export interface Props {
+  article: CollectionEntry<'articles'>;
+}
+
+const { article } = Astro.props;
+const { title, pubDate, category, image } = article.data;
+
+const categoryMeta = categories[category];
+const ledgerCode = categoryMeta.ledgerRubric.split(' ')[0];
+const minutes = readingTime(article);
+const formattedDate = pubDate.toLocaleDateString('id-ID', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+const spokenMeta = `, ${categoryMeta.label}, ${formattedDate}, ${minutes} menit baca`;
+---
+
+<a
+  href={articlePath(category, article.slug)}
+  class="group grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-x-4 gap-y-2 border-b border-line px-4 py-4 last:border-b-0 hover:bg-elevated focus-visible:outline-offset-[-2px] motion-safe:transition-colors md:grid-cols-[7.5rem_5rem_4.5rem_minmax(0,1fr)_auto] md:gap-x-5 md:gap-y-0 md:px-5"
+>
+  <span
+    class="col-span-2 flex flex-wrap items-center gap-x-2 font-mono text-xs tabular-nums text-ink-muted md:contents"
+  >
+    <time
+      datetime={pubDate.toISOString()}
+      class="uppercase md:col-start-1 md:row-start-1"
+      aria-hidden="true"
+    >
+      {formattedDate}
+    </time>
+    <span
+      class="font-bold uppercase text-accent-link before:mr-2 before:content-['·'] md:col-start-2 md:row-start-1 md:before:hidden"
+      aria-hidden="true"
+    >
+      {ledgerCode}
+    </span>
+    <span
+      class="whitespace-nowrap before:mr-2 before:content-['·'] md:col-start-5 md:row-start-1 md:before:hidden"
+      aria-hidden="true"
+    >
+      {minutes} mnt
+    </span>
+  </span>
+
+  <span
+    class="col-start-1 row-start-2 w-full border border-line bg-plate md:col-start-3 md:row-start-1"
+  >
+    <Image
+      src={image}
+      alt=""
+      width={96}
+      height={72}
+      loading="lazy"
+      class="h-full w-full object-contain"
+    />
+  </span>
+
+  <span
+    class="col-start-2 row-start-2 line-clamp-2 font-brand text-sm leading-snug tracking-tight text-ink group-hover:text-accent-link motion-safe:transition-colors md:col-start-4 md:row-start-1 md:text-base"
+  >
+    {title}
+  </span>
+
+  <span class="sr-only">{spokenMeta}</span>
+</a>
