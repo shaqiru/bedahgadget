@@ -147,6 +147,8 @@ html[data-theme='dark'] {
 }
 
 .g-tile-bg { fill: rgb(var(--g-tile)); }
+/* Blok warna HTML (bukan SVG): memakai token --g-tile dari kelas tile di bawah ini. */
+.g-tile-fill { background-color: rgb(var(--g-tile)); }
 .g-tile-plate { --g-tile: var(--g-4-rgb); }
 /* Tile satu warna: bentuk (g1, g2, kontur) memakai warna terang, lubang (g3, g4) memakai warna tile. */
 .g-tile-ink,

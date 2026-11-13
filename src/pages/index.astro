@@ -36,10 +36,23 @@ const parts: ResolvedPart[] = laptopParts.map((part) => {
 });
 
 const categoryKeys = Object.keys(categories) as (keyof typeof categories)[];
-const categoryCounts = categoryKeys.map((key) => ({
-  ...categories[key],
-  count: sortedArticles.filter((a) => a.data.category === key).length,
-}));
+const categoryCounts = categoryKeys.map((key) => {
+  const inCategory = sortedArticles.filter((a) => a.data.category === key);
+  const latest = inCategory[0];
+  return {
+    ...categories[key],
+    count: inCategory.length,
+    latest: latest
+      ? { href: articlePath(key, latest.slug), title: latest.data.title }
+      : undefined,
+  };
+});
+
+const rubricQuestion: Record<string, string> = {
+  bedah: 'Mau tahu cara kerjanya sampai ke sirkuit?',
+  ai: 'Penasaran chip AI di laptop baru?',
+  review: 'Mau beli laptop?',
+};
 
 const rubricBlurb: Record<string, string> = {
   bedah: 'Cara kerja komponen sampai ke level sirkuit: VRM, pendingin, engsel, dan korosi.',
@@ -51,6 +64,13 @@ const rubricGlyph: Record<string, GlyphName> = {
   bedah: 'screw-torx',
   ai: 'chip',
   review: 'fan',
+};
+
+// Kelas tile glyph yang ada; menyetel token --g-tile dan slot --gs-* untuk blok warna dan glyph di dalamnya.
+const rubricTile: Record<string, string> = {
+  bedah: 'g-tile-accent',
+  ai: 'g-tile-ink',
+  review: 'g-tile-heat',
 };
 
 const canonicalURL = 'https://bedahgadget.id/';
@@ -140,30 +160,57 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
   </section>
 
   <!-- RUBRIK -->
-  <section aria-labelledby="rubrik-title" class="py-12 lg:py-16 border-b border-line">
+  <section aria-labelledby="rubrik-title" class="bg-elevated py-12 lg:py-16 border-b border-line">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 id="rubrik-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight mb-8">
-        Rubrik
+        Kamu cari apa?
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         {
           categoryCounts.map((category) => (
-            <a href={category.archivePath} class="panel group flex flex-col hover:border-line-strong transition-colors">
+            <article class="panel group relative flex flex-col hover:border-line-strong transition-colors">
               <div class="panel-head">
                 <span class="font-bold uppercase">{category.label}</span>
                 <span class="text-ink-muted">{category.count} artikel</span>
               </div>
-              <div class="p-5 space-y-4 flex-1 flex flex-col">
-                <div class="flex items-start justify-between gap-4">
-                  <p class="text-sm text-ink-secondary leading-relaxed">{rubricBlurb[category.key]}</p>
-                  <Glyph name={rubricGlyph[category.key]} class="h-12 w-12 shrink-0" />
-                </div>
-                <div class="scale-rule mt-auto" aria-hidden="true" />
-                <span class="font-mono text-xs font-bold uppercase text-accent-link underline underline-offset-4">
-                  Buka arsip
-                </span>
+              <div
+                class={`relative h-20 md:h-32 overflow-hidden ${rubricTile[category.key]} g-tile-fill`}
+                aria-hidden="true"
+              >
+                <Glyph
+                  name={rubricGlyph[category.key]}
+                  class="absolute -right-8 top-1/2 h-40 w-40 -translate-y-1/2"
+                />
               </div>
-            </a>
+              <div class="p-5 flex-1 flex flex-col gap-4">
+                <h3 class="font-brand text-lg sm:text-xl text-ink leading-snug tracking-tight">
+                  {rubricQuestion[category.key]}
+                </h3>
+                <p class="text-sm text-ink-secondary leading-relaxed">{rubricBlurb[category.key]}</p>
+                <div class="mt-auto pt-4 border-t border-line space-y-2">
+                  {category.latest ? (
+                    <a
+                      href={category.latest.href}
+                      class="flex items-start justify-between gap-3 text-sm font-semibold text-ink after:absolute after:inset-0 after:content-['']"
+                    >
+                      <span class="underline decoration-1 underline-offset-4 group-hover:text-accent-link group-hover:decoration-2">
+                        {category.latest.title}
+                      </span>
+                      <Icon
+                        name="arrow-right"
+                        weight="bold"
+                        class="mt-0.5 h-4 w-4 shrink-0 text-accent-link"
+                      />
+                    </a>
+                  ) : null}
+                  {category.count > 1 || !category.latest ? (
+                    <a href={category.archivePath} class="btn btn-ghost relative z-10 justify-start">
+                      Semua {category.count} artikel
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            </article>
           ))
         }
       </div>
