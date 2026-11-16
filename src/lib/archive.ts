@@ -16,6 +16,29 @@ export function designatorFor(slug: string): string | undefined {
   return partFor(slug)?.designator;
 }
 
+export interface DesignatorEntry {
+  designator: string;
+  name: string;
+}
+
+/** Designator unik milik artikel satu rubrik, urut kemunculan, dipakai panduan plate. */
+export function designatorsFor(articles: Article[], limit = 5): DesignatorEntry[] {
+  const seen = new Set<string>();
+  const entries: DesignatorEntry[] = [];
+
+  for (const article of articles) {
+    const part = partFor(article.slug);
+    if (!part || seen.has(part.designator)) continue;
+
+    seen.add(part.designator);
+    entries.push({ designator: part.designator, name: part.name });
+
+    if (entries.length >= limit) break;
+  }
+
+  return entries;
+}
+
 export function sortByNewest(articles: Article[]): Article[] {
   return [...articles].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }

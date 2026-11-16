@@ -1,0 +1,31 @@
+---
+import ArchiveDigest from './ArchiveDigest.astro';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  articles: CollectionEntry<'articles'>[];
+  heading: string;
+  /** Satuan baris dari copy rubrik, mis. "ENTRI". */
+  unit: string;
+  /** Dua kolom saat panel memakai lebar penuh. */
+  wide?: boolean;
+}
+
+const { articles, heading, unit, wide = false } = Astro.props;
+---
+
+<div class="panel overflow-hidden">
+  <div class="panel-head">
+    <h2 class="font-bold uppercase">{heading}</h2>
+    <span class="text-ink-muted">{articles.length} {unit}</span>
+  </div>
+  <ul class:list={[wide ? 'lg:grid lg:grid-cols-2' : '']}>
+    {
+      articles.map((article) => (
+        <li>
+          <ArchiveDigest article={article} />
+        </li>
+      ))
+    }
+  </ul>
+</div>
