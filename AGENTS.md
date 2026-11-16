@@ -40,7 +40,7 @@ src/
     ArticleCard.astro        Kartu daftar artikel
   pages/
     index.astro, tentang.astro
-    bedah/ ai/ review/       index.astro (arsip) + [slug].astro (getStaticPaths + ArticleLayout)
+    bedah/ ai/ review/       index.astro (arsip) + [slug].astro (getStaticPaths + ArticleLayout); bedah/page/[page].astro (halaman arsip 2+)
     tag/[tag].astro          Agregasi per tag
     rss.xml.ts
 public/
@@ -51,7 +51,7 @@ scripts/                     Pemeriksa build (tema/kontras, publikasi repo)
 publication-allowlist.txt    Daftar path yang boleh ada di repo ini
 ```
 
-Kategori menentukan URL: `category: "bedah"` -> `/bedah/<slug>/`, `"ai"` -> `/ai/<slug>/`, `"review"` -> `/review/<slug>/`.
+Kategori menentukan URL: `category: "bedah"` -> `/bedah/<slug>/`, `"ai"` -> `/ai/<slug>/`, `"review"` -> `/review/<slug>/`. Arsip rubrik dipaginasi 12 artikel per halaman: halaman 1 di `/bedah/`, halaman berikutnya di `/bedah/page/<n>/`. Segmen `page` di bawah rubrik dipakai paginasi, jadi jangan memakai slug artikel `page`.
 
 ## Menambah artikel
 

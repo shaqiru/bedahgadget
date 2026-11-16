@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { articlePath, categories } from '../lib/categories';
-import { designatorFor, partFor } from '../lib/archive';
+import { designatorFor } from '../lib/archive';
 import { readingTime } from '../lib/reading-time';
 
 export interface Props {
@@ -14,7 +14,6 @@ const { title, pubDate, category } = article.data;
 
 const href = articlePath(category, article.slug);
 const designator = designatorFor(article.slug);
-const part = partFor(article.slug);
 const minutes = readingTime(article);
 const spokenCategory = categories[category].label;
 const formattedDate = pubDate.toLocaleDateString('id-ID', {
@@ -24,14 +23,13 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
 });
 ---
 
-<a
-  href={href}
-  class="group grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-4 border-b border-line px-4 py-4 last:border-b-0 hover:bg-elevated focus-visible:outline-offset-[-2px] motion-safe:transition-colors sm:px-5"
+<article
+  class="group relative flex items-center gap-4 border-b border-line px-4 py-4 last:border-b-0 hover:bg-elevated focus-within:bg-elevated motion-safe:transition-colors sm:px-5"
 >
-  <span class="w-full border border-line bg-plate">
+  <span class="w-[4.5rem] shrink-0 border border-line bg-plate">
     <Image
       src={article.data.image}
-      alt={part ? `Ilustrasi ${part.name}` : 'Ilustrasi BedahGadget.id'}
+      alt=""
       width={96}
       height={72}
       loading="lazy"
@@ -39,16 +37,20 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
     />
   </span>
 
-  <span class="min-w-0">
-    <span class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs tabular-nums text-ink-muted">
+  <div class="min-w-0">
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs tabular-nums text-ink-muted">
       {designator ? <span class="part-tag">{designator}</span> : null}
       <time datetime={pubDate.toISOString()}>{formattedDate}</time>
       <span aria-hidden="true">&middot;</span>
       <span>{minutes} mnt</span>
       <span class="sr-only">, {spokenCategory}</span>
-    </span>
-    <span class="mt-1 line-clamp-3 font-brand text-sm leading-snug tracking-tight text-ink transition-colors group-hover:text-accent-ember group-focus-within:text-accent-ember sm:text-base">
-      {title}
-    </span>
-  </span>
-</a>
+    </div>
+    <h3
+      class="mt-1 line-clamp-3 font-brand text-sm leading-snug tracking-tight text-ink transition-colors group-hover:text-accent-ember group-focus-within:text-accent-ember sm:text-base"
+    >
+      <a href={href} class="after:absolute after:inset-0 after:content-['']">
+        {title}
+      </a>
+    </h3>
+  </div>
+</article>
