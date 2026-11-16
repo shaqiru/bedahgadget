@@ -1,0 +1,64 @@
+---
+import Icon from './Icon.astro';
+import type { CategoryKey } from '../lib/categories';
+import { pageHref } from '../lib/archive';
+
+export interface Props {
+  categoryKey: CategoryKey;
+  currentPage: number;
+  totalPages: number;
+}
+
+const { categoryKey, currentPage, totalPages } = Astro.props;
+const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+const linkClass =
+  'inline-flex min-h-11 min-w-11 items-center justify-center border border-line px-2.5 text-ink hover:border-line-strong hover:text-accent-link motion-safe:transition-colors';
+const currentClass =
+  'inline-flex min-h-11 min-w-11 items-center justify-center border border-ink bg-ink px-2.5 font-bold text-page';
+---
+
+{
+  totalPages > 1 && (
+    <nav
+      aria-label="Halaman arsip"
+      class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 font-mono text-xs tabular-nums"
+    >
+      {currentPage > 1 ? (
+        <a href={pageHref(categoryKey, currentPage - 1)} class={linkClass} rel="prev">
+          <Icon name="arrow-left" weight="bold" class="h-4 w-4" />
+          <span class="sr-only">Halaman sebelumnya</span>
+          <span class="ml-2 hidden sm:inline">SEBELUMNYA</span>
+        </a>
+      ) : (
+        <span aria-hidden="true" class="min-h-11 min-w-11" />
+      )}
+
+      <ol class="flex items-center gap-2">
+        {pages.map((page) => (
+          <li>
+            {page === currentPage ? (
+              <span aria-current="page" class={currentClass}>
+                {page}
+              </span>
+            ) : (
+              <a href={pageHref(categoryKey, page)} class={linkClass}>
+                {page}
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+
+      {currentPage < totalPages ? (
+        <a href={pageHref(categoryKey, currentPage + 1)} class={linkClass} rel="next">
+          <span class="mr-2 hidden sm:inline">BERIKUTNYA</span>
+          <span class="sr-only">Halaman berikutnya</span>
+          <Icon name="arrow-right" weight="bold" class="h-4 w-4" />
+        </a>
+      ) : (
+        <span aria-hidden="true" class="min-h-11 min-w-11" />
+      )}
+    </nav>
+  )
+}

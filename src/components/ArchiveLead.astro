@@ -1,0 +1,102 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import { articlePath, categories } from '../lib/categories';
+import { designatorFor, partFor } from '../lib/archive';
+import { readingTime } from '../lib/reading-time';
+import { fixnowTopicMap } from '../lib/fixnow-topics';
+
+export interface Props {
+  article: CollectionEntry<'articles'>;
+  /** Label status di kepala plate, mis. "PILIHAN EDITOR". */
+  badge: string;
+  eager?: boolean;
+}
+
+const { article, badge, eager = false } = Astro.props;
+const { title, description, pubDate, category, repairabilityScore, fixnowTopic } = article.data;
+
+const categoryMeta = categories[category];
+const href = articlePath(category, article.slug);
+const designator = designatorFor(article.slug);
+const part = partFor(article.slug);
+const minutes = readingTime(article);
+const formattedDate = pubDate.toLocaleDateString('id-ID', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+
+const service = fixnowTopic ? fixnowTopicMap[fixnowTopic] : undefined;
+const serviceUrl = service
+  ? `${service.url}?utm_source=bedahgadget&utm_medium=bedah_lead&utm_content=${encodeURIComponent(article.slug)}`
+  : undefined;
+---
+
+<article class="panel card-active group relative flex flex-col overflow-hidden">
+  <div class="panel-head">
+    <span class="font-bold uppercase text-accent-link">
+      {designator ? `FIG. ${designator} // ${categoryMeta.ledgerRubric}` : categoryMeta.ledgerRubric}
+    </span>
+    <span class="font-bold uppercase">{badge}</span>
+  </div>
+
+  <div class="flex aspect-[4/3] w-full items-center justify-center bg-plate p-4 sm:p-6">
+    <Image
+      src={article.data.image}
+      alt={part ? `Ilustrasi ${part.name}` : 'Ilustrasi BedahGadget.id'}
+      width={880}
+      height={660}
+      loading={eager ? 'eager' : 'lazy'}
+      class="h-full w-full object-contain"
+    />
+  </div>
+
+  <div class="flex flex-grow flex-col p-5 sm:p-6 lg:p-7">
+    <div class="flex flex-wrap items-center gap-y-1 font-mono text-xs tabular-nums text-ink-muted">
+      <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+      <span class="before:mr-2 before:content-['·']">{minutes} menit baca</span>
+      {
+        repairabilityScore !== undefined && (
+          <span class="before:mr-2 before:content-['·']">SKOR SERVIS {repairabilityScore}/10</span>
+        )
+      }
+    </div>
+
+    <h2 class="mt-3 font-brand text-xl leading-snug tracking-tight text-ink transition-colors group-hover:text-accent-ember group-focus-within:text-accent-ember sm:text-2xl lg:text-[1.75rem]">
+      <a href={href} class="after:absolute after:inset-0 after:content-['']">
+        {title}
+      </a>
+    </h2>
+
+    <p class="mt-3 max-w-[62ch] text-sm leading-relaxed text-ink-secondary sm:text-base">
+      {description}
+    </p>
+
+    <div class="mt-5 flex flex-col gap-4 border-t border-line pt-4">
+      <span
+        aria-hidden="true"
+        class="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wide text-accent-link transition-colors group-hover:text-accent-ember group-focus-within:text-accent-ember"
+      >
+        Baca bedahnya
+        <Icon name="arrow-right" weight="bold" class="h-3.5 w-3.5" />
+      </span>
+
+      {
+        serviceUrl && (
+          <a
+            href={serviceUrl}
+            target="_blank"
+            rel="noopener"
+            class="relative z-10 inline-flex min-h-11 items-center gap-1.5 self-start font-mono text-xs font-bold uppercase tracking-wide text-accent-link underline decoration-1 underline-offset-4 transition-colors hover:text-accent-ember hover:decoration-2"
+          >
+            Cek gejala ini di FixNow.id
+            <span aria-hidden="true">&nearr;</span>
+            <span class="sr-only"> (buka di tab baru)</span>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</article>

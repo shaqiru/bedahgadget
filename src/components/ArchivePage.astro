@@ -1,0 +1,226 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import JsonLd from './JsonLd.astro';
+import ArchiveLead from './ArchiveLead.astro';
+import ArchiveDigest from './ArchiveDigest.astro';
+import ArchivePager from './ArchivePager.astro';
+import { categories } from '../lib/categories';
+import { pageHref, paginate, sortByNewest } from '../lib/archive';
+import { archiveCopy, type ArchiveCopyKey } from '../lib/archive-copy';
+import { indexableTags } from '../lib/related';
+
+export interface Props {
+  categoryKey: ArchiveCopyKey;
+  pageNumber: number;
+}
+
+const { categoryKey, pageNumber } = Astro.props;
+const copy = archiveCopy[categoryKey];
+const categoryMeta = categories[categoryKey];
+
+const allArticles = await getCollection('articles');
+const inCategory = sortByNewest(allArticles.filter((article) => article.data.category === categoryKey));
+const { items, current, totalPages } = paginate(inCategory, pageNumber);
+
+const tags = indexableTags(allArticles, [...new Set(inCategory.flatMap((article) => article.data.tags))]);
+
+// Lead hanya di halaman 1 dan hanya sekali: artikel yang sama tidak diulang di daftar.
+const lead =
+  current === 1 && copy.leadSlug
+    ? (items.find((article) => article.slug === copy.leadSlug) ?? null)
+    : null;
+const rest = lead ? items.filter((article) => article.slug !== lead.slug) : items;
+const displayed = lead ? [lead, ...rest] : rest;
+
+const listHeading = lead ? 'LAPORAN LAIN' : 'SEMUA LAPORAN';
+const canonical = pageHref(categoryKey, current);
+const pageUrl = `https://bedahgadget.id${canonical}`;
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+const pageTitle =
+  current > 1 ? `${copy.metaTitle} (Halaman ${current})` : copy.metaTitle;
+
+const newest = inCategory[0]?.data.pubDate;
+const updatedLabel = newest
+  ? newest.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })
+  : '';
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={copy.metaDescription}
+  type="website"
+  canonicalUrl={pageUrl}
+  image={ogImage}
+>
+  <Fragment slot="schema">
+    <JsonLd
+      type="collection"
+      title={copy.metaTitle}
+      description={copy.metaDescription}
+      url={pageUrl}
+      image={ogImage}
+      items={displayed.map((article) => ({
+        name: article.data.title,
+        url: `${categories[article.data.category].archivePath}${article.slug}/`,
+      }))}
+    />
+  </Fragment>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted mb-6">
+      <ol class="flex items-center gap-2">
+        <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+        <li aria-hidden="true">/</li>
+        <li class="text-ink font-semibold">RUBRIK: {categoryMeta.archiveRubric}</li>
+      </ol>
+    </nav>
+
+    <header class="mb-10 pb-8 border-b border-line flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <div class="space-y-3 max-w-3xl">
+        <h1 class="font-brand text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight tracking-tight">
+          {copy.heading}
+        </h1>
+        <p class="text-base sm:text-lg text-ink-secondary leading-relaxed">
+          {copy.intro}
+        </p>
+      </div>
+      <div class="font-mono text-xs tabular-nums bg-surface border border-line px-4 py-3 shrink-0">
+        <div class="text-ink-muted">TOTAL DOKUMENTASI</div>
+        <div class="font-bold text-ink text-lg mt-0.5">{inCategory.length} {copy.countLabel}</div>
+        {
+          updatedLabel && (
+            <div class="text-ink-muted mt-1.5">DIPERBARUI {updatedLabel}</div>
+          )
+        }
+      </div>
+    </header>
+
+    {
+      tags.length > 0 && (
+        <div class="mb-8 flex flex-wrap items-center gap-2 font-mono text-xs">
+          <span class="text-ink-muted mr-1">{categoryMeta.tagsLabel}</span>
+          {tags.map((tag) => (
+            <a
+              href={`/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`}
+              class="inline-flex min-h-11 min-w-11 items-center justify-center px-2.5 py-1 bg-surface border border-line text-ink-secondary hover:border-line-strong hover:text-accent-link transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <section aria-label="Laporan rubrik" class="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-start">
+      {
+        lead && (
+          <div class="lg:col-span-7">
+            <ArchiveLead article={lead} badge={copy.leadBadge ?? 'PILIHAN EDITOR'} eager />
+          </div>
+        )
+      }
+
+      <div
+        class:list={[
+          'grid gap-5',
+          lead ? 'lg:col-span-5' : 'lg:col-span-12 lg:grid-cols-2 lg:items-start',
+        ]}
+      >
+        <div class="panel overflow-hidden">
+          <div class="panel-head">
+            <h2 class="font-bold uppercase">{listHeading}</h2>
+            <span class="text-ink-muted">{rest.length} ENTRI</span>
+          </div>
+          {
+            rest.length > 0 ? (
+              <ul>
+                {rest.map((article) => (
+                  <li>
+                    <ArchiveDigest article={article} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="p-6 text-sm text-ink-secondary">
+                Semua laporan rubrik ini sudah tampil di atas.
+              </p>
+            )
+          }
+        </div>
+
+        <div class="panel overflow-hidden">
+          <div class="panel-head">
+            <h2 class="font-bold uppercase">Cara membaca plate</h2>
+            <span class="text-ink-muted">3 ISTILAH</span>
+          </div>
+          <dl class="divide-y divide-line">
+            <div class="p-5">
+              <dt class="font-mono text-xs font-bold uppercase tracking-wide text-ink">Designator</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink-secondary">
+                Kode di kepala plate mengikuti penamaan PCB: Q1 MOSFET jalur daya, HS1 heatsink dan
+                antarmuka termal, H1 engsel, J1 slot SO-DIMM, J2 jalur daya baterai.
+              </dd>
+            </div>
+            <div class="p-5">
+              <dt class="font-mono text-xs font-bold uppercase tracking-wide text-ink">Skor servis</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink-secondary">
+                Angka 1&ndash;10 adalah perkiraan tingkat kesulitan servis untuk kasus yang dibahas,
+                bukan jaminan hasil perbaikan atau patokan biaya.
+              </dd>
+            </div>
+            <div class="p-5">
+              <dt class="font-mono text-xs font-bold uppercase tracking-wide text-ink">Still teknis</dt>
+              <dd class="mt-1.5 text-sm leading-relaxed text-ink-secondary">
+                Semua gambar adalah ilustrasi anatomi dan rekonstruksi, bukan foto unit uji atau hasil
+                mikroskop.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <ArchivePager categoryKey={categoryKey} currentPage={current} totalPages={totalPages} />
+
+    <section aria-label="Meja servis FixNow.id" class="mt-5">
+      <div class="panel overflow-hidden">
+        <div class="panel-head">
+          <h2 class="font-bold uppercase">Meja servis</h2>
+          <span class="text-ink-muted">FIXNOW.ID</span>
+        </div>
+        <div class="grid gap-5 p-6 sm:p-8 lg:grid-cols-12 lg:items-center">
+          <div class="lg:col-span-7">
+            <h2 class="font-brand text-xl leading-snug text-ink sm:text-2xl">
+              Laptopmu menunjukkan gejala yang sama?
+            </h2>
+            <p class="mt-2 max-w-[56ch] text-sm leading-relaxed text-ink-secondary">
+              Cek awal gratis di meja servis FixNow.id Bandung sebelum memutuskan perbaikan.
+            </p>
+          </div>
+          <div class="flex flex-col gap-2.5 lg:col-span-5">
+            <a
+              href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary w-full"
+            >
+              WhatsApp 0851-3950-6080
+            </a>
+            <a
+              href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=bedah_archive"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-secondary w-full"
+            >
+              Kunjungi FixNow.id
+            </a>
+            <p class="font-mono text-xs text-ink-muted pt-1">
+              Cek awal gratis <span aria-hidden="true">&middot;</span> Jl. Manteron No. 12, Bandung
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
