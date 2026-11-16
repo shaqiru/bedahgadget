@@ -36,6 +36,12 @@
   /* Teks merah (label bahaya, ikon kecil). */
   --accent-danger: #B02E0E;
   --accent-danger-rgb: 176 46 14;
+  /* Teks state aktif kartu (hover dan fokus keyboard). */
+  --accent-ember: #A63A14;
+  --accent-ember-rgb: 166 58 20;
+  /* Judul besar state aktif: sama dengan warna garis, hanya untuk teks >= 24px. */
+  --accent-ember-strong: #E2401C;
+  --accent-ember-strong-rgb: 226 64 28;
   /* Isian saja, jangan dipakai sebagai warna teks. */
   --accent-hot: #E2401C;
   --accent-hot-rgb: 226 64 28;
@@ -98,6 +104,10 @@ html[data-theme='dark'] {
   --accent-positive-rgb: 111 207 138;
   --accent-danger: #FF6A45;
   --accent-danger-rgb: 255 106 69;
+  --accent-ember: #FFA07F;
+  --accent-ember-rgb: 255 160 127;
+  --accent-ember-strong: #FF6A45;
+  --accent-ember-strong-rgb: 255 106 69;
   --accent-hot: #FF6A45;
   --accent-hot-rgb: 255 106 69;
   --accent-heat: #FFB81C;
@@ -231,19 +241,24 @@ body {
   transition: border-color 150ms ease, background-color 150ms ease;
 }
 
-.iso-plate-interactive:hover {
+/* State aktif kartu: satu bahasa untuk hover dan fokus keyboard.
+   Garis 2px dicapai lewat inset shadow supaya tata letak tidak bergeser 1px. */
+.card-active {
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.card-active:hover,
+.card-active:focus-within {
   border-color: var(--accent-hot);
+  box-shadow: inset 0 0 0 1px var(--accent-hot);
 }
 
 .iso-diagram-well {
   background-color: #F5F4F1;
   border-bottom: 1px solid var(--border-hairline);
-}
-
-/* Split-cut rule inspired by the BEDAH wordmark */
-.split-rule {
-  height: 4px;
-  background: linear-gradient(90deg, var(--accent-hot) 0%, var(--accent-hot) 68%, var(--accent-heat) 68%, var(--accent-heat) 100%);
 }
 
 /* Editorial prose rules for MDX articles */

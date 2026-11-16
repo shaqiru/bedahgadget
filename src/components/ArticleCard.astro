@@ -43,7 +43,7 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
 
 <article
   class:list={[
-    'iso-plate iso-plate-interactive flex flex-col overflow-hidden group',
+    'iso-plate card-active flex flex-col overflow-hidden group',
     featured ? 'lg:grid lg:grid-cols-12' : '',
   ]}
 >
@@ -85,11 +85,13 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
     <div>
       <h3
         class:list={[
-          'font-brand text-ink leading-snug tracking-tight group-hover:text-accent-link transition-colors',
-          featured ? 'text-xl sm:text-2xl mb-3' : 'text-lg mb-2.5',
+          'font-brand text-ink leading-snug tracking-tight group-hover:text-accent-ember group-focus-within:text-accent-ember transition-colors',
+          featured
+            ? 'text-xl sm:text-2xl mb-3 sm:group-hover:text-accent-ember-strong sm:group-focus-within:text-accent-ember-strong'
+            : 'text-lg mb-2.5',
         ]}
       >
-        <a href={currentCategory.href} class="focus:outline-none">
+        <a href={currentCategory.href}>
           {title}
         </a>
       </h3>
@@ -99,7 +101,7 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
       </p>
 
       <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-mono tabular-nums text-ink-muted mt-4">
-        <span class="font-bold text-accent-link">{currentCategory.label}</span>
+        <span class="font-bold text-accent-link group-hover:text-accent-ember group-focus-within:text-accent-ember transition-colors">{currentCategory.label}</span>
         <span aria-hidden="true">/</span>
         <time datetime={pubDate.toISOString()}>{formattedDate}</time>
         <span aria-hidden="true">/</span>
@@ -110,7 +112,7 @@ const formattedDate = pubDate.toLocaleDateString('id-ID', {
     <div class="mt-5 pt-3 border-t border-line flex items-center justify-between text-xs font-mono tabular-nums">
       <a
         href={currentCategory.href}
-        class="inline-flex min-h-11 items-center font-semibold text-ink group-hover:text-accent-link transition-colors underline underline-offset-4"
+        class="inline-flex min-h-11 items-center font-semibold text-ink group-hover:text-accent-ember group-focus-within:text-accent-ember transition-colors underline underline-offset-4"
       >
         BACA DOKUMENTASI TEKNIS
       </a>

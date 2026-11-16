@@ -180,6 +180,7 @@ function checkAccentContrast(css) {
     '--accent-link',
     '--accent-positive',
     '--accent-danger',
+    '--accent-ember',
   ];
   const backgrounds = ['--bg-page', '--bg-surface', '--bg-elevated'];
   const problems = [];
@@ -208,6 +209,40 @@ function checkAccentContrast(css) {
 
   if (problems.length) {
     throw new Error(`Kontras teks di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
+  }
+}
+
+function checkStateHeadingContrast(css) {
+  const blocks = [
+    ['terang', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
+    ['gelap', parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
+  ];
+  const token = '--accent-ember-strong';
+  const backgrounds = ['--bg-page', '--bg-surface', '--bg-elevated'];
+  const problems = [];
+
+  for (const [label, vars] of blocks) {
+    if (!vars) continue;
+    const foreground = vars.get(token);
+    if (!foreground) {
+      problems.push(`${label}: ${token} tidak ditemukan`);
+      continue;
+    }
+    for (const background of backgrounds) {
+      const surface = vars.get(background);
+      if (!surface) {
+        problems.push(`${label}: ${background} tidak ditemukan`);
+        continue;
+      }
+      const ratio = contrastRatio(foreground, surface);
+      if (ratio < 3) {
+        problems.push(`${label}: ${token} pada ${background} hanya ${ratio.toFixed(2)}:1`);
+      }
+    }
+  }
+
+  if (problems.length) {
+    throw new Error(`Kontras judul besar state aktif di bawah 3:1:\n  ${problems.join('\n  ')}`);
   }
 }
 
@@ -281,6 +316,7 @@ try {
   const source = readFileSync(join(root, 'src', 'styles', 'global.css'), 'utf-8');
   checkTokenPairs(source);
   checkAccentContrast(source);
+  checkStateHeadingContrast(source);
   checkActionContrast(source);
   checkGlassContrast(source);
   checkGraphicContrast(source);

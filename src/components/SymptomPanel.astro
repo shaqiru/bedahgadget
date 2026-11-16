@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import { fixnowTopicMap } from '../lib/fixnow-topics';
 import type { FixnowTopic } from '../content/config';
 
@@ -6,33 +7,46 @@ export interface Props {
   label: string;
   href: string;
   title: string;
-  summary: string;
   topic: FixnowTopic;
   slug: string;
+  designator?: string;
+  minutes: number;
 }
 
-const { label, href, title, summary, topic, slug } = Astro.props;
+const { label, href, title, topic, slug, designator, minutes } = Astro.props;
 const service = fixnowTopicMap[topic];
 const serviceUrl = `${service.url}?utm_source=bedahgadget&utm_medium=home_symptom&utm_content=${encodeURIComponent(slug)}`;
 ---
 
-<article class="panel flex flex-col">
-  <div class="split-rule" aria-hidden="true"></div>
+<article class="panel card-active group relative flex flex-col">
   <div class="panel-head">
-    <span class="inline-flex items-center gap-2 font-bold uppercase">
-      <span class="status-dot text-accent-danger" aria-hidden="true"></span>
-      Gejala: {label}
-    </span>
+    {designator ? <span class="part-tag">{designator}</span> : null}
+    <span class="ml-auto whitespace-nowrap uppercase text-ink-muted">{minutes} mnt</span>
   </div>
-  <div class="flex flex-col flex-1 gap-3 p-5">
-    <h3 class="font-brand text-lg leading-snug text-ink">
-      <a href={href} class="hover:text-accent-link transition-colors">{title}</a>
-    </h3>
-    <p class="text-sm text-ink-secondary leading-relaxed line-clamp-4">{summary}</p>
-    <div class="mt-auto pt-3 border-t border-line flex flex-col gap-1">
-      <a href={href} class="btn btn-ghost justify-start">Baca bedahnya</a>
-      <a href={serviceUrl} target="_blank" rel="noopener" class="btn btn-ghost justify-start">
-        Cek gratis di FixNow.id
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <h3 class="font-brand text-xl leading-tight tracking-tight text-ink group-hover:text-accent-ember group-focus-within:text-accent-ember transition-colors sm:text-2xl sm:group-hover:text-accent-ember-strong sm:group-focus-within:text-accent-ember-strong">{label}</h3>
+    <a href={href} class="flex flex-col gap-2 after:absolute after:inset-0 after:content-['']">
+      <span class="text-sm leading-relaxed text-ink-secondary group-hover:text-accent-ember group-focus-within:text-accent-ember transition-colors">
+        {title}
+      </span>
+      <span
+        aria-hidden="true"
+        class="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wide text-accent-link underline decoration-1 underline-offset-4 group-hover:text-accent-ember group-focus-within:text-accent-ember group-hover:decoration-2 group-focus-within:decoration-2 transition-colors"
+      >
+        Baca bedahnya
+        <Icon name="arrow-right" weight="bold" class="h-3.5 w-3.5" />
+      </span>
+    </a>
+    <div class="mt-auto border-t border-line pt-3">
+      <a
+        href={serviceUrl}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-secondary relative z-10 w-full justify-between"
+      >
+        <span>Cek gratis di FixNow.id</span>
+        <span aria-hidden="true">&nearr;</span>
+        <span class="sr-only"> (buka di tab baru)</span>
       </a>
     </div>
   </div>

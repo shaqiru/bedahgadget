@@ -30,6 +30,9 @@ export default {
           link: 'rgb(var(--accent-link-rgb) / <alpha-value>)',
           positive: 'rgb(var(--accent-positive-rgb) / <alpha-value>)',
           danger: 'rgb(var(--accent-danger-rgb) / <alpha-value>)',
+          // Teks state aktif kartu.
+          ember: 'rgb(var(--accent-ember-rgb) / <alpha-value>)',
+          'ember-strong': 'rgb(var(--accent-ember-strong-rgb) / <alpha-value>)',
           // Isian saja; dilarang sebagai warna teks (scripts/check-theme-css.mjs).
           hot: 'rgb(var(--accent-hot-rgb) / <alpha-value>)',
           heat: 'rgb(var(--accent-heat-rgb) / <alpha-value>)',
