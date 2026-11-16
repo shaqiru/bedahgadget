@@ -5,6 +5,7 @@ import JsonLd from './JsonLd.astro';
 import ArchiveLead from './ArchiveLead.astro';
 import ArchiveDigest from './ArchiveDigest.astro';
 import ArchivePager from './ArchivePager.astro';
+import GlyphStrip from './GlyphStrip.astro';
 import { categories } from '../lib/categories';
 import { pageHref, paginate, sortByNewest } from '../lib/archive';
 import { archiveCopy, type ArchiveCopyKey } from '../lib/archive-copy';
@@ -189,35 +190,40 @@ const updatedLabel = newest
           <h2 class="font-bold uppercase">Meja servis</h2>
           <span class="text-ink-muted">FIXNOW.ID</span>
         </div>
-        <div class="grid gap-5 p-6 sm:p-8 lg:grid-cols-12 lg:items-center">
-          <div class="lg:col-span-7">
-            <h3 class="font-brand text-xl leading-snug text-ink sm:text-2xl">
-              Laptopmu menunjukkan gejala yang sama?
-            </h3>
-            <p class="mt-2 max-w-[56ch] text-sm leading-relaxed text-ink-secondary">
-              Cek awal gratis di meja servis FixNow.id Bandung sebelum memutuskan perbaikan.
-            </p>
-          </div>
-          <div class="flex flex-col gap-2.5 lg:col-span-5">
-            <a
-              href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
-              target="_blank"
-              rel="noopener"
-              class="btn btn-primary w-full"
-            >
-              WhatsApp 0851-3950-6080
-            </a>
-            <a
-              href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=bedah_archive"
-              target="_blank"
-              rel="noopener"
-              class="btn btn-secondary w-full"
-            >
-              Kunjungi FixNow.id
-            </a>
-            <p class="font-mono text-xs text-ink-muted pt-1">
-              Cek awal gratis <span aria-hidden="true">&middot;</span> Jl. Manteron No. 12, Bandung
-            </p>
+
+        <GlyphStrip id="strip-meja-servis" size={56} class="border-b border-line" />
+
+        <div class="p-6 sm:p-8">
+          <div class="grid gap-5 lg:grid-cols-12 lg:items-center">
+            <div class="lg:col-span-7">
+              <h3 class="font-brand text-xl leading-snug text-ink sm:text-2xl">
+                Laptopmu menunjukkan gejala yang sama?
+              </h3>
+              <p class="mt-2 max-w-[56ch] text-sm leading-relaxed text-ink-secondary">
+                Cek awal gratis di meja servis FixNow.id Bandung sebelum memutuskan perbaikan.
+              </p>
+            </div>
+            <div class="flex flex-col gap-2.5 lg:col-span-5">
+              <a
+                href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
+                target="_blank"
+                rel="noopener"
+                class="btn btn-primary w-full"
+              >
+                WhatsApp 0851-3950-6080
+              </a>
+              <a
+                href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=bedah_archive"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-secondary w-full"
+              >
+                Kunjungi FixNow.id
+              </a>
+              <p class="font-mono text-xs text-ink-muted pt-1">
+                Cek awal gratis <span aria-hidden="true">&middot;</span> Jl. Manteron No. 12, Bandung
+              </p>
+            </div>
           </div>
         </div>
       </div>
