@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ArchiveRow from '../components/ArchiveRow.astro';
 import JsonLd from '../components/JsonLd.astro';
 import AnatomyHero from '../components/AnatomyHero.astro';
-import SymptomPanel from '../components/SymptomPanel.astro';
+import SymptomRow from '../components/SymptomRow.astro';
 import FloatingCTA from '../components/FloatingCTA.astro';
 import Icon from '../components/Icon.astro';
 import Glyph from '../components/Glyph.astro';
@@ -74,6 +74,21 @@ const rubricTile: Record<string, string> = {
   review: 'g-tile-heat',
 };
 
+// Glyph dan bidang warna per gejala. Kunci memakai slug artikel supaya tidak ada pencocokan label.
+const symptomGlyph: Record<string, GlyphName> = {
+  'kenapa-panas-bikin-laptop-mati-total-vrm': 'laptop-mati',
+  'laptop-kena-air-dendrit-korosi-52-detik': 'tetesan-air',
+  'thermal-paste-vs-thermal-pad-laptop': 'termometer',
+  'kenapa-engsel-laptop-sering-patah': 'poros-patah',
+};
+
+const symptomTones: Record<string, 'heat' | 'accent' | 'ink' | 'plate'> = {
+  'kenapa-panas-bikin-laptop-mati-total-vrm': 'ink',
+  'laptop-kena-air-dendrit-korosi-52-detik': 'accent',
+  'thermal-paste-vs-thermal-pad-laptop': 'heat',
+  'kenapa-engsel-laptop-sering-patah': 'plate',
+};
+
 const canonicalURL = 'https://bedahgadget.id/';
 const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
 const pageTitle = 'bedahgadget.id: Jurnalisme Teknis Bedah Hardware, AI Silikon & Review Laptop';
@@ -140,13 +155,13 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
       <h2 id="gejala-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight mb-8">
         Laptop kamu kenapa?
       </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="grid grid-cols-1 gap-5">
         {
-          symptoms.map((symptom) => {
+          symptoms.map((symptom, index) => {
             const article = find(symptom.slug);
             const part = parts.find((p) => p.slug === article.slug);
             return (
-              <SymptomPanel
+              <SymptomRow
                 label={symptom.label}
                 href={articlePath(article.data.category, article.slug)}
                 title={article.data.title}
@@ -154,6 +169,9 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
                 slug={article.slug}
                 designator={part?.designator}
                 minutes={readingTime(article)}
+                glyph={symptomGlyph[article.slug] ?? 'laptop-mati'}
+                tone={symptomTones[article.slug] ?? 'plate'}
+                flipped={index % 2 === 1}
               />
             );
           })

@@ -12,6 +12,10 @@ export const glyphNames = [
   'hotspot',
   'heatsink',
   'battery',
+  'laptop-mati',
+  'tetesan-air',
+  'termometer',
+  'poros-patah',
 ] as const;
 
 export type GlyphName = (typeof glyphNames)[number];
