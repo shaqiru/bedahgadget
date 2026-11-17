@@ -7,21 +7,10 @@ const currentYear = new Date().getFullYear();
     <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
       <!-- Column 1: Editorial Identity -->
       <div class="md:col-span-5 space-y-4">
-        <a href="/" class="inline-flex min-h-11 items-center" aria-label="Beranda bedahgadget.id">
-          <img
-            src="/brand/svg/lockup-horizontal-light.svg"
-            alt="bedahgadget.id"
-            class="h-10 w-auto theme-light-only"
-            width="148"
-            height="40"
-          />
-          <img
-            src="/brand/svg/lockup-horizontal-dark.svg"
-            alt="bedahgadget.id"
-            class="h-10 w-auto theme-dark-only"
-            width="148"
-            height="40"
-          />
+        <a href="/" class="inline-flex min-h-9 items-center" aria-label="Beranda bedahgadget.id">
+          <span class="inline-flex min-h-9 items-center font-brand text-xl leading-none tracking-tight text-ink">
+            BEDAHGADGET<span class="text-ink-muted">.id</span>
+          </span>
         </a>
         <p class="text-sm text-ink-secondary leading-relaxed max-w-md">
           Publikasi jurnalisme teknis yang membedah arsitektur silikon, skema jalur daya motherboard,
@@ -52,6 +41,11 @@ const currentYear = new Date().getFullYear();
           <li>
             <a href="/review/" class="inline-flex min-h-11 items-center text-ink-secondary hover:text-accent-link transition-colors">
               Review &amp; Checklist Laptop
+            </a>
+          </li>
+          <li>
+            <a href="/servis/" class="inline-flex min-h-11 items-center text-ink-secondary hover:text-accent-link transition-colors">
+              Servis Laptop FixNow.id
             </a>
           </li>
           <li>
@@ -120,37 +114,4 @@ const currentYear = new Date().getFullYear();
       <p>Standar publikasi: Tanpa iklan sponsor tersembunyi, berbasis pengamatan teknis objektif.</p>
     </div>
   </div>
-
-  {/* Dinding glyph (src/pages/brand/glyph-wall.svg.ts): diambil saat footer mendekati viewport lalu
-       disisipkan inline supaya warna mengikuti tema. Selebar layar penuh dan lebih besar dari
-       viewport, sehingga terpotong di kiri, kanan, dan bawah. Tinggi dipesan dalam vw, jadi CLS tetap 0. */}
-  <div class="relative mt-4 h-[50vw] overflow-hidden sm:h-[26vw]" aria-hidden="true">
-    <div
-      class="glyph-wall absolute left-1/2 top-0 aspect-[4/1] w-[250vw] -translate-x-1/2 sm:w-[133vw]"
-      data-glyph-wall
-      data-src="/brand/glyph-wall.svg"
-    ></div>
-  </div>
 </footer>
-
-<script>
-  const wall = document.querySelector<HTMLElement>('[data-glyph-wall]');
-  if (wall?.dataset.src) {
-    const src = wall.dataset.src;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        fetch(src)
-          .then((response) => (response.ok ? response.text() : Promise.reject()))
-          // Aset dari build situs sendiri (same-origin), bukan masukan pengguna.
-          .then((svg) => wall.insertAdjacentHTML('afterbegin', svg))
-          .catch(() => {
-            // Gagal dimuat: ruang tetap kosong dengan ukuran yang sudah dipesan.
-          });
-      },
-      { rootMargin: '400px 0px' },
-    );
-    observer.observe(wall);
-  }
-</script>

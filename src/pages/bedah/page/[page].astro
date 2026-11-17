@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import ArchivePage from '../../../components/ArchivePage.astro';
+import CategoryArchive from '../../../components/CategoryArchive.astro';
 import { ARCHIVE_PAGE_SIZE, totalPagesFor } from '../../../lib/archive';
 
 // Halaman 2 dan seterusnya hidup di /bedah/page/2/ supaya tidak bentrok dengan /bedah/[slug]/.
@@ -24,4 +24,4 @@ interface Props {
 const { pageNumber } = Astro.props;
 ---
 
-<ArchivePage categoryKey="bedah" pageNumber={pageNumber} />
+<CategoryArchive categoryKey="bedah" pageNumber={pageNumber} />

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
+import ArticleList from '../../components/ArticleList.astro';
 import JsonLd from '../../components/JsonLd.astro';
 import { getCollection } from 'astro:content';
 import { MIN_TAG_ARTICLES } from '../../lib/tags.mjs';
@@ -53,7 +53,7 @@ const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.pn
     </Fragment>
   )}
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
     <!-- Breadcrumb -->
     <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted mb-6">
       <ol class="flex items-center gap-2">
@@ -81,17 +81,11 @@ const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.pn
       </a>
     </header>
 
-    <h2 class="sr-only">Daftar artikel dengan topik {tag}</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {
-        articles.map((article, idx) => (
-          <ArticleCard
-            article={article}
-            eager={idx < 3}
-          />
-        ))
-      }
-    </div>
+    <ArticleList
+      articles={articles}
+      heading={`Daftar artikel #${tag}`}
+      headingId="daftar-artikel"
+      emptyMessage="Belum ada artikel dengan topik ini."
+    />
   </div>
 </BaseLayout>

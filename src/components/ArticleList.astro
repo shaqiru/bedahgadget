@@ -1,0 +1,57 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleListRow from './ArticleListRow.astro';
+
+export interface Props {
+  articles: CollectionEntry<'articles'>[];
+  heading: string;
+  headingId: string;
+  id?: string;
+  countLabel?: string;
+  showCategory?: boolean;
+  emptyMessage?: string;
+}
+
+const {
+  articles,
+  heading,
+  headingId,
+  id,
+  countLabel,
+  showCategory = false,
+  emptyMessage = 'Belum ada artikel di daftar ini.',
+} = Astro.props;
+---
+
+<!-- Satu daftar artikel dipakai feed homepage, arsip kategori, dan halaman tag: h2 untuk daftar, h3 per entri. -->
+<section id={id} aria-labelledby={headingId} class="scroll-mt-20">
+  <div class="mb-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-3">
+    <h2 id={headingId} class="font-brand text-xl tracking-tight text-ink sm:text-2xl">
+      {heading}
+    </h2>
+    <span class="font-mono text-xs tabular-nums text-ink-muted">
+      {countLabel ?? `${articles.length} artikel`}
+    </span>
+  </div>
+
+  {
+    articles.length > 0 ? (
+      <div class="panel">
+        <ul>
+          {articles.map((article) => (
+            <li class="border-b border-line last:border-b-0">
+              <ArticleListRow article={article} showCategory={showCategory} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      <div class="panel px-5 py-10 text-center">
+        <p class="font-brand text-lg text-ink">Belum ada artikel</p>
+        <p class="mx-auto mt-2 max-w-[48ch] text-sm leading-relaxed text-ink-secondary">
+          {emptyMessage}
+        </p>
+      </div>
+    )
+  }
+</section>

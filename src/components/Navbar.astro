@@ -13,41 +13,13 @@ const navItems = [
 ];
 ---
 
-<header class="glass glass-edge sticky top-0 z-50 border-b border-line">
+<header class="sticky top-0 z-50 border-b border-line bg-surface">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between gap-3 h-16">
-      <!-- Brand Logo -->
-      <a href="/" class="flex min-h-11 items-center gap-2 shrink-0" aria-label="Beranda bedahgadget.id">
-        <img
-          src="/brand/svg/lockup-horizontal-light.svg"
-          alt=""
-          class="h-8 sm:h-11 w-auto hidden sm:block theme-light-only"
-          width="163"
-          height="44"
-        />
-        <img
-          src="/brand/svg/lockup-horizontal-dark.svg"
-          alt=""
-          class="h-8 sm:h-11 w-auto hidden sm:block theme-dark-only"
-          width="163"
-          height="44"
-        />
-        <img
-          src="/brand/svg/icon-light.svg"
-          alt=""
-          class="h-8 w-8 sm:hidden theme-light-only"
-          width="32"
-          height="32"
-        />
-        <img
-          src="/brand/svg/icon-dark.svg"
-          alt=""
-          class="h-8 w-8 sm:hidden theme-dark-only"
-          width="32"
-          height="32"
-        />
-        <span class="font-brand text-base tracking-tight sm:hidden text-ink">
-          BEDAHGADGET<span class="text-ink-muted text-xs">.id</span>
+      <!-- Wordmark -->
+      <a href="/" class="flex min-h-11 items-center shrink-0" aria-label="Beranda bedahgadget.id">
+        <span class="inline-flex min-h-10 items-center font-brand text-[1.375rem] leading-none tracking-tight text-ink sm:text-2xl">
+          BEDAHGADGET<span class="text-ink-muted">.id</span>
         </span>
       </a>
 
@@ -90,12 +62,10 @@ const navItems = [
         </button>
 
         <a
-          href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=navbar"
-          target="_blank"
-          rel="noopener"
+          href="/servis/"
           class="btn btn-secondary hidden lg:inline-flex text-xs"
         >
-          Meja servis FixNow.id
+          Servis laptop
         </a>
 
         <!-- Mobile Menu Toggle -->
@@ -134,12 +104,10 @@ const navItems = [
       }
       <div class="pt-3 mt-2 border-t border-line">
         <a
-          href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=navbar_mobile"
-          target="_blank"
-          rel="noopener"
+          href="/servis/"
           class="btn btn-primary w-full"
         >
-          Meja servis FixNow.id Bandung
+          Servis laptop FixNow.id Bandung
         </a>
       </div>
     </nav>

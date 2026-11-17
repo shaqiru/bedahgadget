@@ -127,31 +127,7 @@ function checkTokenPairs(css) {
   }
 }
 
-// Kombinasi grafis: token grafis di atas tema terang dan gelap.
-function graphicCombos(css) {
-  const light = parseBlock(css, /:root\s*\{([\s\S]*?)\}/);
-  const dark = new Map([...light, ...parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)]);
-  return [
-    ['terang', light],
-    ['gelap', dark],
-  ];
-}
-
-// Bentuk grafis harus terbaca: --g-1 dan --g-2 minimal 3:1 terhadap latar halaman dan pelat tile.
-function checkGraphicContrast(css) {
-  const problems = [];
-  for (const [label, vars] of graphicCombos(css)) {
-    for (const shape of ['--g-1', '--g-2']) {
-      for (const background of ['--bg-page', '--bg-surface', '--g-4']) {
-        const ratio = contrastRatio(vars.get(shape), vars.get(background));
-        if (ratio < 3) problems.push(`${label}: ${shape} pada ${background} hanya ${ratio.toFixed(2)}:1`);
-      }
-    }
-  }
-  if (problems.length) {
-    throw new Error(`Kontras bentuk grafis di bawah 3:1:\n  ${problems.join('\n  ')}`);
-  }
-}
+// Kombinasi grafis dan glass sudah dipensiunkan; cek fokus pada pasangan token dan kontras teks.
 
 function relativeLuminance(hex) {
   const channels = [0, 2, 4].map((offset) => {
@@ -279,36 +255,7 @@ function checkActionContrast(css) {
   }
 }
 
-// Kasus terburuk teks di atas glass: fill glass dicampur dengan isian paling mencolok di bawahnya.
-function checkGlassContrast(css) {
-  const blocks = graphicCombos(css);
-  const problems = [];
-  for (const [label, vars] of blocks) {
-    const fill = vars?.get('--glass-fill')?.match(/rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/);
-    if (!fill) {
-      problems.push(`${label}: --glass-fill tidak ditemukan atau formatnya bukan rgb(r g b / a)`);
-      continue;
-    }
-    const [, r, g, b, alpha] = fill.map(Number);
-    const ink = vars.get('--text-primary');
-    for (const under of ['--accent-hot', '--accent-heat', '--text-primary', '--bg-page', '--g-1', '--g-2']) {
-      const below = vars.get(under).replace('#', '');
-      const mixed =
-        '#' +
-        [r, g, b]
-          .map((channel, i) => {
-            const base = parseInt(below.slice(i * 2, i * 2 + 2), 16);
-            return Math.round(channel * alpha + base * (1 - alpha)).toString(16).padStart(2, '0');
-          })
-          .join('');
-      const ratio = contrastRatio(ink, mixed);
-      if (ratio < 4.5) problems.push(`${label}: teks di glass di atas ${under} hanya ${ratio.toFixed(2)}:1`);
-    }
-  }
-  if (problems.length) {
-    throw new Error(`Kontras teks di atas glass di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
-  }
-}
+// Kasus terburuk teks di atas glass sudah tidak berlaku karena permukaan kini datar dan opak.
 
 try {
   const total = collectOpacityClasses().length;
@@ -318,10 +265,8 @@ try {
   checkAccentContrast(source);
   checkStateHeadingContrast(source);
   checkActionContrast(source);
-  checkGlassContrast(source);
-  checkGraphicContrast(source);
   checkRawAccentText();
-  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks, tombol aksi, dan glass >= 4.5:1, bentuk grafis >= 3:1, tanpa warna isian untuk teks).`);
+  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks dan tombol aksi >= 4.5:1, tanpa warna isian untuk teks).`);
 } catch (error) {
   console.error(`check:css gagal: ${error.message}`);
   process.exit(1);

@@ -9,10 +9,10 @@ export default {
       colors: {
         // Plate: latar gambar still dan header figur, tetap terang di kedua tema karena gambar berlatar putih.
         plate: {
-          DEFAULT: '#F5F4F1',
-          head: '#E4DDD1',
-          line: '#CFC6B8',
-          ink: '#17120F',
+          DEFAULT: '#F7F7F4',
+          head: '#E7E5DF',
+          line: '#D2D0C9',
+          ink: '#14181C',
         },
         page: 'rgb(var(--bg-page-rgb) / <alpha-value>)',
         surface: 'rgb(var(--bg-surface-rgb) / <alpha-value>)',
@@ -27,6 +27,8 @@ export default {
           strong: 'rgb(var(--border-strong-rgb) / <alpha-value>)',
         },
         accent: {
+          DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)',
+          contrast: 'rgb(var(--accent-contrast-rgb) / <alpha-value>)',
           link: 'rgb(var(--accent-link-rgb) / <alpha-value>)',
           positive: 'rgb(var(--accent-positive-rgb) / <alpha-value>)',
           danger: 'rgb(var(--accent-danger-rgb) / <alpha-value>)',
@@ -48,9 +50,10 @@ export default {
         },
       },
       fontFamily: {
-        brand: ['"Archivo Black"', 'system-ui', 'sans-serif'],
-        heading: ['"Archivo Black"', 'system-ui', 'sans-serif'],
-        sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        brand: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        heading: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        // Body prosa memakai Literata; UI mewarisi font yang sama.
+        sans: ['Literata', 'Georgia', '"Times New Roman"', 'serif'],
         // Font mono sistem: tanpa unduhan, supaya FCP tidak tertahan (spec brand-system).
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', '"Liberation Mono"', 'monospace'],
       },

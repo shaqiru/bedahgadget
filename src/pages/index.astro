@@ -1,93 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ArchiveRow from '../components/ArchiveRow.astro';
+import ArticleList from '../components/ArticleList.astro';
 import JsonLd from '../components/JsonLd.astro';
-import AnatomyHero from '../components/AnatomyHero.astro';
-import SymptomRow from '../components/SymptomRow.astro';
 import FloatingCTA from '../components/FloatingCTA.astro';
-import Icon from '../components/Icon.astro';
-import Glyph from '../components/Glyph.astro';
-import GlyphGrid from '../components/GlyphGrid.astro';
-import GlyphStrip from '../components/GlyphStrip.astro';
-import type { GlyphName } from '../lib/glyphs';
 import { getCollection } from 'astro:content';
-import { articlePath, categories } from '../lib/categories';
-import { laptopParts, symptoms, type ResolvedPart } from '../lib/laptop-parts';
-import { readingTime } from '../lib/reading-time';
+import { articlePath } from '../lib/categories';
 
-const allArticles = await getCollection('articles');
-const sortedArticles = allArticles.sort(
+const articles = (await getCollection('articles')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
-const bySlug = new Map(sortedArticles.map((a) => [a.slug, a]));
-const find = (slug: string) => {
-  const article = bySlug.get(slug);
-  if (!article) throw new Error(`Artikel "${slug}" di src/lib/laptop-parts.ts tidak ditemukan.`);
-  return article;
-};
-
-const parts: ResolvedPart[] = laptopParts.map((part) => {
-  const article = find(part.slug);
-  return {
-    ...part,
-    href: articlePath(article.data.category, article.slug),
-    title: article.data.title,
-    minutes: readingTime(article),
-  };
-});
-
-const categoryKeys = Object.keys(categories) as (keyof typeof categories)[];
-const categoryCounts = categoryKeys.map((key) => {
-  const inCategory = sortedArticles.filter((a) => a.data.category === key);
-  const latest = inCategory[0];
-  return {
-    ...categories[key],
-    count: inCategory.length,
-    latest: latest
-      ? { href: articlePath(key, latest.slug), title: latest.data.title }
-      : undefined,
-  };
-});
-
-const rubricQuestion: Record<string, string> = {
-  bedah: 'Mau tahu cara kerjanya sampai ke sirkuit?',
-  ai: 'Penasaran chip AI di laptop baru?',
-  review: 'Mau beli laptop?',
-};
-
-const rubricBlurb: Record<string, string> = {
-  bedah: 'Cara kerja komponen sampai ke level sirkuit: VRM, pendingin, engsel, dan korosi.',
-  ai: 'Arsitektur silikon untuk AI di laptop: NPU, GPU, dan jalur memorinya.',
-  review: 'Checklist menilai jeroan laptop sebelum membeli, dari pendingin sampai kemudahan servis.',
-};
-
-const rubricGlyph: Record<string, GlyphName> = {
-  bedah: 'screw-torx',
-  ai: 'chip',
-  review: 'fan',
-};
-
-// Kelas tile glyph yang ada; menyetel token --g-tile dan slot --gs-* untuk blok warna dan glyph di dalamnya.
-const rubricTile: Record<string, string> = {
-  bedah: 'g-tile-accent',
-  ai: 'g-tile-ink',
-  review: 'g-tile-heat',
-};
-
-// Glyph dan bidang warna per gejala. Kunci memakai slug artikel supaya tidak ada pencocokan label.
-const symptomGlyph: Record<string, GlyphName> = {
-  'kenapa-panas-bikin-laptop-mati-total-vrm': 'laptop-mati',
-  'laptop-kena-air-dendrit-korosi-52-detik': 'tetesan-air',
-  'thermal-paste-vs-thermal-pad-laptop': 'termometer',
-  'kenapa-engsel-laptop-sering-patah': 'poros-patah',
-};
-
-const symptomTones: Record<string, 'heat' | 'accent' | 'ink' | 'plate'> = {
-  'kenapa-panas-bikin-laptop-mati-total-vrm': 'ink',
-  'laptop-kena-air-dendrit-korosi-52-detik': 'accent',
-  'thermal-paste-vs-thermal-pad-laptop': 'heat',
-  'kenapa-engsel-laptop-sering-patah': 'plate',
-};
 
 const canonicalURL = 'https://bedahgadget.id/';
 const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
@@ -110,344 +31,51 @@ const pageDescription = 'Publikasi jurnalisme teknis independen yang membedah an
       url={canonicalURL}
       image={ogImage}
     />
+    <JsonLd
+      type="collection"
+      title={pageTitle}
+      description={pageDescription}
+      url={canonicalURL}
+      image={ogImage}
+      items={articles.map((article) => ({
+        name: article.data.title,
+        url: articlePath(article.data.category, article.slug),
+      }))}
+    />
   </Fragment>
 
-  <!-- HERO: figur laptop sebagai pintu masuk artikel -->
   <section id="hero" class="border-b border-line">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10 lg:pt-20 lg:pb-14 space-y-10 lg:space-y-14">
-      <div class="max-w-3xl mx-auto text-center space-y-6">
-        <h1 class="font-brand text-[2.25rem] sm:text-5xl lg:text-[4rem] text-ink leading-[1.02] tracking-tight">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10 lg:pt-20 lg:pb-14">
+      <div class="max-w-[65ch] space-y-5">
+        <h1 class="font-brand text-[2.25rem] leading-[1.05] tracking-tight text-ink sm:text-5xl lg:text-[3.5rem]">
           Bedah laptop sampai ke jalur dayanya.
         </h1>
-        <p class="text-base sm:text-lg text-ink-secondary leading-relaxed max-w-[56ch] mx-auto">
+        <p class="text-base leading-relaxed text-ink-secondary sm:text-lg">
           Kenapa laptop mati total, kepanasan, rusak kena air, atau engselnya patah. Setiap
           bahasan berangkat dari skema elektris dan kasus kerusakan di meja servis{' '}
           <a
-            href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=hero_text"
+            href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_intro"
             target="_blank"
             rel="noopener"
-            class="text-accent-link font-semibold underline underline-offset-4"
+            class="font-semibold text-accent-link underline underline-offset-4"
           >
             FixNow.id Bandung
           </a>.
         </p>
-        <div class="flex flex-wrap justify-center gap-3">
-          <a
-            href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=hero_cta"
-            target="_blank"
-            rel="noopener"
-            class="btn btn-primary"
-          >
-            Meja servis FixNow.id
-          </a>
-          <a href="#arsip" class="btn btn-secondary">Lihat semua artikel</a>
-        </div>
-      </div>
-
-    </div>
-    <!-- Figur selebar halaman (di luar container), sesuai permintaan pemilik. -->
-    <AnatomyHero parts={parts} />
-  </section>
-
-  <!-- GEJALA -->
-  <section aria-labelledby="gejala-title" class="py-12 lg:py-16 border-b border-line">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 id="gejala-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight mb-8">
-        Laptop kamu kenapa?
-      </h2>
-      <div class="grid grid-cols-1 gap-5">
-        {
-          symptoms.map((symptom, index) => {
-            const article = find(symptom.slug);
-            const part = parts.find((p) => p.slug === article.slug);
-            return (
-              <SymptomRow
-                label={symptom.label}
-                href={articlePath(article.data.category, article.slug)}
-                title={article.data.title}
-                topic={symptom.topic}
-                slug={article.slug}
-                designator={part?.designator}
-                minutes={readingTime(article)}
-                glyph={symptomGlyph[article.slug] ?? 'laptop-mati'}
-                tone={symptomTones[article.slug] ?? 'plate'}
-                flipped={index % 2 === 1}
-              />
-            );
-          })
-        }
       </div>
     </div>
   </section>
 
-  <!-- RUBRIK -->
-  <section aria-labelledby="rubrik-title" class="bg-elevated py-12 lg:py-16 border-b border-line">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 id="rubrik-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight mb-8">
-        Kamu cari apa?
-      </h2>
-      <div class="grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-y-0">
-        {
-          categoryCounts.map((category) => (
-            <article class="panel card-active group relative flex flex-col md:row-span-5 md:grid md:[grid-template-rows:subgrid]">
-              <div class="panel-head">
-                <span class="font-bold uppercase">{category.label}</span>
-                <span class="text-ink-muted">{category.count} artikel</span>
-              </div>
-              <div
-                class={`relative h-20 md:h-32 overflow-hidden ${rubricTile[category.key]} g-tile-fill`}
-                aria-hidden="true"
-              >
-                <Glyph
-                  name={rubricGlyph[category.key]}
-                  class="absolute -right-8 top-1/2 h-40 w-40 -translate-y-1/2"
-                />
-              </div>
-              <div class="p-5 flex-1 flex flex-col gap-4 md:row-span-3 md:grid md:[grid-template-rows:subgrid] md:gap-0">
-                <h3 class="font-brand text-lg sm:text-xl text-ink leading-snug tracking-tight md:mb-4">
-                  {rubricQuestion[category.key]}
-                </h3>
-                <p class="text-sm text-ink-secondary leading-relaxed md:mb-4">{rubricBlurb[category.key]}</p>
-                <div class="mt-auto flex flex-col gap-2 border-t border-line pt-4 md:mt-0">
-                  {category.latest ? (
-                    <a
-                      href={category.latest.href}
-                      class="flex min-h-11 items-start justify-between gap-3 text-sm font-semibold text-ink after:absolute after:inset-0 after:content-['']"
-                    >
-                      <span class="underline decoration-1 underline-offset-4 group-hover:text-accent-ember group-focus-within:text-accent-ember group-hover:decoration-2 group-focus-within:decoration-2 transition-colors">
-                        {category.latest.title}
-                      </span>
-                      <Icon
-                        name="arrow-right"
-                        weight="bold"
-                        class="mt-0.5 h-4 w-4 shrink-0 text-accent-link"
-                      />
-                    </a>
-                  ) : (
-                    <div class="min-h-11" aria-hidden="true"></div>
-                  )}
-                  <div class="min-h-11">
-                    {category.count > 1 || !category.latest ? (
-                      <a
-                        href={category.archivePath}
-                        class="btn btn-ghost relative z-10 h-11 justify-start"
-                      >
-                        Semua {category.count} artikel
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- ARSIP dengan bar filter glass -->
-  <section id="arsip" aria-labelledby="arsip-title" class="pb-12 lg:pb-16 border-b border-line scroll-mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16">
-      <h2 id="arsip-title" class="font-brand text-2xl sm:text-3xl text-ink tracking-tight">
-        Arsip
-      </h2>
-    </div>
-
-    <div class="glass glass-edge lg:sticky lg:top-16 z-30 border-y border-line mt-6">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col lg:flex-row lg:items-center gap-3">
-        <div
-          role="group"
-          aria-label="Filter rubrik publikasi"
-          class="flex flex-wrap items-center gap-2 font-mono text-xs tabular-nums"
-        >
-          <button
-            type="button"
-            aria-pressed="true"
-            data-filter-category="all"
-            class="rubrik-tab inline-flex min-h-11 items-center px-3.5 border border-line-strong bg-ink text-page font-bold"
-          >
-            SEMUA ({sortedArticles.length})
-          </button>
-          {
-            categoryCounts.map((category) => (
-              <button
-                type="button"
-                aria-pressed="false"
-                data-filter-category={category.key}
-                class="rubrik-tab inline-flex min-h-11 items-center px-3.5 border border-line-strong text-ink"
-              >
-                {category.label.toUpperCase()} ({category.count})
-              </button>
-            ))
-          }
-        </div>
-        <div class="lg:ml-auto w-full lg:w-80">
-          <label for="article-search" class="block mb-1 font-mono text-xs text-ink-secondary">Cari komponen atau gejala</label>
-          <input
-            id="article-search"
-            type="search"
-            placeholder="mis. VRM, engsel, NPU"
-            class="w-full min-h-11 px-3.5 text-sm font-mono bg-surface text-ink border border-line-strong placeholder:text-ink-muted"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-      <p id="filter-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-
-      <div class="panel">
-        <ul id="articles-grid">
-          {
-            sortedArticles.map((article) => (
-              <li
-                class="article-item"
-                data-category={article.data.category}
-                data-search={`${article.data.title} ${article.data.description} ${article.data.tags.join(' ')}`.toLowerCase()}
-              >
-                <ArchiveRow article={article} />
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div id="empty-filter-state" class="hidden panel p-8 sm:p-10 text-center max-w-xl mx-auto my-8 space-y-4">
-        <h3 class="font-brand text-xl text-ink">Belum ada artikel yang cocok</h3>
-        <p class="text-sm text-ink-secondary">
-          Coba istilah lain, misalnya VRM, pasta termal, engsel, korosi, RAM, atau NPU.
-        </p>
-        <button id="reset-filter-btn" type="button" class="btn btn-secondary">Tampilkan semua artikel</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- WORKSHOP FixNow.id -->
-  <section aria-labelledby="workshop-title" class="py-12 lg:py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="panel overflow-hidden">
-        <GlyphStrip id="strip-workshop" size={48} class="lg:hidden" />
-
-        <div class="lg:grid lg:grid-cols-12">
-          <div
-            class="hidden lg:block lg:col-span-5 relative overflow-hidden border-r border-line g-tile-fill g-tile-plate"
-            aria-hidden="true"
-          >
-            <GlyphGrid class="absolute inset-0 h-full w-full" />
-          </div>
-
-          <div class="lg:col-span-7 p-6 sm:p-8 lg:p-10">
-            <div class="max-w-[52ch] lg:mx-auto">
-              <h2 id="workshop-title" class="font-brand text-2xl sm:text-3xl text-ink leading-snug">
-                Apa yang dikerjakan di meja servis, dan apa yang tidak
-              </h2>
-
-              <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div class="space-y-3">
-                  <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-positive">
-                    <Icon name="check" weight="bold" class="h-4 w-4 shrink-0" />
-                    Bisa dikerjakan
-                  </h3>
-                  <ul class="text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
-                    <li>Perbaikan jalur daya motherboard (mikrosolder)</li>
-                    <li>Penggantian VRAM</li>
-                    <li>Konversi Discrete-to-UMA</li>
-                  </ul>
-                </div>
-
-                <div class="space-y-3">
-                  <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase text-accent-danger">
-                    <Icon name="x" weight="bold" class="h-4 w-4 shrink-0" />
-                    Tidak dikerjakan
-                  </h3>
-                  <ul class="text-sm text-ink-secondary space-y-1.5 list-disc pl-4">
-                    <li>Reballing atau ganti chip GPU utama</li>
-                    <li>Kartu VGA PC desktop</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="mt-8 pt-6 border-t border-line flex flex-col gap-2.5">
-                <a
-                  href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
-                  target="_blank"
-                  rel="noopener"
-                  class="btn btn-primary w-full"
-                >
-                  WhatsApp 0851-3950-6080
-                </a>
-                <a
-                  href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=home_cta"
-                  target="_blank"
-                  rel="noopener"
-                  class="btn btn-secondary w-full"
-                >
-                  Kunjungi FixNow.id
-                </a>
-                <p class="font-mono text-xs text-ink-muted pt-1">
-                  Cek awal gratis <span aria-hidden="true">&middot;</span> Jl. Manteron No. 12, Bandung
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <ArticleList
+      articles={articles}
+      heading="Semua artikel"
+      headingId="feed-title"
+      id="arsip"
+      showCategory
+      emptyMessage="Belum ada artikel. Silakan kembali lagi nanti."
+    />
+  </div>
 
   <FloatingCTA watch="#hero" />
 </BaseLayout>
-
-<script>
-  const filterButtons = document.querySelectorAll<HTMLButtonElement>('.rubrik-tab');
-  const items = document.querySelectorAll<HTMLElement>('.article-item');
-  const searchInput = document.getElementById('article-search') as HTMLInputElement | null;
-  const emptyState = document.getElementById('empty-filter-state');
-  const resetBtn = document.getElementById('reset-filter-btn');
-  const filterStatus = document.getElementById('filter-status');
-
-  let activeCategory = 'all';
-  let searchQuery = '';
-
-  function applyFilter() {
-    let visibleCount = 0;
-    items.forEach((item) => {
-      const matchesCat = activeCategory === 'all' || item.dataset.category === activeCategory;
-      const matchesSearch = !searchQuery || (item.dataset.search || '').includes(searchQuery);
-      const visible = matchesCat && matchesSearch;
-      item.classList.toggle('hidden', !visible);
-      if (visible) visibleCount++;
-    });
-    emptyState?.classList.toggle('hidden', visibleCount > 0);
-    if (filterStatus) {
-      filterStatus.textContent =
-        visibleCount === 1 ? '1 artikel ditampilkan.' : `${visibleCount} artikel ditampilkan.`;
-    }
-  }
-
-  filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      activeCategory = button.dataset.filterCategory || 'all';
-      filterButtons.forEach((other) => {
-        const isActive = other === button;
-        other.setAttribute('aria-pressed', String(isActive));
-        other.classList.toggle('bg-ink', isActive);
-        other.classList.toggle('text-page', isActive);
-        other.classList.toggle('font-bold', isActive);
-        other.classList.toggle('text-ink', !isActive);
-      });
-      applyFilter();
-    });
-  });
-
-  searchInput?.addEventListener('input', () => {
-    searchQuery = searchInput.value.trim().toLowerCase();
-    applyFilter();
-  });
-
-  resetBtn?.addEventListener('click', () => {
-    searchQuery = '';
-    if (searchInput) searchInput.value = '';
-    filterButtons[0]?.click();
-  });
-</script>

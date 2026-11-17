@@ -2,182 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Dua wajah: Bricolage Grotesque untuk display, Literata untuk prosa. Self-hosted, tanpa CDN. */
 @font-face {
-  font-family: 'Archivo Black';
-  src: url('/brand/fonts/ArchivoBlack-Regular.woff2') format('woff2'),
-    url('/brand/fonts/ArchivoBlack-Regular.ttf') format('truetype');
-  font-weight: 900;
+  font-family: 'Bricolage Grotesque';
+  src: url('/brand/fonts/BricolageGrotesque-Variable.woff2') format('woff2');
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }
 
-/* Palet termal. Pasangan hex dan kanal RGB wajib identik (diperiksa scripts/check-theme-css.mjs). */
+@font-face {
+  font-family: 'Literata';
+  src: url('/brand/fonts/Literata-Variable.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Literata';
+  src: url('/brand/fonts/Literata-Variable-Italic.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Palet "tinta di atas kertas": netral sejuk + satu aksen teal.
+   Pasangan hex dan kanal RGB wajib identik (diperiksa scripts/check-theme-css.mjs). */
 :root {
   color-scheme: light;
 
-  --bg-page: #EFE9DF;
-  --bg-page-rgb: 239 233 223;
-  --bg-surface: #F8F5EF;
-  --bg-surface-rgb: 248 245 239;
-  --bg-elevated: #E4DDD1;
-  --bg-elevated-rgb: 228 221 209;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Literata', Georgia, 'Times New Roman', serif;
 
-  --text-primary: #17120F;
-  --text-primary-rgb: 23 18 15;
-  --text-secondary: #3D352F;
-  --text-secondary-rgb: 61 53 47;
-  --text-muted: #5A5048;
-  --text-muted-rgb: 90 80 72;
+  --bg-page: #F3F2EE;
+  --bg-page-rgb: 243 242 238;
+  --bg-surface: #FBFAF8;
+  --bg-surface-rgb: 251 250 248;
+  --bg-elevated: #E7E5DF;
+  --bg-elevated-rgb: 231 229 223;
 
-  --accent-link: #1F4E79;
-  --accent-link-rgb: 31 78 121;
-  --accent-positive: #2F6B3A;
-  --accent-positive-rgb: 47 107 58;
+  --text-primary: #14181C;
+  --text-primary-rgb: 20 24 28;
+  --text-secondary: #3A4147;
+  --text-secondary-rgb: 58 65 71;
+  --text-muted: #5A626A;
+  --text-muted-rgb: 90 98 106;
+
+  /* Satu aksen: teal sinyal untuk tautan, status, dan CTA. */
+  --accent: #0B5F58;
+  --accent-rgb: 11 95 88;
+  --accent-contrast: #FFFFFF;
+  --accent-contrast-rgb: 255 255 255;
+
+  --accent-link: #0B5F58;
+  --accent-link-rgb: 11 95 88;
+  --accent-positive: #1F6B3A;
+  --accent-positive-rgb: 31 107 58;
   /* Teks merah (label bahaya, ikon kecil). */
-  --accent-danger: #B02E0E;
-  --accent-danger-rgb: 176 46 14;
+  --accent-danger: #A3331C;
+  --accent-danger-rgb: 163 51 28;
   /* Teks state aktif kartu (hover dan fokus keyboard). */
-  --accent-ember: #A63A14;
-  --accent-ember-rgb: 166 58 20;
+  --accent-ember: #084A45;
+  --accent-ember-rgb: 8 74 69;
   /* Judul besar state aktif: sama dengan warna garis, hanya untuk teks >= 24px. */
-  --accent-ember-strong: #E2401C;
-  --accent-ember-strong-rgb: 226 64 28;
+  --accent-ember-strong: #0B5F58;
+  --accent-ember-strong-rgb: 11 95 88;
   /* Isian saja, jangan dipakai sebagai warna teks. */
-  --accent-hot: #E2401C;
-  --accent-hot-rgb: 226 64 28;
-  --accent-heat: #FFB81C;
-  --accent-heat-rgb: 255 184 28;
-  --text-on-heat: #17120F;
-  --text-on-heat-rgb: 23 18 15;
+  --accent-hot: #0B5F58;
+  --accent-hot-rgb: 11 95 88;
+  --accent-heat: #0B5F58;
+  --accent-heat-rgb: 11 95 88;
+  --text-on-heat: #FFFFFF;
+  --text-on-heat-rgb: 255 255 255;
 
-  --border-hairline: #CFC6B8;
-  --border-hairline-rgb: 207 198 184;
-  --border-strong: #17120F;
-  --border-strong-rgb: 23 18 15;
+  --border-hairline: #D2D0C9;
+  --border-hairline-rgb: 210 208 201;
+  --border-strong: #14181C;
+  --border-strong-rgb: 20 24 28;
 
-  /* Aksi utama (CTA perbaikan): merah termal gelap dengan teks putih. */
-  --bg-action: #B02E0E;
-  --bg-action-rgb: 176 46 14;
-  --bg-action-hover: #8E240A;
-  --bg-action-hover-rgb: 142 36 10;
+  /* Aksi utama: aksen teal dengan teks kontras. */
+  --bg-action: #0B5F58;
+  --bg-action-rgb: 11 95 88;
+  --bg-action-hover: #084A45;
+  --bg-action-hover-rgb: 8 74 69;
   --text-on-action: #FFFFFF;
   --text-on-action-rgb: 255 255 255;
   --text-on-action-hover: #FFFFFF;
   --text-on-action-hover-rgb: 255 255 255;
-
-  /* Material glass (layer fungsional saja). */
-  --glass-fill: rgb(248 245 239 / 0.78);
-  --glass-edge: rgb(255 255 255 / 0.4);
-
-  /* Grafis brand (design brand-graphics Decision 4). Dekorasi saja, bukan untuk teks atau status. */
-  --g-1: #17120F;
-  --g-1-rgb: 23 18 15;
-  --g-2: #E2401C;
-  --g-2-rgb: 226 64 28;
-  --g-3: #FFB81C;
-  --g-3-rgb: 255 184 28;
-  --g-4: #E4DDD1;
-  --g-4-rgb: 228 221 209;
-  --g-line: #17120F;
-  --g-line-rgb: 23 18 15;
 }
 
 html[data-theme='dark'] {
   color-scheme: dark;
-  --bg-page: #17120F;
-  --bg-page-rgb: 23 18 15;
-  --bg-surface: #201A16;
-  --bg-surface-rgb: 32 26 22;
-  --bg-elevated: #2B241F;
-  --bg-elevated-rgb: 43 36 31;
+  --bg-page: #111416;
+  --bg-page-rgb: 17 20 22;
+  --bg-surface: #1A1E21;
+  --bg-surface-rgb: 26 30 33;
+  --bg-elevated: #242A2E;
+  --bg-elevated-rgb: 36 42 46;
 
-  --text-primary: #EFE9DF;
-  --text-primary-rgb: 239 233 223;
-  --text-secondary: #CFC6B8;
-  --text-secondary-rgb: 207 198 184;
-  --text-muted: #A89E93;
-  --text-muted-rgb: 168 158 147;
+  --text-primary: #F2F1ED;
+  --text-primary-rgb: 242 241 237;
+  --text-secondary: #C6C9C6;
+  --text-secondary-rgb: 198 201 198;
+  --text-muted: #A2A8AB;
+  --text-muted-rgb: 162 168 171;
 
-  --accent-link: #7FB3E0;
-  --accent-link-rgb: 127 179 224;
-  --accent-positive: #6FCF8A;
-  --accent-positive-rgb: 111 207 138;
-  --accent-danger: #FF6A45;
-  --accent-danger-rgb: 255 106 69;
-  --accent-ember: #FFA07F;
-  --accent-ember-rgb: 255 160 127;
-  --accent-ember-strong: #FF6A45;
-  --accent-ember-strong-rgb: 255 106 69;
-  --accent-hot: #FF6A45;
-  --accent-hot-rgb: 255 106 69;
-  --accent-heat: #FFB81C;
-  --accent-heat-rgb: 255 184 28;
-  --text-on-heat: #17120F;
-  --text-on-heat-rgb: 23 18 15;
+  --accent: #6FD3C4;
+  --accent-rgb: 111 211 196;
+  --accent-contrast: #111416;
+  --accent-contrast-rgb: 17 20 22;
 
-  --border-hairline: #3A322B;
-  --border-hairline-rgb: 58 50 43;
-  --border-strong: #EFE9DF;
-  --border-strong-rgb: 239 233 223;
+  --accent-link: #6FD3C4;
+  --accent-link-rgb: 111 211 196;
+  --accent-positive: #7ED6A0;
+  --accent-positive-rgb: 126 214 160;
+  --accent-danger: #FF8F7A;
+  --accent-danger-rgb: 255 143 122;
+  --accent-ember: #8CE2D5;
+  --accent-ember-rgb: 140 226 213;
+  --accent-ember-strong: #6FD3C4;
+  --accent-ember-strong-rgb: 111 211 196;
+  --accent-hot: #6FD3C4;
+  --accent-hot-rgb: 111 211 196;
+  --accent-heat: #6FD3C4;
+  --accent-heat-rgb: 111 211 196;
+  --text-on-heat: #111416;
+  --text-on-heat-rgb: 17 20 22;
 
-  --bg-action: #FF6A45;
-  --bg-action-rgb: 255 106 69;
-  --bg-action-hover: #FF8A6B;
-  --bg-action-hover-rgb: 255 138 107;
-  --text-on-action: #17120F;
-  --text-on-action-rgb: 23 18 15;
-  --text-on-action-hover: #17120F;
-  --text-on-action-hover-rgb: 23 18 15;
+  --border-hairline: #333A3E;
+  --border-hairline-rgb: 51 58 62;
+  --border-strong: #F2F1ED;
+  --border-strong-rgb: 242 241 237;
 
-  --glass-fill: rgb(23 18 15 / 0.74);
-  --glass-edge: rgb(255 255 255 / 0.12);
-
-  --g-1: #EFE9DF;
-  --g-1-rgb: 239 233 223;
-  --g-2: #FF6A45;
-  --g-2-rgb: 255 106 69;
-  --g-3: #FFB81C;
-  --g-3-rgb: 255 184 28;
-  --g-4: #2B241F;
-  --g-4-rgb: 43 36 31;
-  --g-line: #EFE9DF;
-  --g-line-rgb: 239 233 223;
-}
-
-/* Glyph membaca slot --gs-*; komposisi menyetel slot itu per jenis tile. */
-.glyph .g1 { fill: rgb(var(--gs-1, var(--g-1-rgb))); }
-.glyph .g2 { fill: rgb(var(--gs-2, var(--g-2-rgb))); }
-.glyph .g3 { fill: rgb(var(--gs-3, var(--g-3-rgb))); }
-.glyph .g4 { fill: rgb(var(--gs-4, var(--g-4-rgb))); }
-.glyph .gl {
-  fill: none;
-  stroke: rgb(var(--gs-line, var(--g-line-rgb)));
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
-.g-tile-bg { fill: rgb(var(--g-tile)); }
-/* Blok warna HTML (bukan SVG): memakai token --g-tile dari kelas tile di bawah ini. */
-.g-tile-fill { background-color: rgb(var(--g-tile)); }
-.g-tile-plate { --g-tile: var(--g-4-rgb); }
-/* Tile satu warna: bentuk (g1, g2, kontur) memakai warna terang, lubang (g3, g4) memakai warna tile. */
-.g-tile-ink,
-.g-tile-accent {
-  --gs-1: var(--bg-surface-rgb);
-  --gs-2: var(--bg-surface-rgb);
-  --gs-3: var(--g-tile);
-  --gs-4: var(--g-tile);
-  --gs-line: var(--bg-surface-rgb);
-}
-.g-tile-ink { --g-tile: var(--g-1-rgb); }
-.g-tile-accent { --g-tile: var(--g-2-rgb); }
-.g-tile-heat {
-  --g-tile: var(--g-3-rgb);
-  --gs-1: var(--text-on-heat-rgb);
-  --gs-2: var(--text-on-heat-rgb);
-  --gs-3: var(--g-tile);
-  --gs-4: var(--g-tile);
-  --gs-line: var(--text-on-heat-rgb);
+  --bg-action: #6FD3C4;
+  --bg-action-rgb: 111 211 196;
+  --bg-action-hover: #8CE2D5;
+  --bg-action-hover-rgb: 140 226 213;
+  --text-on-action: #111416;
+  --text-on-action-rgb: 17 20 22;
+  --text-on-action-hover: #111416;
+  --text-on-action-hover-rgb: 17 20 22;
 }
 
 /* Theme visibility helpers for dual SVGs */
@@ -214,7 +179,7 @@ html[data-theme='dark'] .theme-light-only {
 body {
   background-color: var(--bg-page);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -226,7 +191,8 @@ body {
 }
 
 .font-brand {
-  font-family: 'Archivo Black', system-ui, sans-serif;
+  font-family: var(--font-display);
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
@@ -257,7 +223,7 @@ body {
 }
 
 .iso-diagram-well {
-  background-color: #F5F4F1;
+  background-color: var(--bg-elevated);
   border-bottom: 1px solid var(--border-hairline);
 }
 
@@ -266,6 +232,7 @@ body {
   color: var(--text-secondary);
   font-size: 1.0625rem;
   line-height: 1.75;
+  max-width: 72ch;
 }
 
 .article-prose > p,
@@ -282,7 +249,8 @@ body {
 }
 
 .article-prose h2 {
-  font-family: 'Archivo Black', system-ui, sans-serif;
+  font-family: var(--font-display);
+  font-weight: 700;
   color: var(--text-primary);
   font-size: clamp(1.35rem, 2.2vw, 1.75rem);
   line-height: 1.2;
@@ -295,7 +263,8 @@ body {
 }
 
 .article-prose h3 {
-  font-family: 'Archivo Black', system-ui, sans-serif;
+  font-family: var(--font-display);
+  font-weight: 700;
   color: var(--text-primary);
   font-size: clamp(1.125rem, 1.8vw, 1.35rem);
   line-height: 1.25;
@@ -361,8 +330,8 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 0.875rem;
   line-height: 1.6;
-  background-color: #17120F;
-  color: #EFE9DF;
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
   padding: 1.25rem;
   border: 1px solid var(--border-hairline);
   overflow-x: auto;
@@ -564,56 +533,8 @@ body {
   }
 }
 
-/* ---------- Material glass (design.md Decisions 7) ----------
-   Hanya untuk layer fungsional: navbar, bar filter arsip, popover figur, CTA mengambang. */
-.glass {
-  background-color: var(--glass-fill);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  backdrop-filter: blur(24px) saturate(1.4);
-  box-shadow: inset 0 1px 0 var(--glass-edge);
-}
-
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass {
-    background-color: var(--bg-surface);
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .glass {
-    background-color: var(--bg-surface);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
-
-@media (prefers-contrast: more) {
-  .glass {
-    background-color: var(--bg-surface);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    border-color: var(--border-strong) !important;
-    border-width: 2px;
-  }
-}
-
-/* Scroll edge: pita pudar di bawah bar glass. Elemennya harus sticky atau fixed. */
-.glass-edge::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 16px;
-  pointer-events: none;
-  background: linear-gradient(to bottom, var(--glass-fill), transparent);
-}
-
-@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
-  .glass-edge::after {
-    display: none;
-  }
-}
+/* ---------- Permukaan datar ----------
+   Tidak ada glass atau backdrop-filter. Header dan CTA memakai bg-surface dengan garis tegas. */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -624,25 +545,4 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* Dinding glyph footer: bagian glyph terangkat bertingkat lalu terpasang lagi (bongkar-pasang).
-   Hanya transform; diam saat prefers-reduced-motion, tanpa tombol jeda (aturan gerak proyek). */
-@keyframes gw-lift {
-  0%, 30% { transform: translateY(0); }
-  48%, 66% { transform: translateY(var(--gw-lift)); }
-  84%, 100% { transform: translateY(0); }
-}
-.glyph-wall-svg .gx-1, .glyph-wall-svg .gx-2, .glyph-wall-svg .gx-3 {
-  animation: gw-lift 7.2s cubic-bezier(.65, 0, .35, 1) infinite;
-  animation-delay: var(--gw-delay, 0s);
-}
-.glyph-wall-svg .gx-1 { --gw-lift: -5px; }
-.glyph-wall-svg .gx-2 { --gw-lift: -10px; }
-.glyph-wall-svg .gx-3 { --gw-lift: -15px; }
-.gw-d0 { --gw-delay: 0s; } .gw-d1 { --gw-delay: .6s; } .gw-d2 { --gw-delay: 1.2s; } .gw-d3 { --gw-delay: 1.8s; }
-.gw-d4 { --gw-delay: 2.4s; } .gw-d5 { --gw-delay: 3s; } .gw-d6 { --gw-delay: 3.6s; } .gw-d7 { --gw-delay: 4.2s; }
-.gw-d8 { --gw-delay: 4.8s; } .gw-d9 { --gw-delay: 5.4s; } .gw-d10 { --gw-delay: 6s; } .gw-d11 { --gw-delay: 6.6s; }
-@media (prefers-reduced-motion: reduce) {
-  .glyph-wall-svg .gx-1, .glyph-wall-svg .gx-2, .glyph-wall-svg .gx-3 { animation: none; }
 }
