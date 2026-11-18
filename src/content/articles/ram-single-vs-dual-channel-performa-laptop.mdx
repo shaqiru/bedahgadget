@@ -32,6 +32,12 @@ faqs: [
     answer: "Bisa, asalkan generasi memori (DDR4 atau DDR5), tegangan kerja, frekuensi MT/s, dan nilai CAS Latency (CL) sesuai standar JEDEC yang sama agar pengontrol memori tidak menurunkan kecepatan clock."
   }
 ]
+llms:
+  heading: "Memori: Bandwidth RAM Single vs Dual Channel"
+  summary: "Perbandingan throughput bus 64-bit (25.6 GB/s) vs bus 128-bit (51.2 GB/s) dan pengaruhnya pada grafis terintegrasi (iGPU) serta token AI."
+  topics: "Bus Data 64-bit vs 128-bit, DDR4 3200, DDR5 5600, iGPU Bottleneck, Token AI."
+  digest: "Memori single channel membatasi bus pada 64-bit (25.6 GB/s), membuat iGPU kehilangan 25-40% performa game dan memperlambat inferensi LLM lokal. Mode dual channel 128-bit melipatgandakan throughput data."
+  service: "Pemasangan modul RAM kompatibel berkecepatan identik di FixNow.id."
 ---
 
 import { Image } from 'astro:assets';

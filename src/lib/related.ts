@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import { compareArticles } from './articles';
 import { MIN_TAG_ARTICLES } from './tags.mjs';
 
 type Article = CollectionEntry<'articles'>;
@@ -17,7 +18,7 @@ export function relatedArticles(current: Article, all: Article[], limit = 3): Ar
       (x, y) =>
         y.shared - x.shared ||
         y.sameCategory - x.sameCategory ||
-        y.a.data.pubDate.valueOf() - x.a.data.pubDate.valueOf()
+        compareArticles(x.a, y.a)
     )
     .slice(0, limit)
     .map(({ a }) => a);

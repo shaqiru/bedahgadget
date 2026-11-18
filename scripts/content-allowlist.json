@@ -1,0 +1,21 @@
+{
+  "_comment": "Konstruksi yang boleh dipakai di isi artikel (src/content/articles). Diperluas lewat PR yang direview pemilik. Dibaca oleh scripts/check-content-security.mjs.",
+  "imports": {
+    "named": { "astro:assets": ["Image"] },
+    "defaultFrom": "^\\.\\./\\.\\./assets/stills/[a-z0-9-]+\\.(png|jpe?g|webp)$"
+  },
+  "components": {
+    "Image": ["src", "alt", "widths", "sizes", "class", "loading"]
+  },
+  "elements": {
+    "figure": ["class"],
+    "figcaption": ["class"],
+    "div": ["class"],
+    "span": ["class"]
+  },
+  "expressionAttributes": {
+    "src": "importedIdentifier",
+    "widths": "numberArray"
+  },
+  "frontmatterImage": "^\\.\\./\\.\\./assets/[a-z0-9/_-]+\\.(png|jpe?g|webp)$"
+}

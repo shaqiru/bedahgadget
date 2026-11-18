@@ -1,10 +1,11 @@
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Hosting target: Jagoan Hosting (cPanel + LiteSpeed), yang membaca .htaccess.
-// Ditulis saat build supaya hash CSP selalu cocok dengan script inline yang benar-benar terbit.
+// Ditulis saat build. CSP hanya memuat hash script inline yang tercantum di
+// inline-script-allowlist.json dan benar-benar terbit.
 
 function listHtml(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -14,16 +15,40 @@ function listHtml(dir) {
   });
 }
 
+const ALLOWLIST_PATH = fileURLToPath(new URL('./inline-script-allowlist.json', import.meta.url));
+
+// Hash script inline yang muncul di HTML hasil build, dikelompokkan per hash beserta halaman pertamanya.
+// Blok JSON-LD dan script eksternal (src=) tidak dieksekusi sebagai inline, jadi tidak dihitung.
 function inlineScriptHashes(distDir) {
-  const hashes = new Set();
+  const found = new Map();
   for (const file of listHtml(distDir)) {
     const html = readFileSync(file, 'utf-8');
-    for (const [, attrs, body] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
-      if (/\bsrc=/.test(attrs) || /application\/ld\+json/.test(attrs)) continue;
-      hashes.add(`'sha256-${createHash('sha256').update(body).digest('base64')}'`);
+    for (const [, attrs, body] of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/gi)) {
+      if (/\bsrc\s*=/i.test(attrs) || /application\/ld\+json/i.test(attrs)) continue;
+      const hash = `sha256-${createHash('sha256').update(body).digest('base64')}`;
+      if (!found.has(hash)) found.set(hash, relative(distDir, file));
     }
   }
-  return [...hashes].sort();
+  return found;
+}
+
+// Hanya hash yang sudah direview di inline-script-allowlist.json yang boleh masuk CSP.
+// Script inline lain (misalnya disisipkan lewat artikel) menggagalkan build.
+function allowedScriptHashes(distDir, logger) {
+  const allowlist = JSON.parse(readFileSync(ALLOWLIST_PATH, 'utf-8')).scripts.map((entry) => entry.hash);
+  const found = inlineScriptHashes(distDir);
+  const unknown = [...found].filter(([hash]) => !allowlist.includes(hash));
+  if (unknown.length > 0) {
+    throw new Error(
+      'Script inline yang belum direview ditemukan di HTML hasil build:\n' +
+        unknown.map(([hash, page]) => `  ${hash} (pertama kali di ${page})`).join('\n') +
+        '\nJika script ini memang disengaja, tambahkan hash-nya ke src/lib/inline-script-allowlist.json di PR yang sama.',
+    );
+  }
+  for (const hash of allowlist) {
+    if (!found.has(hash)) logger.warn(`Hash di allowlist tidak dipakai di HTML mana pun: ${hash}`);
+  }
+  return allowlist.filter((hash) => found.has(hash)).map((hash) => `'${hash}'`).sort();
 }
 
 function buildHtaccess(scriptHashes) {
@@ -88,7 +113,7 @@ export default function htaccess() {
     hooks: {
       'astro:build:done': ({ dir, logger }) => {
         const distDir = fileURLToPath(dir);
-        const hashes = inlineScriptHashes(distDir);
+        const hashes = allowedScriptHashes(distDir, logger);
         writeFileSync(join(distDir, '.htaccess'), buildHtaccess(hashes));
         logger.info(`.htaccess ditulis dengan ${hashes.length} hash script inline`);
       },

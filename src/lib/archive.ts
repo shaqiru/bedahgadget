@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import { compareArticles } from './articles';
 import { categories, type CategoryKey } from './categories';
 
 export type Article = CollectionEntry<'articles'>;
@@ -7,7 +8,7 @@ export type Article = CollectionEntry<'articles'>;
 export const ARCHIVE_PAGE_SIZE = 12;
 
 export function sortByNewest(articles: Article[]): Article[] {
-  return [...articles].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return [...articles].sort(compareArticles);
 }
 
 export interface Page<T> {

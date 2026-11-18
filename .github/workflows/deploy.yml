@@ -1,0 +1,191 @@
+# Deploy otomatis dari main ke hosting produksi.
+#
+# Job "build" berjalan tanpa secret dan menghasilkan artefak dist/ yang sudah divalidasi.
+# Job "deploy" berjalan di environment "production" (hanya branch main), TIDAK checkout repo dan
+# TIDAK menjalankan kode repo: ia hanya mengunggah artefak itu dengan lftp, memangkas file lama,
+# lalu purge cache Cloudflare.
+#
+# Deploy hanya berjalan jika repository variable DEPLOY_ENABLED = "true". Prosedur menyiapkan
+# secret, rollback, dan rotasi kredensial ada di dokumen operasional pemilik.
+#
+# Rollback: Actions -> Deploy -> Run workflow, isi "sha" dengan salah satu dari 10 commit terakhir main.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: SHA commit main yang ingin diterbitkan ulang (kosongkan untuk HEAD main)
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      sha: ${{ steps.target.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 10
+          persist-credentials: false
+
+      - name: Resolve target commit
+        id: target
+        env:
+          REQUESTED: ${{ inputs.sha }}
+        run: |
+          set -euo pipefail
+          if [ -n "${REQUESTED:-}" ]; then
+            target="$(git rev-parse --verify "${REQUESTED}^{commit}")"
+            if ! git rev-list --max-count=10 HEAD | grep -qx "$target"; then
+              echo "::error::$target bukan salah satu dari 10 commit terakhir main"
+              exit 1
+            fi
+            git checkout --quiet "$target"
+          else
+            target="$(git rev-parse HEAD)"
+          fi
+          echo "sha=$target" >> "$GITHUB_OUTPUT"
+          echo "Menerbitkan $target"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache optimized images
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/.astro
+          key: astro-assets-${{ hashFiles('src/assets/**', 'package-lock.json') }}
+          restore-keys: astro-assets-
+
+      - name: Checks and build
+        run: |
+          npm run check:publication
+          npm run check:content
+          npm run build
+
+      - name: Write release manifest
+        env:
+          RELEASE_SHA: ${{ steps.target.outputs.sha }}
+        run: node scripts/write-release-manifest.mjs dist "$RELEASE_SHA"
+
+      - name: Validate dist/
+        run: npm run check:dist
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-${{ steps.target.outputs.sha }}
+          path: dist/
+          include-hidden-files: true
+          retention-days: 30
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://bedahgadget.id
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site-${{ needs.build.outputs.sha }}
+          path: site
+
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp jq
+
+      - name: Upload, prune, purge
+        env:
+          RELEASE_SHA: ${{ needs.build.outputs.sha }}
+          SITE_URL: https://bedahgadget.id
+          DEPLOY_PROTOCOL: ${{ secrets.DEPLOY_PROTOCOL }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          LFTP_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          PRUNE_KEEP_REGEX: ${{ vars.PRUNE_KEEP_REGEX }}
+        run: |
+          set -euo pipefail
+          for v in DEPLOY_PROTOCOL DEPLOY_HOST DEPLOY_USER LFTP_PASSWORD DEPLOY_PATH CF_ZONE_ID CF_API_TOKEN; do
+            if [ -z "${!v:-}" ]; then echo "::error::Secret untuk $v belum diisi di environment production"; exit 1; fi
+          done
+          test -f site/release.json || { echo "::error::Artefak tidak berisi release.json"; exit 1; }
+
+          # Pengaturan koneksi terenkripsi dengan verifikasi identitas server.
+          case "$DEPLOY_PROTOCOL" in
+            ftps)
+              SETTINGS="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate true; set ftp:passive-mode true"
+              URL="ftp://$DEPLOY_HOST"
+              ;;
+            sftp)
+              test -n "${DEPLOY_HOST_KEY:-}" || { echo "::error::DEPLOY_HOST_KEY wajib untuk sftp"; exit 1; }
+              printf '%s\n' "$DEPLOY_HOST_KEY" > "$RUNNER_TEMP/known_hosts"
+              SETTINGS="set sftp:connect-program 'ssh -a -x -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$RUNNER_TEMP/known_hosts'"
+              URL="sftp://$DEPLOY_HOST"
+              ;;
+            *) echo "::error::DEPLOY_PROTOCOL harus ftps atau sftp"; exit 1 ;;
+          esac
+          SETTINGS="$SETTINGS; set net:max-retries 3; set net:timeout 30; set cmd:fail-exit true"
+          remote() { lftp -c "$SETTINGS; open --env-password -u \"$DEPLOY_USER\" \"$URL\"; cd \"$DEPLOY_PATH\"; $1"; }
+
+          # Daftar file rilis yang sedang live (untuk pemangkasan aman).
+          curl -fsS --max-time 20 "$SITE_URL/release.json" -o "$RUNNER_TEMP/previous.json" || echo '{"files":[]}' > "$RUNNER_TEMP/previous.json"
+          PREVIOUS_SHA="$(jq -r '.sha // "none"' "$RUNNER_TEMP/previous.json")"
+          echo "Rilis live sebelumnya: $PREVIOUS_SHA"
+
+          # 1. Aset (semua selain HTML, .htaccess, dan manifest) diunggah lebih dulu.
+          remote "mirror -R --overwrite --no-perms --parallel=4 --exclude-glob *.html --exclude-glob .htaccess --exclude-glob release.json site/ ./"
+          # 2. Lalu HTML dan .htaccess, sehingga halaman baru hanya merujuk aset yang sudah ada.
+          remote "mirror -R --overwrite --no-perms --parallel=4 --include-glob *.html --include-glob .htaccess --exclude-glob * site/ ./"
+          # 3. Manifest terakhir: menandai rilis ini sebagai live.
+          remote "put -O ./ site/release.json"
+
+          # 4. Pangkas file yang tidak ada di rilis ini maupun rilis sebelumnya.
+          #    Deploy pertama (belum ada release.json live) tidak memangkas apa pun.
+          if [ "$PREVIOUS_SHA" != "none" ]; then
+            jq -r '.files[]' site/release.json "$RUNNER_TEMP/previous.json" | sort -u > "$RUNNER_TEMP/keep.txt"
+            remote "find ./" | sed -e 's#^\./##' -e '/\/$/d' -e '/^$/d' | sort -u > "$RUNNER_TEMP/remote.txt"
+            KEEP_REGEX="${PRUNE_KEEP_REGEX:-^(\.well-known/|cgi-bin/)}"
+            comm -23 "$RUNNER_TEMP/remote.txt" "$RUNNER_TEMP/keep.txt" | grep -Ev "$KEEP_REGEX" > "$RUNNER_TEMP/prune.txt" || true
+            echo "Dipangkas: $(wc -l < "$RUNNER_TEMP/prune.txt") file"
+            if [ -s "$RUNNER_TEMP/prune.txt" ]; then
+              { while IFS= read -r f; do printf 'rm -f "%s"\n' "$f"; done < "$RUNNER_TEMP/prune.txt"; } > "$RUNNER_TEMP/prune.lftp"
+              remote "source $RUNNER_TEMP/prune.lftp"
+            fi
+          fi
+
+          # 5. Purge cache Cloudflare (token hanya berizin Cache Purge di zona ini).
+          curl -fsS --max-time 30 -X POST "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CF_API_TOKEN" -H 'Content-Type: application/json' \
+            --data '{"purge_everything":true}' | jq -e '.success == true' > /dev/null
+
+          # 6. Verifikasi rilis live.
+          LIVE_SHA="$(curl -fsS --max-time 20 "$SITE_URL/release.json?v=$RELEASE_SHA" | jq -r '.sha')"
+          if [ "$LIVE_SHA" != "$RELEASE_SHA" ]; then
+            echo "::error::release.json live ($LIVE_SHA) tidak sama dengan $RELEASE_SHA"
+            exit 1
+          fi
+          echo "Live: $RELEASE_SHA"

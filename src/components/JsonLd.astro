@@ -1,4 +1,5 @@
 ---
+import { serializeJsonLd } from '../lib/json-ld';
 interface Props {
   type: 'article' | 'review' | 'website' | 'collection' | 'about';
   title: string;
@@ -175,25 +176,25 @@ const faqSchema =
 ---
 
 {websiteSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(websiteSchema)} />
 )}
 
 {collectionSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(collectionSchema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(collectionSchema)} />
 )}
 
 {aboutSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(aboutSchema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(aboutSchema)} />
 )}
 
 {breadcrumbSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(breadcrumbSchema)} />
 )}
 
 {articleSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(articleSchema)} />
 )}
 
 {faqSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <script type="application/ld+json" set:html={serializeJsonLd(faqSchema)} />
 )}
