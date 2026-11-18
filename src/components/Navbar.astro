@@ -15,7 +15,7 @@ const navItems = [
 
 <header class="sticky top-0 z-50 border-b border-line bg-surface">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between gap-3 h-16">
+    <div class="flex items-center justify-between gap-3 min-h-16">
       <!-- Wordmark -->
       <a href="/" class="flex min-h-11 items-center shrink-0" aria-label="Beranda bedahgadget.id">
         <span class="inline-flex min-h-10 items-center font-brand text-[1.375rem] leading-none tracking-tight text-ink sm:text-2xl">
@@ -31,7 +31,7 @@ const navItems = [
               href={item.href}
               aria-current={item.active ? 'page' : undefined}
               class:list={[
-                'h-16 inline-flex items-center px-3 lg:px-4 text-sm border-b-2 transition-colors',
+                'min-h-16 inline-flex items-center px-3 lg:px-4 text-sm border-b-2 transition-colors',
                 item.active
                   ? 'border-accent-hot text-ink font-semibold'
                   : 'border-transparent text-ink-secondary hover:text-ink hover:border-line-strong',
@@ -117,19 +117,36 @@ const navItems = [
 <script>
   const btn = document.getElementById('mobile-menu-btn');
   const menu = document.getElementById('mobile-menu');
+  const main = document.querySelector('main');
+  const footer = document.querySelector('footer');
   const themeBtn = document.getElementById('theme-toggle');
 
   if (btn && menu) {
+    const desktopMq = window.matchMedia('(min-width: 768px)');
+    const setBackgroundInert = (isInert: boolean) => {
+      if (main) main.inert = isInert;
+      if (footer) footer.inert = isInert;
+    };
+    const setMenuOpen = (open: boolean) => {
+      menu.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', String(open));
+      setBackgroundInert(open);
+    };
+
     btn.addEventListener('click', () => {
-      const isHidden = menu.classList.toggle('hidden');
-      btn.setAttribute('aria-expanded', String(!isHidden));
+      setMenuOpen(menu.classList.contains('hidden'));
     });
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
-        menu.classList.add('hidden');
-        btn.setAttribute('aria-expanded', 'false');
+        setMenuOpen(false);
         btn.focus();
+      }
+    });
+
+    desktopMq.addEventListener('change', (e: MediaQueryListEvent) => {
+      if (e.matches && !menu.classList.contains('hidden')) {
+        setMenuOpen(false);
       }
     });
   }

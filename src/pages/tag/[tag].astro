@@ -24,10 +24,12 @@ export async function getStaticPaths() {
 }
 
 const { tag, articles } = Astro.props;
+const tagSlug = tag.toLowerCase().replace(/\s+/g, '-');
+const tagHref = `/tag/${tagSlug}/`;
 const isThin = articles.length < MIN_TAG_ARTICLES;
 const pageTitle = `Indeks Topik #${tag}: Arsip Teknis bedahgadget.id`;
 const pageDescription = `Kumpulan dokumentasi bedah komponen, arsitektur silikon, dan review laptop dengan topik teknis ${tag} di bedahgadget.id.`;
-const pageUrl = `https://bedahgadget.id/tag/${tag.toLowerCase().replace(/\s+/g, '-')}/`;
+const pageUrl = `https://bedahgadget.id${tagHref}`;
 const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
 ---
 
@@ -56,11 +58,14 @@ const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.pn
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
     <!-- Breadcrumb -->
-    <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted mb-6">
-      <ol class="flex items-center gap-2">
+    <nav aria-label="Breadcrumb" class="breadcrumb font-mono text-xs text-ink-muted mb-6">
+      <ol class="flex flex-wrap items-center gap-2">
         <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
-        <li>/</li>
-        <li class="text-ink font-semibold">TOPIK KOMPONEN: #{tag.toUpperCase()}</li>
+        <li>
+          <a href={tagHref} aria-current="page" class="inline-flex min-h-11 items-center text-ink font-semibold">
+            TOPIK KOMPONEN: #{tag.toUpperCase()}
+          </a>
+        </li>
       </ol>
     </nav>
 

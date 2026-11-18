@@ -247,6 +247,18 @@ body {
   border-bottom: 1px solid var(--border-hairline);
 }
 
+.breadcrumb ol > li + li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumb ol > li + li::before {
+  content: '/';
+  content: '/' / '';
+  color: var(--text-muted);
+}
+
 /* Editorial prose rules for MDX articles */
 .article-prose {
   color: var(--text-secondary);

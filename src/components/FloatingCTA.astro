@@ -35,13 +35,19 @@ const { watch } = Astro.props;
   const close = document.getElementById('floating-cta-close');
   const hero = cta && document.querySelector(cta.dataset.watch || '');
   const footer = document.querySelector('footer');
+  const main = document.getElementById('main-content');
 
   if (cta && close && hero && footer) {
     let heroVisible = true;
     let footerVisible = false;
     let dismissed = false;
     const update = () => {
-      cta.hidden = dismissed || heroVisible || footerVisible;
+      const nextHidden = dismissed || heroVisible || footerVisible;
+      const hadFocus = nextHidden && cta.contains(document.activeElement);
+      cta.hidden = nextHidden;
+      if (hadFocus && main) {
+        main.focus({ preventScroll: true });
+      }
     };
     new IntersectionObserver(([entry]) => {
       heroVisible = entry.isIntersecting;
