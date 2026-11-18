@@ -44,25 +44,28 @@ const fullTitle = title.includes('BedahGadget') || title.includes('bedahgadget.i
     <meta name="generator" content={Astro.generator} />
 
     <!-- Theme Initialization: respects user setting, falls back to system preference -->
+    <meta name="color-scheme" content="light dark" />
+    <!-- Theme Color for Browser Header -->
+    <meta name="theme-color" content="#F3F2EE" />
     <script is:inline>
       (function () {
+        var root = document.documentElement;
+        var schemeMeta = document.querySelector('meta[name="color-scheme"]');
+        var themeMeta = document.querySelector('meta[name="theme-color"]');
+        var theme = 'light';
         try {
           var saved = localStorage.getItem('bg-theme');
           if (saved === 'dark' || saved === 'light') {
-            document.documentElement.setAttribute('data-theme', saved);
-          } else {
-            var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            theme = saved;
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark';
           }
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
+        } catch (e) {}
+        root.setAttribute('data-theme', theme);
+        if (schemeMeta) schemeMeta.setAttribute('content', theme);
+        if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#111416' : '#F3F2EE');
       })();
     </script>
-
-    <!-- Theme Color for Browser Header -->
-    <meta name="theme-color" content="#111416" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#F3F2EE" media="(prefers-color-scheme: light)" />
 
     <!-- Favicon & Brand Icons -->
     <link rel="icon" type="image/svg+xml" href="/brand/svg/icon-dark.svg" />

@@ -30,7 +30,8 @@
 /* Palet "tinta di atas kertas": netral sejuk + satu aksen teal.
    Pasangan hex dan kanal RGB wajib identik (diperiksa scripts/check-theme-css.mjs). */
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
+  scrollbar-color: var(--text-muted) var(--bg-page);
 
   --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-body: 'Literata', Georgia, 'Times New Roman', serif;
@@ -145,6 +146,14 @@ html[data-theme='dark'] {
   --text-on-action-hover-rgb: 17 20 22;
 }
 
+:root:has(> head > meta[name='color-scheme'][content='light']) {
+  color-scheme: light;
+}
+
+:root:has(> head > meta[name='color-scheme'][content='dark']) {
+  color-scheme: dark;
+}
+
 /* Theme visibility helpers for dual SVGs */
 html:not([data-theme='dark']) .theme-dark-only {
   display: none !important;
@@ -159,21 +168,23 @@ html[data-theme='dark'] .theme-light-only {
   color: var(--text-on-heat);
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-page);
-}
+  ::-webkit-scrollbar-track {
+    background: var(--bg-page);
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
-}
+  ::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-hot);
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hot);
+  }
 }
 
 body {
@@ -220,6 +231,15 @@ body {
 .card-active:focus-within {
   border-color: var(--accent-hot);
   box-shadow: inset 0 0 0 1px var(--accent-hot);
+}
+
+@media (forced-colors: active) {
+  .card-active:hover,
+  .card-active:focus-within {
+    border-color: Highlight;
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
 }
 
 .iso-diagram-well {

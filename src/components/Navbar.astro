@@ -136,19 +136,48 @@ const navItems = [
 
   if (themeBtn) {
     const html = document.documentElement;
-    const sync = () => themeBtn.setAttribute('aria-checked', String(html.getAttribute('data-theme') === 'dark'));
-    sync();
+    const schemeMeta = document.querySelector('meta[name="color-scheme"]');
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const applyTheme = (theme: 'light' | 'dark') => {
+      html.setAttribute('data-theme', theme);
+      themeBtn.setAttribute('aria-checked', String(theme === 'dark'));
+      if (schemeMeta) schemeMeta.setAttribute('content', theme);
+      if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#111416' : '#F3F2EE');
+    };
+
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
     themeBtn.addEventListener('click', () => {
       const current = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      sync();
+      const next: 'light' | 'dark' = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
       try {
         // Pilihan sama dengan tema sistem: hapus preferensi supaya situs kembali mengikuti sistem.
-        const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const system = mq.matches ? 'dark' : 'light';
         if (next === system) localStorage.removeItem('bg-theme');
         else localStorage.setItem('bg-theme', next);
       } catch (e) {}
+    });
+
+    mq.addEventListener('change', (e: MediaQueryListEvent) => {
+      try {
+        const saved = localStorage.getItem('bg-theme');
+        if (saved === 'dark' || saved === 'light') return;
+      } catch (err) {}
+      applyTheme(e.matches ? 'dark' : 'light');
+    });
+
+    window.addEventListener('storage', (e: StorageEvent) => {
+      if (e.key !== 'bg-theme' && e.key !== null) return;
+      const next: 'light' | 'dark' =
+        e.newValue === 'dark' || e.newValue === 'light'
+          ? e.newValue
+          : mq.matches
+            ? 'dark'
+            : 'light';
+      applyTheme(next);
     });
   }
 </script>
