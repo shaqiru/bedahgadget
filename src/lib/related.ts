@@ -14,7 +14,7 @@ export function relatedArticles(current: Article, all: Article[], limit = 3): Ar
       shared: a.data.tags.filter((t) => tags.has(t)).length,
       sameCategory: a.data.category === current.data.category ? 1 : 0,
     }))
-    .sort(
+    .toSorted(
       (x, y) =>
         y.shared - x.shared ||
         y.sameCategory - x.sameCategory ||

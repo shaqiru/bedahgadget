@@ -191,8 +191,16 @@ body {
   background-color: var(--bg-page);
   color: var(--text-primary);
   font-family: var(--font-body);
+  font-size-adjust: from-font;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.article-prose h4 {
+  text-wrap: balance;
 }
 
 /* Cincin fokus: 2px line-strong, offset 2px (design.md Decisions 9). */
@@ -203,6 +211,7 @@ body {
 
 .font-brand {
   font-family: var(--font-display);
+  font-size-adjust: from-font;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
@@ -242,11 +251,6 @@ body {
   }
 }
 
-.iso-diagram-well {
-  background-color: var(--bg-elevated);
-  border-bottom: 1px solid var(--border-hairline);
-}
-
 .breadcrumb ol > li + li {
   display: inline-flex;
   align-items: center;
@@ -259,12 +263,32 @@ body {
   color: var(--text-muted);
 }
 
+.meta-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+}
+
+.meta-inline > li + li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.meta-inline > li + li::before {
+  content: '\00B7';
+  content: '\00B7' / '';
+  color: var(--text-muted);
+}
+
 /* Editorial prose rules for MDX articles */
 .article-prose {
   color: var(--text-secondary);
   font-size: 1.0625rem;
   line-height: 1.75;
   max-width: 72ch;
+  overflow-wrap: break-word;
 }
 
 .article-prose > p,
@@ -272,6 +296,10 @@ body {
 .article-prose > ol,
 .article-prose > blockquote {
   max-width: 68ch;
+}
+
+.article-prose :is(p, blockquote, li) {
+  text-wrap: pretty;
 }
 
 .article-prose p {
@@ -437,59 +465,6 @@ body {
     border: 1px solid var(--border-hairline);
   }
 
-  .panel-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.625rem 1rem;
-    background-color: var(--bg-elevated);
-    border-bottom: 1px solid var(--border-hairline);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-    font-size: 0.75rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-primary);
-  }
-
-  /* Readout: label kecil di atas nilai, selalu angka tabular. */
-  .readout {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .readout > dt,
-  .readout-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-  }
-
-  .readout > dd,
-  .readout-value {
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-
-  /* Designator PCB untuk bagian figur (Q3, U1, J2). */
-  .part-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2.25rem;
-    padding: 0.125rem 0.375rem;
-    border: 1px solid var(--border-strong);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    background-color: var(--bg-surface);
-  }
-
   /* Titik status selalu berdampingan dengan teks. */
   .status-dot {
     display: inline-block;
@@ -498,20 +473,6 @@ body {
     border-radius: 9999px;
     background-color: currentColor;
     flex-shrink: 0;
-  }
-
-  /* Garis skala bertick, dekoratif (aria-hidden di markup). */
-  .scale-rule {
-    height: 10px;
-    border-bottom: 1px solid var(--border-strong);
-    background-image: repeating-linear-gradient(
-      90deg,
-      var(--border-strong) 0 1px,
-      transparent 1px 12px
-    );
-    background-size: 100% 6px;
-    background-repeat: no-repeat;
-    background-position: bottom;
   }
 
   .btn {
@@ -550,18 +511,6 @@ body {
 
   .btn-secondary:hover {
     background-color: var(--bg-elevated);
-  }
-
-  .btn-ghost {
-    color: var(--accent-link);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .btn-ghost:hover {
-    text-decoration-thickness: 2px;
   }
 }
 

@@ -14,7 +14,7 @@ export async function getStaticPaths() {
     const slugTag = tag.toLowerCase().replace(/\s+/g, '-');
     const filteredArticles = allArticles
       .filter((article) => article.data.tags.includes(tag))
-      .sort(compareArticles);
+      .toSorted(compareArticles);
 
     return {
       params: { tag: slugTag },

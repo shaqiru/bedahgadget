@@ -7,7 +7,7 @@ import FloatingCTA from '../components/FloatingCTA.astro';
 import { getCollection } from 'astro:content';
 import { articlePath } from '../lib/categories';
 
-const articles = (await getCollection('articles')).sort(compareArticles);
+const articles = (await getCollection('articles')).toSorted(compareArticles);
 
 const canonicalURL = 'https://bedahgadget.id/';
 const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';

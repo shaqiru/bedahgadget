@@ -8,7 +8,7 @@ export type Article = CollectionEntry<'articles'>;
 export const ARCHIVE_PAGE_SIZE = 12;
 
 export function sortByNewest(articles: Article[]): Article[] {
-  return [...articles].sort(compareArticles);
+  return articles.toSorted(compareArticles);
 }
 
 export interface Page<T> {
