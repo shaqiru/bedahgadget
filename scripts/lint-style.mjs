@@ -42,7 +42,7 @@ function warn(file, line, message) {
 
 for (const file of files) {
   const source = readFileSync(file, 'utf8');
-  const lines = source.split('\n');
+  const lines = source.split(/\r?\n/);
   let inCode = false;
   lines.forEach((text, index) => {
     if (/^\s*```/.test(text)) inCode = !inCode;

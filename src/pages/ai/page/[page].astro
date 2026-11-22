@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import CategoryArchive from '../../../components/CategoryArchive.astro';
+import { ARCHIVE_PAGE_SIZE, totalPagesFor } from '../../../lib/archive';
+
+// Halaman 2 dan seterusnya hidup di /ai/page/2/ supaya tidak bentrok dengan /ai/[slug]/.
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', ({ data }) => data.category === 'ai');
+  const totalPages = totalPagesFor(articles.length, ARCHIVE_PAGE_SIZE);
+
+  return Array.from({ length: totalPages - 1 }, (_, index) => {
+    const pageNumber = index + 2;
+    return {
+      params: { page: String(pageNumber) },
+      props: { pageNumber },
+    };
+  });
+}
+
+interface Props {
+  pageNumber: number;
+}
+
+const { pageNumber } = Astro.props;
+---
+
+<CategoryArchive categoryKey="ai" pageNumber={pageNumber} />

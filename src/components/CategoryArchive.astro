@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import JsonLd from './JsonLd.astro';
+import ArticleList from './ArticleList.astro';
+import Icon from './Icon.astro';
+import { categories, type CategoryKey } from '../lib/categories';
+import { pageHref, paginate, sortByNewest } from '../lib/archive';
+import { archiveCopy } from '../lib/archive-copy';
+
+export interface Props {
+  categoryKey: CategoryKey;
+  pageNumber: number;
+}
+
+const { categoryKey, pageNumber } = Astro.props;
+const copy = archiveCopy[categoryKey];
+const categoryMeta = categories[categoryKey];
+
+const allArticles = await getCollection('articles');
+const inCategory = sortByNewest(allArticles.filter((article) => article.data.category === categoryKey));
+const { items, current, totalPages } = paginate(inCategory, pageNumber);
+
+const canonical = pageHref(categoryKey, current);
+const pageUrl = `https://bedahgadget.id${canonical}`;
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+const pageTitle = current > 1 ? `${copy.metaTitle} (Halaman ${current})` : copy.metaTitle;
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={copy.metaDescription}
+  type="website"
+  canonicalUrl={pageUrl}
+  image={ogImage}
+>
+  <Fragment slot="schema">
+    <JsonLd
+      type="collection"
+      title={copy.metaTitle}
+      description={copy.metaDescription}
+      url={pageUrl}
+      image={ogImage}
+      items={items.map((article) => ({
+        name: article.data.title,
+        url: `${categoryMeta.archivePath}${article.slug}/`,
+      }))}
+    />
+  </Fragment>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-10">
+    <nav aria-label="Breadcrumb" class="breadcrumb font-mono text-xs text-ink-muted">
+      <ol class="flex flex-wrap items-center gap-2">
+        <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+        <li>
+          <a href={canonical} aria-current="page" class="inline-flex min-h-11 items-center font-semibold text-ink">
+            RUBRIK: {categoryMeta.archiveRubric}
+          </a>
+        </li>
+      </ol>
+    </nav>
+
+    <header class="space-y-3 border-b border-line pb-8">
+      <h1 class="font-brand text-3xl leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
+        {copy.heading}
+      </h1>
+      <p class="max-w-[68ch] text-base leading-relaxed text-ink-secondary sm:text-lg">
+        {copy.intro}
+      </p>
+      <p class="font-mono text-xs tabular-nums text-ink-muted">
+        {inCategory.length} artikel di rubrik ini
+      </p>
+    </header>
+
+    <ArticleList
+      articles={items}
+      heading="Semua artikel"
+      headingId="daftar-artikel"
+      countLabel={totalPages > 1 ? `${items.length} dari ${inCategory.length} artikel` : undefined}
+    />
+
+    {
+      totalPages > 1 && (
+        <nav
+          aria-label="Halaman arsip"
+          class="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 font-mono text-xs tabular-nums"
+        >
+          {current > 1 ? (
+            <a
+              href={pageHref(categoryKey, current - 1)}
+              rel="prev"
+              class="inline-flex min-h-11 items-center gap-2 border border-line px-3 text-ink hover:border-line-strong hover:text-accent-link motion-safe:transition-colors"
+            >
+              <Icon name="arrow-left" weight="bold" class="h-4 w-4" />
+              Sebelumnya
+            </a>
+          ) : (
+            <span aria-hidden="true" class="min-h-11" />
+          )}
+
+          <span aria-current="page" class="text-ink-muted">
+            Halaman {current} dari {totalPages}
+          </span>
+
+          {current < totalPages ? (
+            <a
+              href={pageHref(categoryKey, current + 1)}
+              rel="next"
+              class="inline-flex min-h-11 items-center gap-2 border border-line px-3 text-ink hover:border-line-strong hover:text-accent-link motion-safe:transition-colors"
+            >
+              Berikutnya
+              <Icon name="arrow-right" weight="bold" class="h-4 w-4" />
+            </a>
+          ) : (
+            <span aria-hidden="true" class="min-h-11" />
+          )}
+        </nav>
+      )
+    }
+  </div>
+</BaseLayout>

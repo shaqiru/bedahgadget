@@ -15,7 +15,7 @@ const errors = [];
 if (existsSync(dir)) {
   for (const name of readdirSync(dir).filter((f) => /\.ya?ml$/.test(f))) {
     const path = join(dir, name);
-    const lines = readFileSync(path, 'utf8').split('\n');
+    const lines = readFileSync(path, 'utf8').split(/\r?\n/);
 
     lines.forEach((line, index) => {
       const code = line.replace(/#.*$/, '');

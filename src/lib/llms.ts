@@ -35,7 +35,7 @@ Dokumen ini memuat rangkuman lengkap materi ilmiah bedah perangkat keras laptop,
 type Article = CollectionEntry<'articles'>;
 
 async function sortedArticles(): Promise<Article[]> {
-  return (await getCollection('articles')).sort(compareArticles);
+  return (await getCollection('articles')).toSorted(compareArticles);
 }
 
 function pathOf(article: Article): string {

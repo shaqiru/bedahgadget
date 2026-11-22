@@ -5,7 +5,7 @@ import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
   const articles = await getCollection('articles');
-  const sortedArticles = articles.sort(compareArticles);
+  const sortedArticles = articles.toSorted(compareArticles);
 
   return rss({
     title: 'BedahGadget.id: Sains Hardware & Bedah Anatomi Laptop',

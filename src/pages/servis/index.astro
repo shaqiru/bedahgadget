@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+
+const pageTitle = 'Servis Laptop FixNow.id Bandung: Lingkup Layanan & Kontak';
+const pageDescription = 'Lingkup layanan meja servis FixNow.id Bandung: perbaikan jalur daya motherboard, penggantian VRAM, dan konversi Discrete-to-UMA, dengan cek awal gratis.';
+const pageUrl = 'https://bedahgadget.id/servis/';
+const ogImage = 'https://bedahgadget.id/brand/png/lockup-horizontal-dark-1024.png';
+
+const performed = [
+  'Perbaikan jalur daya motherboard (mikrosolder)',
+  'Penggantian VRAM',
+  'Konversi Discrete-to-UMA',
+];
+
+const notPerformed = [
+  'Reballing atau ganti chip GPU utama',
+  'Kartu VGA PC desktop',
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  type="website"
+  canonicalUrl={pageUrl}
+  image={ogImage}
+>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-10">
+    <nav aria-label="Breadcrumb" class="breadcrumb font-mono text-xs text-ink-muted">
+      <ol class="flex flex-wrap items-center gap-2">
+        <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
+        <li>
+          <a href="/servis/" aria-current="page" class="inline-flex min-h-11 items-center font-semibold text-ink">
+            SERVIS LAPTOP
+          </a>
+        </li>
+      </ol>
+    </nav>
+
+    <header class="space-y-4 border-b border-line pb-8">
+      <h1 class="font-brand text-3xl leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
+        Servis laptop di FixNow.id Bandung
+      </h1>
+      <p class="max-w-[68ch] text-base leading-relaxed text-ink-secondary sm:text-lg">
+        Pekerjaan meja servis difokuskan pada jalur daya motherboard dan memori. Pengecekan awal
+        selalu gratis, dan hasil pemeriksaan dijelaskan sebelum ada keputusan perbaikan.
+      </p>
+    </header>
+
+    <section aria-labelledby="lingkup-title" class="space-y-6">
+      <h2 id="lingkup-title" class="font-brand text-2xl tracking-tight text-ink">
+        Lingkup layanan
+      </h2>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div class="iso-plate p-6 space-y-3">
+          <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wide text-accent-positive">
+            <Icon name="check" weight="bold" class="h-4 w-4 shrink-0" />
+            Bisa dikerjakan
+          </h3>
+          <ul class="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-ink-secondary">
+            {performed.map((service) => <li>{service}</li>)}
+          </ul>
+        </div>
+
+        <div class="iso-plate p-6 space-y-3">
+          <h3 class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wide text-accent-danger">
+            <Icon name="x" weight="bold" class="h-4 w-4 shrink-0" />
+            Tidak dikerjakan
+          </h3>
+          <ul class="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-ink-secondary">
+            {notPerformed.map((service) => <li>{service}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="kontak-title" class="space-y-4">
+      <h2 id="kontak-title" class="font-brand text-2xl tracking-tight text-ink">
+        Kontak dan alamat
+      </h2>
+
+      <div class="iso-plate p-6 sm:p-8 space-y-5">
+        <dl class="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+          <div>
+            <dt class="font-mono text-xs uppercase text-ink-muted">Alamat workshop</dt>
+            <dd class="mt-1 leading-relaxed text-ink">Jl. Manteron No. 12, Sukaluyu, Bandung</dd>
+          </div>
+          <div>
+            <dt class="font-mono text-xs uppercase text-ink-muted">WhatsApp resmi</dt>
+            <dd class="mt-1 font-semibold tabular-nums text-ink">0851-3950-6080</dd>
+          </div>
+        </dl>
+
+        <div class="flex max-w-md flex-col gap-2.5 border-t border-line pt-5">
+          <a
+            href="https://wa.me/6285139506080?text=Halo%20FixNow.id,%20saya%20membaca%20bedahgadget.id%20dan%20ingin%20jadwal%20cek%20gratis%20laptop%20saya."
+            target="_blank"
+            rel="noopener"
+            class="btn btn-primary w-full"
+          >
+            WhatsApp 0851-3950-6080
+          </a>
+          <a
+            href="https://fixnow.id/?utm_source=bedahgadget&utm_medium=servis"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-secondary w-full"
+          >
+            Kunjungi FixNow.id
+          </a>
+          <p class="pt-1 font-mono text-xs text-ink-muted">
+            Cek awal gratis <span aria-hidden="true">&middot;</span> Jl. Manteron No. 12, Sukaluyu, Bandung
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

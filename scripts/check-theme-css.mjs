@@ -6,12 +6,13 @@ import { join } from 'node:path';
 // Dijalankan setelah `astro build` (lihat package.json scripts.build).
 
 const root = process.cwd();
-const SEMANTIC = /^--(bg|text|accent|border)-/;
+const SEMANTIC = /^--(bg|text|accent|border|g)-/;
 // Varian seperti `hover:`, `md:`, `dark:` ikut ditangkap supaya selektor yang
 // diperiksa sama persis dengan kelas yang dihasilkan Tailwind.
 const OPACITY_CLASS =
   /(?<![\w:-])((?:[a-z0-9-]+:)*(?:bg|text|border|ring|divide)-(?:page|surface|elevated|ink|line)[a-z-]*\/\d+)/g;
-const RAW_ACCENT_TEXT = /\btext-(?:ocean|clover|brandred)\b/g;
+// Merah isian dan kuning panas hanya untuk isian; teks merah memakai text-accent-danger.
+const RAW_ACCENT_TEXT = /\btext-accent-(?:hot|heat)\b/g;
 
 function walk(dir, allowed) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -71,7 +72,7 @@ function checkRawAccentText() {
   }
   if (violations.length) {
     throw new Error(
-      `Warna brand mentah dipakai sebagai warna teks (pakai text-accent-link/positive/danger):\n  ${violations.join('\n  ')}`,
+      `Warna isian dipakai sebagai warna teks (pakai text-accent-danger atau text-ink):\n  ${violations.join('\n  ')}`,
     );
   }
 }
@@ -126,6 +127,8 @@ function checkTokenPairs(css) {
   }
 }
 
+// Kombinasi grafis dan glass sudah dipensiunkan; cek fokus pada pasangan token dan kontras teks.
+
 function relativeLuminance(hex) {
   const channels = [0, 2, 4].map((offset) => {
     const value = parseInt(hex.replace('#', '').slice(offset, offset + 2), 16) / 255;
@@ -146,7 +149,15 @@ function checkAccentContrast(css) {
     ['terang', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
     ['gelap', parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
   ];
-  const accents = ['--accent-link', '--accent-positive', '--accent-danger'];
+  const accents = [
+    '--text-primary',
+    '--text-secondary',
+    '--text-muted',
+    '--accent-link',
+    '--accent-positive',
+    '--accent-danger',
+    '--accent-ember',
+  ];
   const backgrounds = ['--bg-page', '--bg-surface', '--bg-elevated'];
   const problems = [];
 
@@ -173,7 +184,41 @@ function checkAccentContrast(css) {
   }
 
   if (problems.length) {
-    throw new Error(`Kontras teks aksen di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
+    throw new Error(`Kontras teks di bawah 4.5:1:\n  ${problems.join('\n  ')}`);
+  }
+}
+
+function checkStateHeadingContrast(css) {
+  const blocks = [
+    ['terang', parseBlock(css, /:root\s*\{([\s\S]*?)\}/)],
+    ['gelap', parseBlock(css, /html\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\}/)],
+  ];
+  const token = '--accent-ember-strong';
+  const backgrounds = ['--bg-page', '--bg-surface', '--bg-elevated'];
+  const problems = [];
+
+  for (const [label, vars] of blocks) {
+    if (!vars) continue;
+    const foreground = vars.get(token);
+    if (!foreground) {
+      problems.push(`${label}: ${token} tidak ditemukan`);
+      continue;
+    }
+    for (const background of backgrounds) {
+      const surface = vars.get(background);
+      if (!surface) {
+        problems.push(`${label}: ${background} tidak ditemukan`);
+        continue;
+      }
+      const ratio = contrastRatio(foreground, surface);
+      if (ratio < 3) {
+        problems.push(`${label}: ${token} pada ${background} hanya ${ratio.toFixed(2)}:1`);
+      }
+    }
+  }
+
+  if (problems.length) {
+    throw new Error(`Kontras judul besar state aktif di bawah 3:1:\n  ${problems.join('\n  ')}`);
   }
 }
 
@@ -185,6 +230,7 @@ function checkActionContrast(css) {
   const pairs = [
     ['--text-on-action', '--bg-action'],
     ['--text-on-action-hover', '--bg-action-hover'],
+    ['--text-on-heat', '--accent-heat'],
   ];
   const problems = [];
 
@@ -209,15 +255,18 @@ function checkActionContrast(css) {
   }
 }
 
+// Kasus terburuk teks di atas glass sudah tidak berlaku karena permukaan kini datar dan opak.
+
 try {
   const total = collectOpacityClasses().length;
   checkOpacityClasses();
   const source = readFileSync(join(root, 'src', 'styles', 'global.css'), 'utf-8');
   checkTokenPairs(source);
   checkAccentContrast(source);
+  checkStateHeadingContrast(source);
   checkActionContrast(source);
   checkRawAccentText();
-  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras aksen dan tombol aksi >= 4.5:1, tanpa warna brand mentah untuk teks).`);
+  console.log(`check:css lulus (${total} kelas opasitas, pasangan token sinkron, kontras teks dan tombol aksi >= 4.5:1, tanpa warna isian untuk teks).`);
 } catch (error) {
   console.error(`check:css gagal: ${error.message}`);
   process.exit(1);

@@ -7,6 +7,8 @@ public/**
 scripts/**
 .agents/**
 .github/**
+# Pointer store OpenSpec. Perencanaan tetap disimpan di repo private.
+openspec/config.yaml
 astro.config.mjs
 tailwind.config.mjs
 tsconfig.json

@@ -44,35 +44,38 @@ const fullTitle = title.includes('BedahGadget') || title.includes('bedahgadget.i
     <meta name="generator" content={Astro.generator} />
 
     <!-- Theme Initialization: respects user setting, falls back to system preference -->
+    <meta name="color-scheme" content="light dark" />
+    <!-- Theme Color for Browser Header -->
+    <meta name="theme-color" content="#F3F2EE" />
     <script is:inline>
       (function () {
+        var root = document.documentElement;
+        var schemeMeta = document.querySelector('meta[name="color-scheme"]');
+        var themeMeta = document.querySelector('meta[name="theme-color"]');
+        var theme = 'light';
         try {
           var saved = localStorage.getItem('bg-theme');
           if (saved === 'dark' || saved === 'light') {
-            document.documentElement.setAttribute('data-theme', saved);
-          } else {
-            var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            theme = saved;
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark';
           }
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
+        } catch (e) {}
+        root.setAttribute('data-theme', theme);
+        if (schemeMeta) schemeMeta.setAttribute('content', theme);
+        if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#111416' : '#F3F2EE');
       })();
     </script>
-
-    <!-- Theme Color for Browser Header -->
-    <meta name="theme-color" content="#0B132B" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#F4F4F4" media="(prefers-color-scheme: light)" />
 
     <!-- Favicon & Brand Icons -->
     <link rel="icon" type="image/svg+xml" href="/brand/svg/icon-dark.svg" />
     <link rel="icon" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/brand/png/profile-navy.png" />
 
-    <!-- Self-Hosted Archivo Black Font Preload -->
+    <!-- Self-Hosted Display Font Preload -->
     <link
       rel="preload"
-      href="/brand/fonts/ArchivoBlack-Regular.woff2"
+      href="/brand/fonts/BricolageGrotesque-Variable.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -123,15 +126,15 @@ const fullTitle = title.includes('BedahGadget') || title.includes('bedahgadget.i
       )}
     </slot>
   </head>
-  <body class="min-h-screen flex flex-col bg-page text-ink selection:bg-ocean selection:text-white">
+  <body class="min-h-screen flex flex-col bg-page text-ink">
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-ocean focus:text-white focus:inline-flex focus:min-h-11 focus:items-center focus:px-4 focus:py-2 focus:font-mono focus:text-xs"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-action focus:text-on-action focus:inline-flex focus:min-h-11 focus:items-center focus:px-4 focus:py-2 focus:font-mono focus:text-xs"
     >
       Langsung ke isi utama
     </a>
     <Navbar />
-    <main id="main-content" class="flex-grow">
+    <main id="main-content" tabindex="-1" class="flex-grow">
       <slot />
     </main>
     <Footer />

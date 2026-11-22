@@ -33,11 +33,14 @@ const breadcrumbs = [
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12">
     <!-- Breadcrumb -->
-    <nav aria-label="Breadcrumb" class="font-mono text-xs text-ink-muted">
-      <ol class="flex items-center gap-2">
+    <nav aria-label="Breadcrumb" class="breadcrumb font-mono text-xs text-ink-muted">
+      <ol class="flex flex-wrap items-center gap-2">
         <li><a href="/" class="inline-flex min-h-11 items-center hover:text-accent-link">BERANDA</a></li>
-        <li>/</li>
-        <li class="text-ink font-semibold">METODOLOGI &amp; TRANSPARANSI WORKSHOP</li>
+        <li>
+          <a href="/tentang/" aria-current="page" class="inline-flex min-h-11 items-center text-ink font-semibold">
+            METODOLOGI &amp; TRANSPARANSI WORKSHOP
+          </a>
+        </li>
       </ol>
     </nav>
 
@@ -136,7 +139,6 @@ const breadcrumbs = [
 
     <!-- Affiliation Disclosure & FixNow.id Details -->
     <section class="iso-plate overflow-hidden">
-      <div class="split-rule"></div>
       <div class="px-5 py-3 bg-elevated border-b border-line flex flex-wrap items-center justify-between gap-2 font-mono text-xs tabular-nums">
         <span class="font-bold text-ink">PERNYATAAN AFILIASI &amp; WORKSHOP MITRA</span>
         <span class="text-ink-muted">FIXNOW.ID BANDUNG</span>
